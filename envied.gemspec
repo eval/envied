@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["gert@thinkcreate.nl"]
   spec.summary       = %q{ENV on epo}
   spec.description   = %q{no, really}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/eval/envied"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
