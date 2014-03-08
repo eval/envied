@@ -18,7 +18,29 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+It can be used as follows:
+
+```ruby
+# app/models/app_config.rb
+class AppConfig
+  include Envied
+
+  variable :force_ssl, Boolean
+  variable :database_url
+end
+
+# config/application.rb
+Bundler.require(*Rails.groups)
+
+AppConfig.require # checks availability
+
+module Blog
+  class Application < Rails::Application
+    config.force_ssl = AppConfig.force_ssl
+  end
+end
+```
+
 
 ## Contributing
 
