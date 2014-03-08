@@ -2,9 +2,10 @@
 
 TL;DR `ENVied` will improve your life drama-ti-cally.
 
-Say you're nicely configuring your app via ENV-variables, 'ey?
-Then maybe, just like me, you had the itch to check whether all variables your app needs, are present.
+Say you're nicely configuring your app via ENV-variables, 'ey?  
+Then maybe, just like me, you had the itch to check whether all variables your app needs, are present.  
 Or you sometimes wish that ENV-variables should not only contain strings, but integers and booleans.
+
 Wooha! You really should try `ENVied`.
 
 
