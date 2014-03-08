@@ -23,10 +23,11 @@ It can be used as follows:
 ```ruby
 # app/models/app_config.rb
 class AppConfig
-  include Envied
+  include ENVied
 
-  variable :force_ssl, Boolean
+  variable :rails_env
   variable :database_url
+  variable :force_ssl, Boolean
 end
 
 # config/application.rb
