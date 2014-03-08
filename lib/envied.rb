@@ -1,5 +1,5 @@
 require "envied/version"
 
-module Envied
+module ENVied
   # Your code goes here...
 end

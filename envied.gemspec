@@ -5,7 +5,7 @@ require 'envied/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "envied"
-  spec.version       = Envied::VERSION
+  spec.version       = ENVied::VERSION
   spec.authors       = ["Gert Goet"]
   spec.email         = ["gert@thinkcreate.nl"]
   spec.summary       = %q{TODO: Write a short summary. Required.}

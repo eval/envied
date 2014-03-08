@@ -1,5 +1,5 @@
 require 'spec_helper'
 
-describe Envied do
+describe ENVied do
   it { should be }
 end
