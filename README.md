@@ -1,6 +1,6 @@
 # ENVied or ENV on EPO
 
-TL;DR `ENVied` will improve your life drama-ti-cally.
+### TL;DR `ENVied` will improve your life drama-ti-cally.
 
 Say you're nicely configuring your app via ENV-variables, 'ey?  
 Then maybe, just like me, you had the itch to check whether all variables your app needs, are present.  
@@ -8,6 +8,7 @@ Or you sometimes wish that ENV-variables should not only contain strings, but in
 
 Wooha! You really should try `ENVied`.
 
+![](underconstruction.gif)
 
 ## Installation
 
@@ -25,12 +26,13 @@ And then execute:
 # in config/application.rb
 # somewhere after 'Bundler.require(*Rails.groups)':
 ENVied.configure do |env|
-  env.variable :rails_env
   env.variable :force_ssl, :Boolean
   env.variable :port, :Integer
 end
 
-ENVied.require! # raises when configured variables are not present in ENV
+# require! will raise when ENV is *not* something like
+# {'FORCE_SSL' => 'true', 'PORT' => '3000'}
+ENVied.require!
 
 # existing app config starts here
 module Blog
