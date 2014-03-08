@@ -1,5 +1,5 @@
 class ENVied
-  VERSION = "0.0.1"
+  VERSION = "0.0.2"
   module Configurable
     require 'virtus'
 
@@ -74,11 +74,3 @@ class ENVied
     instance.attributes.key?(method) || super
   end
 end
-
-#ENVied.configure do |env|
-#  env.variable :port, :Integer
-#  env.variable :force_ssl, :Boolean
-#  env.variable :require, :Boolean
-#end
-#
-#ENVied.require
