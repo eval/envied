@@ -21,36 +21,12 @@ Or install it yourself as:
 It can be used as follows:
 
 ```ruby
-# app/models/app_config.rb
-class AppConfig
-  include ENVied
-
-  variable :rails_env
-  variable :database_url
-  variable :force_ssl, Boolean
-end
-
-# config/application.rb
-Bundler.require(*Rails.groups)
-
-Config = AppConfig.require # checks availability
-
-module Blog
-  class Application < Rails::Application
-    config.force_ssl = Config.force_ssl
-  end
-end
-```
-
-Alternative:
-
-```ruby
 ENVied::Configure do |env|
   env.variable :force_ssl, Boolean
   env.variable :rails_env
 end
 
-ENVied.rails_env
+ENVied.require! # raise when not all configured variables are present
 ```
 
 ## Testing
