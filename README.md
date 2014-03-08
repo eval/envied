@@ -41,6 +41,20 @@ module Blog
 end
 ```
 
+## Testing
+
+```bash
+bin/rspec
+# or
+bin/rake
+```
+
+## Developing
+
+```bash
+bin/pry --gem
+```
+
 
 ## Contributing
 
