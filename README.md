@@ -41,8 +41,8 @@ A meaningful error will in this case explain what key and type is needed.
 Variables accessed via ENVied have the configured type:
 
 ```ruby
-ENVied.port => 1
-ENVied.force_ssl => false
+ENVied.port # => 1
+ENVied.force_ssl # => false
 ```
 
 ## Installation
