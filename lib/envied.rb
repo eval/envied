@@ -3,8 +3,28 @@ class ENVied
   module Configurable
     require 'virtus'
 
-    class EnvMissing < StandardError;end
-    class EnvWrongType < StandardError;end
+    class VariableError < StandardError
+      attr_reader :variable
+      def initialize(variable)
+        @variable = variable
+      end
+
+      def variable_type
+        variable.type.to_s.split("::").last
+      end
+    end
+
+    class VariableMissingError < VariableError
+      def message
+        "Please provide ENV['#{variable.name.to_s.upcase}'] of type #{variable_type}"
+      end
+    end
+
+    class VariableTypeError < VariableError
+      def message
+        "ENV['#{variable.name.to_s.upcase}'] should be of type #{variable_type}"
+      end
+    end
 
     def self.included(base)
       base.class_eval do
@@ -14,30 +34,27 @@ class ENVied
     end
 
     module ClassMethods
-      # Creates an instance of Configuration.
+      # Creates a configuration instance from env.
       #
-      # Will raise EnvMissing for variables Configuration defined
-      # but are missing from env.
+      # Will raise VariableMissingError for variables not present in ENV.
       #
-      # Will raise EnvWrongType for variables that can't be coerced to the
-      # type defined in Configuration.
+      # Will raise VariableTypeError for variables whose ENV-value can't be coerced to the configured type.
       #
       # @param env [Hash] the env
       def parse_env(env)
         atts = attribute_set.map(&:name).each_with_object({}) do |name, result|
-          @current_att = name
+          @variable = attribute_set[name]
           unless result[name] = env[name.to_s] || env[name.to_s.upcase]
-            raise EnvMissing, "Please provide ENV['#{name.to_s.upcase}']"
+            raise VariableMissingError, @variable
           end
         end
+
         new(atts)
       rescue Virtus::CoercionError => e
-        configured_type = attribute_set[@current_att].options[:primitive]
-        raise EnvWrongType,
-          "ENV['#{@current_att.to_s.upcase}'] should be of type %s" % configured_type
+        raise VariableTypeError, @variable
       end
 
-      def variable(name, type = String, options = {})
+      def variable(name, type = :String, options = {})
         attribute name, type, { strict: true }.merge(options)
       end
     end
