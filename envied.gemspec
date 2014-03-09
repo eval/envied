@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = ENVied::VERSION
   spec.authors       = ["Gert Goet"]
   spec.email         = ["gert@thinkcreate.nl"]
-  spec.summary       = %q{ENV on epo}
-  spec.description   = %q{no, really}
+  spec.summary       = %q{ENV on EPO}
+  spec.description   = %q{ENV on EPO. Or: ensure presence and type of your app's ENV-variables.}
   spec.homepage      = "https://github.com/eval/envied"
   spec.license       = "MIT"
 
