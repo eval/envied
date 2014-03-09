@@ -47,13 +47,13 @@ describe ENVied do
       it 'raises EnvMissing on calling required!' do
         expect {
           ENVied.require!
-        }.to raise_error(ENVied::Configurable::EnvMissing)
+        }.to raise_error(ENVied::Configurable::VariableMissingError)
       end
 
       it 'raises EnvMissing when interacted with and configured variable not present in ENV' do
         expect {
           ENVied.any_missing_method
-        }.to raise_error(ENVied::Configurable::EnvMissing)
+        }.to raise_error(ENVied::Configurable::VariableMissingError)
       end
     end
 
@@ -63,7 +63,7 @@ describe ENVied do
       specify do
         expect {
           ENVied.a
-        }.to raise_error(ENVied::Configurable::EnvWrongType)
+        }.to raise_error(ENVied::Configurable::VariableTypeError)
       end
     end
   end
