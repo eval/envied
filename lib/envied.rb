@@ -44,7 +44,10 @@ class ENVied
       def parse_env(env)
         atts = attribute_set.map(&:name).each_with_object({}) do |name, result|
           @variable = attribute_set[name]
-          unless result[name] = env[name.to_s] || env[name.to_s.upcase]
+          has_default = !!@variable.options[:default]
+          var_value = env[name.to_s] || env[name.to_s.upcase]
+          result[name] = var_value if var_value
+          if !(result[name] || has_default)
             raise VariableMissingError, @variable
           end
         end
@@ -55,7 +58,22 @@ class ENVied
       end
 
       def variable(name, type = :String, options = {})
+        options[:default] &&= flexible_arity(options[:default])
         attribute name, type, { strict: true }.merge(options)
+      end
+
+      protected
+      def flexible_arity(default)
+        return default unless default.respond_to?(:call)
+
+        case default.arity
+        when 1
+          ->(env, _){ default[env] }
+        when 0
+          ->(*){ default[] }
+        else
+          default
+        end
       end
     end
   end

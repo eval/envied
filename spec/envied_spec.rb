@@ -16,7 +16,7 @@ describe ENVied do
     def configured_with(hash = {})
       described_class.configure do |env|
         hash.each do |name, type|
-          env.variable(name, type)
+          env.variable(name, *type)
         end
       end
       self
@@ -50,7 +50,7 @@ describe ENVied do
         }.to raise_error(ENVied::Configurable::VariableMissingError)
       end
 
-      it 'raises EnvMissing when interacted with and configured variable not present in ENV' do
+      it 'raises EnvMissing when interacted with' do
         expect {
           ENVied.any_missing_method
         }.to raise_error(ENVied::Configurable::VariableMissingError)
@@ -64,6 +64,31 @@ describe ENVied do
         expect {
           ENVied.a
         }.to raise_error(ENVied::Configurable::VariableTypeError)
+      end
+    end
+
+    describe 'variable with default' do
+      it 'can be a value' do
+        configured_with(a: [:Integer, default: 1]).and_no_ENV
+        expect(ENVied.a).to eq 1
+      end
+
+      (0..2).each do |arity|
+        it "can be a proc with arity #{arity}" do
+          default = begin
+            case arity
+            when 2
+              ->(a,b){ 1 }
+            when 1
+              ->(a){ 1 }
+            when 0
+              ->(){ 1 }
+            end
+          end
+
+          configured_with(a: [:Integer, default: default]).and_no_ENV
+          expect(ENVied.a).to eq 1
+        end
       end
     end
   end
