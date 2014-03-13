@@ -60,11 +60,11 @@ The following types are supported:
 
 ### Defaults
 
-Variables can have defaults. It can be a value or a proc (with arity 0, 1 or 2).
+Variables can have defaults. It can be a value or a proc.
 
 ```ruby
 ENVied.configure do |env|
-  env.variable :port, :Integer, default: ->(env, variable){ env.force_ssl ? 443 : 80 }
+  env.variable :port, :Integer, default: proc {|env, variable| env.force_ssl ? 443 : 80 }
   env.variable :force_ssl, :Boolean, default: true
 end
 ```

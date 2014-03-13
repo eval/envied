@@ -29,6 +29,7 @@ class ENVied
     def self.included(base)
       base.class_eval do
         include Virtus.model
+
       end
       base.extend ClassMethods
     end
@@ -43,37 +44,44 @@ class ENVied
       # @param env [Hash] the env
       def parse_env(env)
         atts = attribute_set.map(&:name).each_with_object({}) do |name, result|
-          @variable = attribute_set[name]
-          has_default = !!@variable.options[:default]
-          var_value = env[name.to_s] || env[name.to_s.upcase]
-          result[name] = var_value if var_value
-          if !(result[name] || has_default)
-            raise VariableMissingError, @variable
+          variable = attribute_set[name]
+          default = variable.options[:default]
+          value = env[name.to_s] || env[name.to_s.upcase]
+          if !(value || default)
+            raise VariableMissingError, variable
           end
+
+          try_coercion(variable, value, default)
+          result[name] = value if value
         end
 
         new(atts)
-      rescue Virtus::CoercionError => e
-        raise VariableTypeError, @variable
       end
 
       def variable(name, type = :String, options = {})
-        options[:default] &&= flexible_arity(options[:default])
         attribute name, type, { strict: true }.merge(options)
       end
 
-      protected
-      def flexible_arity(default)
-        return default unless default.respond_to?(:call)
+      def default_if?(cond, value = nil, &block)
+        options = { default: (value || block) }
+        cond ? options : Hash.new
+      end
 
-        case default.arity
-        when 1
-          ->(env, _){ default[env] }
-        when 0
-          ->(*){ default[] }
-        else
-          default
+      def default_unless?(cond, value = nil, &block)
+        default_if?(!cond, value, &block)
+      end
+
+      private
+      def try_coercion(variable, value, default)
+        value ||= begin
+          default unless default.respond_to?(:call)
         end
+        return unless value
+        @variable = variable
+
+        variable.coerce(value)
+      rescue Virtus::CoercionError => e
+        raise VariableTypeError.new(@variable)
       end
     end
   end
@@ -83,7 +91,9 @@ class ENVied
   end
 
   def self.configure(&block)
-    @configuration = Class.new { include Configurable }.tap(&block)
+    @configuration = Class.new { include Configurable }.tap do |k|
+      k.instance_eval(&block)
+    end
     # or define this thing as ENVied::Configuration? prolly not threadsafe
   ensure
     @instance = nil

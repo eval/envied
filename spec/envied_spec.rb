@@ -73,22 +73,9 @@ describe ENVied do
         expect(ENVied.a).to eq 1
       end
 
-      (0..2).each do |arity|
-        it "can be a proc with arity #{arity}" do
-          default = begin
-            case arity
-            when 2
-              ->(a,b){ 1 }
-            when 1
-              ->(a){ 1 }
-            when 0
-              ->(){ 1 }
-            end
-          end
-
-          configured_with(a: [:Integer, default: default]).and_no_ENV
-          expect(ENVied.a).to eq 1
-        end
+      it "can be anything callable" do
+        configured_with(a: [:Integer, default: proc { 1 }]).and_no_ENV
+        expect(ENVied.a).to eq 1
       end
     end
   end
