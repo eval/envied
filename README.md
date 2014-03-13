@@ -63,7 +63,7 @@ The following types are supported:
 In order to let other developers easily bootstrap the application, you can assign defaults to variables.
 Defaults can be a value or a `Proc` (see example below).
 
-Note that 'easily bootstrap' is rather different than 'fail-fast when not all ENV-variables are present'. Therefor it's disabled by default and you should explicitly state whén it is allowed:
+Note that 'easily bootstrap' is quite the opposite of 'fail-fast when not all ENV-variables are present'. Therefor it's disabled by default and you should explicitly state whén it is allowed:
 
 ```ruby
 ENVied.configure(enable_defaults: Rails.env.development?) do |env|

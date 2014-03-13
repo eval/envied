@@ -49,7 +49,7 @@ describe ENVied do
     context 'ENV contains not all configured variables' do
       before { configured_with(a: :Integer).and_no_ENV }
 
-      it 'raises EnvMissing on calling required!' do
+      it 'raises EnvMissing on calling require!' do
         expect {
           ENVied.require!
         }.to raise_error(ENVied::Configurable::VariableMissingError)
