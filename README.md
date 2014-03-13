@@ -60,7 +60,7 @@ The following types are supported:
 
 ### Defaults
 
-Variables can have defaults. It can be value or a proc (with arity 0, 1 or 2).
+Variables can have defaults. It can be a value or a proc (with arity 0, 1 or 2).
 
 ```ruby
 ENVied.configure do |env|
