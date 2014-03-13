@@ -13,6 +13,11 @@ describe ENVied do
       self
     end
 
+    def configure(options = {}, &block)
+      described_class.configure(options, &block)
+      self
+    end
+
     def configured_with(hash = {})
       described_class.configure do |env|
         hash.each do |name, type|
@@ -68,13 +73,25 @@ describe ENVied do
     end
 
     describe 'variable with default' do
-      it 'can be a value' do
+      it "are disabled by default" do
         configured_with(a: [:Integer, default: 1]).and_no_ENV
+
+        expect { ENVied.a }.to raise_error
+      end
+
+      it 'can be a value' do
+        configure(enable_defaults: true) do
+          variable :a, :Integer, default: 1
+        end.and_no_ENV
+
         expect(ENVied.a).to eq 1
       end
 
       it "can be anything callable" do
-        configured_with(a: [:Integer, default: proc { 1 }]).and_no_ENV
+        configure(enable_defaults: true) do
+          variable :a, :Integer, default: proc { 1 }
+        end.and_no_ENV
+
         expect(ENVied.a).to eq 1
       end
     end

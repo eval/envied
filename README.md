@@ -32,7 +32,7 @@ end
 ENVied.require!
 ```
 Excecution will halt unless ENV is something like
-`{'FORCE_SSL' => 'true', 'PORT' => '3000'}`.
+`{'FORCE_SSL' => 'false', 'PORT' => '3001'}`.
 
 A meaningful error will in this case explain what key and type is needed.
 
@@ -41,7 +41,7 @@ A meaningful error will in this case explain what key and type is needed.
 Variables accessed via ENVied have the configured type:
 
 ```ruby
-ENVied.port # => 1
+ENVied.port # => 3001
 ENVied.force_ssl # => false
 ```
 
@@ -60,16 +60,23 @@ The following types are supported:
 
 ### Defaults
 
-Variables can have defaults. It can be a value or a proc.
+In order to let other developers easily bootstrap the application, you can assign defaults to variables.
+Defaults can be a value or a `Proc` (see example below).
+
+Note that 'easily bootstrap' is rather different than 'fail-fast when not all ENV-variables are present'. Therefor it's disabled by default and you should explicitly state whén it is allowed:
 
 ```ruby
-ENVied.configure do |env|
+ENVied.configure(enable_defaults: Rails.env.development?) do |env|
   env.variable :port, :Integer, default: proc {|env, variable| env.force_ssl ? 443 : 80 }
-  env.variable :force_ssl, :Boolean, default: true
+  env.variable :force_ssl, :Boolean, default: false
 end
 ```
 
-Please remember that ENVied only **reads** from ENV; don't let setting a default for, say `rails_env`, give you or your team the impression that `ENV['RAILS_ENV']` is set.
+Please remember that ENVied only **reads** from ENV; don't let setting a default for, say `rails_env`, give you or your team the impression that `ENV['RAILS_ENV']` is set.  
+As a rule of thumb: you should only use defaults:
+* in a development-environment
+* for ENV-variables that your application introduces (i.e. for `ENV['DEFAULT_SENDER']` not for `ENV['REDIS_URL']`)
+
 
 ## Installation
 

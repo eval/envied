@@ -30,6 +30,9 @@ class ENVied
       base.class_eval do
         include Virtus.model
 
+        class << self
+          attr_accessor :enable_defaults
+        end
       end
       base.extend ClassMethods
     end
@@ -58,17 +61,19 @@ class ENVied
         new(atts)
       end
 
+      # Define a variable.
+      #
+      # @param name [Symbol] name of the variable
+      # @param type [Symbol] type (one of :String (default), :Symbol, :Integer, :Boolean,
+      #   :Date, :Time)
+      # @param options [Hash]
+      # @option options [String, Integer, Boolean, #call] :default (nil) what value will be
+      #   used when no ENV-variable is present.
+      # @note Defaults are ignored by default, see {configure}.
+      #
       def variable(name, type = :String, options = {})
+        options.delete(:default) unless self.enable_defaults
         attribute name, type, { strict: true }.merge(options)
-      end
-
-      def default_if?(cond, value = nil, &block)
-        options = { default: (value || block) }
-        cond ? options : Hash.new
-      end
-
-      def default_unless?(cond, value = nil, &block)
-        default_if?(!cond, value, &block)
       end
 
       private
@@ -90,8 +95,20 @@ class ENVied
     attr_accessor :configuration
   end
 
-  def self.configure(&block)
+  # Configure ENVied.
+  #
+  # @param options [Hash]
+  # @option options [Boolean] :enable_defaults (false) whether or not defaults are used.
+  #
+  # @example
+  #   ENVied.configure(enable_defaults: Rails.env.development?) do
+  #     variable :force_ssl, :Boolean, default: false
+  #   end
+  #
+  def self.configure(options = {}, &block)
+    options = { enable_defaults: false }.merge(options)
     @configuration = Class.new { include Configurable }.tap do |k|
+      k.enable_defaults = options[:enable_defaults]
       k.instance_eval(&block)
     end
     # or define this thing as ENVied::Configuration? prolly not threadsafe
