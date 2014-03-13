@@ -45,6 +45,32 @@ ENVied.port # => 1
 ENVied.force_ssl # => false
 ```
 
+## Configuration
+
+### Types
+
+The following types are supported:
+
+* `:String` (implied)
+* `:Boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'yes','no' for resp. true or false)
+* `:Integer`
+* `:Symbol`
+* `:Date` (e.g. '2014-3-26')
+* `:Time` (e.g. '14:00')
+
+### Defaults
+
+Variables can have defaults. It can be value or a proc (with arity 0, 1 or 2).
+
+```ruby
+ENVied.configure do |env|
+  env.variable :port, :Integer, default: ->(env, variable){ env.force_ssl ? 443 : 80 }
+  env.variable :force_ssl, :Boolean, default: true
+end
+```
+
+Please remember that ENVied only **reads** from ENV; don't let setting a default for, say `rails_env`, give you or your team the impression that `ENV['RAILS_ENV']` is set.
+
 ## Installation
 
 Add this line to your application's Gemfile:
