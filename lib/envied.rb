@@ -1,5 +1,4 @@
 class ENVied
-  VERSION = "0.3.0"
   module Configurable
     require 'virtus'
 
