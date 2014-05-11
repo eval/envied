@@ -19,9 +19,10 @@ describe ENVied do
     end
 
     def configured_with(hash = {})
-      described_class.configure do |env|
+      described_class.instance_eval { @configuration = nil }
+      described_class.configure do
         hash.each do |name, type|
-          env.variable(name, *type)
+          variable(name, *type)
         end
       end
       self
@@ -37,62 +38,36 @@ describe ENVied do
     end
 
     it 'responds to configured variables' do
-      configured_with(a: :Integer).and_ENV({'A' => '1'})
+      configured_with(a: :Integer).and_ENV({'a' => '1'})
+      described_class.require!
+
       is_expected.to respond_to :a
     end
 
     it 'responds not to unconfigured variables' do
       unconfigured.and_ENV({'A' => '1'})
-      is_expected.to_not respond_to :a
+      described_class.require!
+
+      is_expected.to_not respond_to :B
     end
 
     context 'ENV contains not all configured variables' do
       before { configured_with(a: :Integer).and_no_ENV }
 
-      it 'raises EnvMissing on calling require!' do
+      specify do
         expect {
           ENVied.require!
-        }.to raise_error(ENVied::Configurable::VariableMissingError)
-      end
-
-      it 'raises EnvMissing when interacted with' do
-        expect {
-          ENVied.any_missing_method
-        }.to raise_error(ENVied::Configurable::VariableMissingError)
+        }.to raise_error /set the following ENV-variables: a/
       end
     end
 
-    context 'ENV containing variable of different type' do
-      before { configured_with(a: :Integer).and_ENV('A' => 'NaN') }
+    context 'ENV variables are not coercible' do
+      before { configured_with(A: :Integer).and_ENV('A' => 'NaN') }
 
       specify do
         expect {
-          ENVied.a
-        }.to raise_error(ENVied::Configurable::VariableTypeError)
-      end
-    end
-
-    describe 'variable with default' do
-      it "are disabled by default" do
-        configured_with(a: [:Integer, default: 1]).and_no_ENV
-
-        expect { ENVied.a }.to raise_error
-      end
-
-      it 'can be a value' do
-        configure(enable_defaults: true) do
-          variable :a, :Integer, default: 1
-        end.and_no_ENV
-
-        expect(ENVied.a).to eq 1
-      end
-
-      it "can be anything callable" do
-        configure(enable_defaults: true) do
-          variable :a, :Integer, default: proc { 1 }
-        end.and_no_ENV
-
-        expect(ENVied.a).to eq 1
+          ENVied.require!
+        }.to raise_error /ENV\['A'\] can't be coerced to Integer/
       end
     end
   end

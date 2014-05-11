@@ -1,137 +1,89 @@
+require 'virtus'
+
 class ENVied
-  module Configurable
-    require 'virtus'
+  class Configuration
+    include Virtus.model
 
-    class VariableError < StandardError
-      attr_reader :variable
-      def initialize(variable)
-        @variable = variable
-      end
-
-      def variable_type
-        variable.type.to_s.split("::").last
-      end
-    end
-
-    class VariableMissingError < VariableError
-      def message
-        "Please provide ENV['#{variable.name.to_s.upcase}'] of type #{variable_type}"
-      end
-    end
-
-    class VariableTypeError < VariableError
-      def message
-        "ENV['#{variable.name.to_s.upcase}'] should be of type #{variable_type}"
-      end
-    end
-
-    def self.included(base)
-      base.class_eval do
-        include Virtus.model
-
-        class << self
-          attr_accessor :enable_defaults
-        end
-      end
-      base.extend ClassMethods
-    end
-
-    module ClassMethods
-      # Creates a configuration instance from env.
-      #
-      # Will raise VariableMissingError for variables not present in ENV.
-      #
-      # Will raise VariableTypeError for variables whose ENV-value can't be coerced to the configured type.
-      #
-      # @param env [Hash] the env
-      def parse_env(env)
-        atts = attribute_set.map(&:name).each_with_object({}) do |name, result|
-          variable = attribute_set[name]
-          default = variable.options[:default]
-          value = env[name.to_s] || env[name.to_s.upcase]
-          if !(value || default)
-            raise VariableMissingError, variable
-          end
-
-          try_coercion(variable, value, default)
-          result[name] = value if value
-        end
-
-        new(atts)
-      end
-
-      # Define a variable.
-      #
-      # @param name [Symbol] name of the variable
-      # @param type [Symbol] type (one of :String (default), :Symbol, :Integer, :Boolean,
-      #   :Date, :Time)
-      # @param options [Hash]
-      # @option options [String, Integer, Boolean, #call] :default (nil) what value will be
-      #   used when no ENV-variable is present.
-      # @note Defaults are ignored by default, see {configure}.
-      #
-      def variable(name, type = :String, options = {})
-        options.delete(:default) unless self.enable_defaults
-        attribute name, type, { strict: true }.merge(options)
-      end
-
-      private
-      def try_coercion(variable, value, default)
-        value ||= begin
-          default unless default.respond_to?(:call)
-        end
-        return unless value
-        @variable = variable
-
-        variable.coerce(value)
-      rescue Virtus::CoercionError => e
-        raise VariableTypeError.new(@variable)
-      end
+    def self.variable(name, type = :String, options = {})
+      options = { strict: true }.merge(options)
+      attribute(name, type, options)
     end
   end
 
+  def self.configuration(&block)
+    @configuration ||= Class.new(Configuration)
+    @configuration.instance_eval(&block) if block_given?
+    @configuration
+  end
   class << self
-    attr_accessor :configuration
+    alias_method :configure, :configuration
   end
 
-  # Configure ENVied.
-  #
-  # @param options [Hash]
-  # @option options [Boolean] :enable_defaults (false) whether or not defaults are used.
+  def self.require!
+    @instance = nil
+    configured_variables_present_or_error!
+    configured_variables_coercible_or_error!
+
+    @instance = configuration.new(ENV.to_hash)
+  end
+
+  def self.configured_variables_present_or_error!
+    if missing_variable_names.any?
+      raise "Please set the following ENV-variables: #{missing_variable_names.sort.join(',')}"
+    end
+  end
+
+  def self.configured_variables_coercible_or_error!
+    if non_coercible_variables.any?
+      single_error = "ENV['%{name}'] can't be coerced to %{type}"
+      errors = non_coercible_variables.map do |v|
+        var_type = v.type.to_s.split("::").last
+        single_error % { name: v.name, type: var_type }
+      end.join ","
+
+      raise "The following ENV-variables are not coercible: #{errors}"
+    end
+  end
+
+  # A list of all configured variable names.
   #
   # @example
-  #   ENVied.configure(enable_defaults: Rails.env.development?) do
-  #     variable :force_ssl, :Boolean, default: false
-  #   end
+  #   ENVied.configured_variable_names
+  #   # => [:DATABASE_URL]
   #
-  def self.configure(options = {}, &block)
-    options = { enable_defaults: false }.merge(options)
-    @configuration = Class.new { include Configurable }.tap do |k|
-      k.enable_defaults = options[:enable_defaults]
-      k.instance_eval(&block)
-    end
-    # or define this thing as ENVied::Configuration? prolly not threadsafe
-  ensure
-    @instance = nil
+  # @return [Array<Symbol>] the list of variable names
+  def self.configured_variable_names
+    configured_variables.map(&:name).map(&:to_sym)
   end
 
-  def self.instance
-    @instance ||= @configuration.parse_env(ENV.to_hash)
-  end
-  class << self
-    alias_method :require!, :instance
+  def self.configured_variables
+    configuration.attribute_set.dup
   end
 
-  def self.[](key)
-    instance.attributes[key]
-    #instance[key] # will raise and complain that <class <>> doesn't response; better?
+  def self.provided_variable_names
+    ENV.keys.map(&:to_sym)
+  end
+
+  def self.non_coercible_variables
+    configured_variables.map do |a|
+      begin
+        a.coerce ENV[a.name.to_s]
+        next
+      rescue Virtus::CoercionError
+        a
+      end
+    end.compact
+  end
+
+  def self.missing_variable_names
+    configured_variable_names - provided_variable_names
   end
 
   def self.method_missing(method, *args, &block)
-    respond_to_missing?(method) ? instance.public_send(method, *args, &block) : super
+    respond_to_missing?(method) ? @instance.public_send(method, *args, &block) : super
   end
 
   def self.respond_to_missing?(method, include_private = false)
-    instance.attributes.key?(method) || super
+    @instance.respond_to?(method) || super
   end
 end
