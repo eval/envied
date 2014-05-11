@@ -67,7 +67,84 @@ describe ENVied do
       specify do
         expect {
           ENVied.require!
-        }.to raise_error /ENV\['A'\] can't be coerced to Integer/
+        }.to raise_error /ENV\['A'\] \('NaN' can't be coerced to Integer/
+      end
+    end
+
+    describe 'defaults' do
+      describe 'setting' do
+        subject { described_class.configuration }
+
+        it 'is disabled by default' do
+          expect(subject.enable_defaults).to_not be
+        end
+
+        it 'can be enabled via #configure' do
+          configure(enable_defaults: true){ }
+
+          expect(subject.enable_defaults).to be
+        end
+
+        it 'can be enabled via a configure-block' do
+          configure { self.enable_defaults = true }
+
+          expect(subject.enable_defaults).to be
+        end
+
+        it 'can be assigned a Proc' do
+          configure { self.enable_defaults = -> { true } }
+
+          expect(subject.enable_defaults).to be
+        end
+      end
+
+      describe 'assigning' do
+        it 'can be a value' do
+          configure(enable_defaults: true) do
+            variable :A, :Integer, default: 1
+          end
+          described_class.require!
+
+          expect(described_class.A).to eq 1
+        end
+
+        it 'can be a Proc' do
+          configure(enable_defaults: true) do
+            variable :A, :Integer, default: proc { 1 }
+          end
+          described_class.require!
+
+          expect(described_class.A).to eq 1
+        end
+
+        it 'is ignored if defaults are disabled' do
+          configure(enable_defaults: false) do
+            variable :A, :Integer, default: 1
+          end.and_no_ENV
+
+          expect {
+            described_class.require!
+          }.to raise_error
+        end
+
+        it 'is is ignored if ENV is provided' do
+          configure(enable_defaults: true) do
+            variable :A, :Integer, default: 1
+          end.and_ENV('A' => '2')
+          described_class.require!
+
+          expect(described_class.A).to eq 2
+        end
+
+        it 'can be defined in terms of other variables' do
+          configure(enable_defaults: true) do
+            variable :A, :Integer
+            variable :B, :Integer, default: proc {|env| env.A * 2 }
+          end.and_ENV('A' => '1')
+          described_class.require!
+
+          expect(described_class.B).to eq 2
+        end
       end
     end
   end
