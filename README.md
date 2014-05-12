@@ -1,4 +1,4 @@
-# ENVied
+# ENVied [![travis](https://secure.travis-ci.org/eval/envied.png?branch=master)](https://secure.travis-ci.org/#!/eval/envied)
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
