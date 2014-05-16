@@ -57,7 +57,7 @@ It's just like you Gemfile:
 ```ruby
 ENVied.configure do
   variable :FORCE_SSL, :Boolean
-  
+
   group :production do
     variable :NEW_RELIC_LICENSE_KEY
   end
@@ -118,20 +118,21 @@ ENVied.configure(enable_defaults: &not_production_nor_ci) do
   # Your code will likely not use ENVied.RACK_ENV (better use Rails.env),
   # we want it to be present though; heck, we're using it in this file!
   variable :RACK_ENV
-  
+
   variable :FORCE_SSL, :Boolean, default: false
   variable :PORT, :Integer, default: 3000
+  # generate the default value using the value of PORT:
   variable :PUBLIC_HOST_WITH_PORT, :String, default: proc {|envied| "localhost:#{envied.PORT}" }
-  
+
   group :production do
     variable :MAIL_PAAS_USERNAME
     variable :DATABASE_URL, :Symbol
   end
-  
+
   group :ci do
     # ci-only stuff
   end
-  
+
   group :not_ci do
     # CI needs no puma-threads, and sidekiq-stuff etc.
     # Define that here:
