@@ -6,6 +6,19 @@ describe ENVied do
   it { should respond_to :require }
   it { should respond_to :configure }
 
+  before do
+    reset_env
+    reset_configuration
+  end
+
+  def reset_configuration
+    ENVied.instance_eval { @configuration = nil }
+  end
+
+  def reset_env
+    ENVied.instance_eval { @env = nil }
+  end
+
   context 'configured' do
 
     def unconfigured
@@ -14,13 +27,11 @@ describe ENVied do
     end
 
     def configure(options = {}, &block)
-      described_class.instance_eval { @configuration = nil }
       described_class.configure(options, &block)
       self
     end
 
     def configured_with(hash = {})
-      described_class.instance_eval { @configuration = nil }
       described_class.configure do
         hash.each do |name, type|
           variable(name, *type)
@@ -148,6 +159,7 @@ describe ENVied do
         end
       end
     end
+
     describe "groups" do
       context 'a variable in a group' do
         before do
@@ -187,6 +199,32 @@ describe ENVied do
               described_class.require(*groups)
             }.to raise_error /moar/
           end
+        end
+      end
+
+      describe 'Hashable' do
+        before do
+          configure do
+            variable :moar, :Hash
+          end.and_ENV('moar' => 'a=1&b=&c')
+          ENVied.require
+        end
+
+        it 'yields hash from string' do
+          expect(ENVied.moar).to eq Hash['a'=> '1', 'b' => '', 'c' => nil]
+        end
+      end
+
+      describe 'Arrayable' do
+        before do
+          configure do
+            variable :moar, :Array
+          end.and_ENV('moar' => 'a, b, and\, c')
+          ENVied.require
+        end
+
+        it 'yields array from string' do
+          expect(ENVied.moar).to eq ['a','b','and, c']
         end
       end
     end
