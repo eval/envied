@@ -218,6 +218,20 @@ describe ENVied do
         it 'yields hash from an empty string' do
           expect(ENVied.bar).to eq Hash.new
         end
+
+        context 'with defaults enabled' do
+          before do
+            configure(enable_defaults: true) do
+              variable :baz, :Hash
+            end.and_no_ENV
+          end
+
+          it 'has no default by default' do
+            # fixes a bug where variables of type :Hash had a default even
+            # when none was configured.
+            expect { ENVied.require(:default) }.to raise_error
+          end
+        end
       end
 
       describe 'Arrayable' do

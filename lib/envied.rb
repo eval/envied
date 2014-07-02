@@ -18,7 +18,7 @@ class ENVied
     include Virtus.model
 
     def self.variable(name, type = :String, options = {})
-      options = { strict: true, group: self.current_group }.merge(options)
+      options = { default: nil, strict: true, group: self.current_group }.merge(options)
       type = Array if type == :Array
       attribute(name, type, options)
     end
