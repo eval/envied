@@ -1,3 +1,18 @@
+# 0.5.0 / unreleased
+
+* add Array Hash types
+
+  ```ruby
+  # in env.rb
+  ENVied.configure { variable :TAGS, :Array; variable :HASH, :Hash }
+  ENVied.require
+
+  $ HASH=a=1&b=2 TAGS=tag1,tag2 ruby -renvied -r./env.rb -e 'p ENVied.TAGS'
+  # ["tag1", "tag2"]
+  $ HASH='a=1&b=2' TAGS=tag1,tag2 ruby -renvied -r./env.rb -e 'p ENVied.HASH'
+  # {'a' => '1', 'b' => '2'}
+  ```
+
 # 0.4.0 / 2014-05-16
 
 * groups added

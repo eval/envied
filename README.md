@@ -2,45 +2,38 @@
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
-For applications that are configured via ENV-variables, this gem will provide:
+This gem will provide:
 
-* A fail-fast check for presence of required ENV-variables
-* A fail-fast check for type of required ENV-variables
+* A fail-fast check for presence of ENV-variables
+* A fail-fast check whether the values can be coerced to the correct type
 * Access to typed ENV-variables (instead of just strings)
 
-### Current status
-
-![](underconstruction.gif)
-
-## Usage
+## Quickstart
 
 ### 1) Configure
 
 Let's configure the ENV-variables we need:
 
 ```ruby
-# e.g. config/application.rb
 ENVied.configure do
   variable :FORCE_SSL, :Boolean
   variable :PORT, :Integer
 end
 ```
 
-### 2) Check for presence and type
+### 2) Check for presence and coercibility
 
 ```ruby
 ENVied.require
 ```
 
-This will throw an error if not:
-* both `ENV['FORCE_SSL']` and `ENV['PORT']` are present
-* both the values of `ENV['FORCE_SSL']` and `ENV['PORT']` can be coerced (to resp. Boolean or Integer).
+This will throw an error if:
+* not both `ENV['FORCE_SSL']` and `ENV['PORT']` are present.
+* the values can't be coerced to resp. Boolean and Integer.
 
-(The error contains exactly what ENV-variables are missing/faulty.)
+### 3) Use coerced variables
 
-### 3) Use typed variables
-
-Variables accessed via ENVied have the configured type:
+Variables accessed via ENVied are of the correct type:
 
 ```ruby
 ENVied.PORT # => 3001
@@ -52,7 +45,7 @@ ENVied.FORCE_SSL # => false
 ### Groups
 
 Groups give you more flexibility to define when variables are needed.  
-It's just like you Gemfile:
+It's similar to groups in a Gemfile:
 
 ```ruby
 ENVied.configure do
@@ -85,6 +78,8 @@ The following types are supported:
 * `:Symbol`
 * `:Date` (e.g. '2014-3-26')
 * `:Time` (e.g. '14:00')
+* `:Hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
+* `:Array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
 
 ### Defaults
 
@@ -104,7 +99,7 @@ Please remember that ENVied only **reads** from ENV; it doesn't set ENV-variable
 Don't let setting a default for, say `RAILS_ENV`, give you the impression that `ENV['RAILS_ENV']` is set.  
 As a rule of thumb you should only use defaults:
 * for local development
-* for ENV-variables that your application introduces (i.e. for `ENV['DEFAULT_SENDER']` not for `ENV['REDIS_URL']`)
+* for ENV-variables that your application introduces (i.e. for `ENV['STAFF_EMAILS']` not for `ENV['REDIS_URL']`)
 
 ### A more extensive example:
 
@@ -126,7 +121,7 @@ ENVied.configure(enable_defaults: &not_production_nor_ci) do
 
   group :production do
     variable :MAIL_PAAS_USERNAME
-    variable :DATABASE_URL, :Symbol
+    variable :DATABASE_URL
   end
 
   group :ci do

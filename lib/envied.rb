@@ -1,11 +1,25 @@
 require 'virtus'
 
 class ENVied
+  module Hashable
+    def to_hash
+      require 'rack/utils'
+      ::Rack::Utils.parse_nested_query(self)
+    end
+  end
+
+  module Arrayable
+    def to_a
+      self.split(/(?<!\\), ?/).map{|i| i.gsub(/\\,/,',') }
+    end
+  end
+
   class Configuration
     include Virtus.model
 
     def self.variable(name, type = :String, options = {})
-      options = { strict: true, group: self.current_group }.merge(options)
+      options = { default: nil, strict: true, group: self.current_group }.merge(options)
+      type = Array if type == :Array
       attribute(name, type, options)
     end
 
@@ -36,7 +50,7 @@ class ENVied
   def self.configuration(options = {}, &block)
     if block_given?
       @configuration = build_configuration(&block).tap do |c|
-        options.each{|k, v| c.public_send("#{k}=", v) }
+        options.each {|k, v| c.public_send("#{k}=", v) }
       end
     end
     @configuration ||= build_configuration
@@ -70,7 +84,7 @@ class ENVied
         @attribute_set << v
       end
     end
-    @instance = group_configuration.new(ENV.to_hash)
+    @instance = group_configuration.new(env)
   end
 
   def self.error_on_missing_variables!
@@ -80,6 +94,7 @@ class ENVied
   end
 
   def self.error_on_uncoercible_variables!
+    # TODO default values should have defined type
     if non_coercible_variables.any?
       single_error = "ENV['%{name}'] ('%{value}' can't be coerced to %{type})"
       errors = non_coercible_variables.map do |v|
@@ -92,7 +107,13 @@ class ENVied
   end
 
   def self.env_value(variable)
-    ENV[variable.name.to_s]
+    env[variable.name.to_s]
+  end
+
+  def self.env
+    @env ||= begin
+      Hash[ENV.to_hash.map {|k,v| [k, v.dup.extend(Hashable, Arrayable)] }]
+    end
   end
 
   def self.env_value_or_default(variable)
