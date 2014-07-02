@@ -4,7 +4,7 @@ class ENVied
   module Hashable
     def to_hash
       require 'rack/utils'
-      ::Rack::Utils.parse_query(self)
+      ::Rack::Utils.parse_nested_query(self)
     end
   end
 
@@ -50,7 +50,7 @@ class ENVied
   def self.configuration(options = {}, &block)
     if block_given?
       @configuration = build_configuration(&block).tap do |c|
-        options.each{|k, v| c.public_send("#{k}=", v) }
+        options.each {|k, v| c.public_send("#{k}=", v) }
       end
     end
     @configuration ||= build_configuration
@@ -94,6 +94,7 @@ class ENVied
   end
 
   def self.error_on_uncoercible_variables!
+    # TODO default values should have defined type
     if non_coercible_variables.any?
       single_error = "ENV['%{name}'] ('%{value}' can't be coerced to %{type})"
       errors = non_coercible_variables.map do |v|
@@ -111,7 +112,7 @@ class ENVied
 
   def self.env
     @env ||= begin
-      Hash[ENV.to_hash.map{|k,v| [k, v.dup.extend(Hashable, Arrayable)] }]
+      Hash[ENV.to_hash.map {|k,v| [k, v.dup.extend(Hashable, Arrayable)] }]
     end
   end
 

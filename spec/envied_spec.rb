@@ -205,13 +205,18 @@ describe ENVied do
       describe 'Hashable' do
         before do
           configure do
-            variable :moar, :Hash
-          end.and_ENV('moar' => 'a=1&b=&c')
+            variable :foo, :Hash
+            variable :bar, :Hash
+          end.and_ENV('foo' => 'a=1&b=&c', 'bar' => '')
           ENVied.require
         end
 
         it 'yields hash from string' do
-          expect(ENVied.moar).to eq Hash['a'=> '1', 'b' => '', 'c' => nil]
+          expect(ENVied.foo).to eq Hash['a'=> '1', 'b' => '', 'c' => nil]
+        end
+
+        it 'yields hash from an empty string' do
+          expect(ENVied.bar).to eq Hash.new
         end
       end
 
