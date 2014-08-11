@@ -1,4 +1,4 @@
-# 0.5.0 / unreleased
+# 0.5.0 / 2014-07-02
 
 * add Array Hash types
 
