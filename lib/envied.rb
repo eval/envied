@@ -81,6 +81,7 @@ class ENVied
     else
       self.required_groups = [:default]
     end
+    ensure_configured!
     error_on_missing_variables!
     error_on_uncoercible_variables!
 
@@ -91,6 +92,23 @@ class ENVied
       end
     end
     @instance = group_configuration.new(env)
+  end
+
+  def self.ensure_configured!
+    # Backward compat: load Envfile only when it's present
+    configure_via_envfile if envfile_exists?
+  end
+
+  def self.envfile
+    File.expand_path('Envfile')
+  end
+
+  def self.envfile_exists?
+    File.exists?(envfile)
+  end
+
+  def self.configure_via_envfile
+    configure { eval(File.read(ENVied.envfile)) }
   end
 
   def self.error_on_missing_variables!
