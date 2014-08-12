@@ -36,9 +36,15 @@ class ENVied
         @enable_defaults
     end
 
+    def self.enable_defaults!(value, &block)
+      value ||= block if block_given?
+      @enable_defaults = value
+    end
+
     class << self
-      attr_writer :enable_defaults
+      #attr_writer :enable_defaults
       alias_method :defaults_enabled?, :enable_defaults
+      alias_method :enable_defaults=, :enable_defaults!
       attr_accessor :current_group
     end
 
