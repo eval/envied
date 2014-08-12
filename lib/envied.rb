@@ -1,3 +1,4 @@
+require 'envied/cli'
 require 'virtus'
 
 class ENVied
