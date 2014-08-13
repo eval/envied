@@ -1,3 +1,4 @@
+require 'envied/version'
 require 'envied/cli'
 require 'virtus'
 
