@@ -1,3 +1,4 @@
+require 'envied/cli'
 require 'virtus'
 
 class ENVied
@@ -36,9 +37,14 @@ class ENVied
         @enable_defaults
     end
 
+    def self.enable_defaults!(value = nil, &block)
+      value ||= block if block_given?
+      @enable_defaults = value
+    end
+
     class << self
-      attr_writer :enable_defaults
       alias_method :defaults_enabled?, :enable_defaults
+      alias_method :enable_defaults=, :enable_defaults!
       attr_accessor :current_group
     end
 
@@ -56,8 +62,12 @@ class ENVied
     @configuration ||= build_configuration
   end
 
+  def self.configure(options = {}, &block)
+    deprecation_warning "ENVied.configure will be deprecated. Please generate an Envfile instead (see the envied command)."
+    configuration(options, &block)
+  end
+
   class << self
-    alias_method :configure, :configuration
     attr_accessor :required_groups
   end
 
@@ -75,6 +85,7 @@ class ENVied
     else
       self.required_groups = [:default]
     end
+    ensure_configured!
     error_on_missing_variables!
     error_on_uncoercible_variables!
 
@@ -85,6 +96,23 @@ class ENVied
       end
     end
     @instance = group_configuration.new(env)
+  end
+
+  def self.ensure_configured!
+    # Backward compat: load Envfile only when it's present
+    configure_via_envfile if envfile_exists?
+  end
+
+  def self.envfile
+    File.expand_path('Envfile')
+  end
+
+  def self.envfile_exists?
+    File.exists?(envfile)
+  end
+
+  def self.configure_via_envfile
+    configuration { eval(File.read(ENVied.envfile)) }
   end
 
   def self.error_on_missing_variables!
@@ -189,5 +217,9 @@ class ENVied
 
   def self.respond_to_missing?(method, include_private = false)
     @instance.respond_to?(method) || super
+  end
+
+  def self.deprecation_warning(msg)
+    puts "DEPRECATION WARNING: #{msg}"
   end
 end
