@@ -37,13 +37,12 @@ class ENVied
         @enable_defaults
     end
 
-    def self.enable_defaults!(value, &block)
+    def self.enable_defaults!(value = nil, &block)
       value ||= block if block_given?
       @enable_defaults = value
     end
 
     class << self
-      #attr_writer :enable_defaults
       alias_method :defaults_enabled?, :enable_defaults
       alias_method :enable_defaults=, :enable_defaults!
       attr_accessor :current_group
@@ -63,8 +62,12 @@ class ENVied
     @configuration ||= build_configuration
   end
 
+  def self.configure(options = {}, &block)
+    deprecation_warning "ENVied.configure will be deprecated. Please generate an Envfile instead (see the envied command)."
+    configuration(options, &block)
+  end
+
   class << self
-    alias_method :configure, :configuration
     attr_accessor :required_groups
   end
 
@@ -109,7 +112,7 @@ class ENVied
   end
 
   def self.configure_via_envfile
-    configure { eval(File.read(ENVied.envfile)) }
+    configuration { eval(File.read(ENVied.envfile)) }
   end
 
   def self.error_on_missing_variables!
@@ -214,5 +217,9 @@ class ENVied
 
   def self.respond_to_missing?(method, include_private = false)
     @instance.respond_to?(method) || super
+  end
+
+  def self.deprecation_warning(msg)
+    puts "DEPRECATION WARNING: #{msg}"
   end
 end
