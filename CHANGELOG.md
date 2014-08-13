@@ -1,3 +1,7 @@
+# 0.6.0 / 2014-08-13
+
+* Configuration should now be put in `Envfile`
+
 # 0.5.0 / 2014-07-02
 
 * add Array Hash types
