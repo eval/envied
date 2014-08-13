@@ -12,18 +12,18 @@ This gem will provide:
 
 ### 1) Configure
 
-Let's configure the ENV-variables we need:
+After [successful installation](#installation), define some variables in `Envfile`:
 
 ```ruby
-ENVied.configure do
-  variable :FORCE_SSL, :Boolean
-  variable :PORT, :Integer
-end
+# file: Envfile
+variable :FORCE_SSL, :Boolean
+variable :PORT, :Integer
 ```
 
 ### 2) Check for presence and coercibility
 
 ```ruby
+# file: some file that'll be run on initialization (e.g. `config/application.rb`)
 ENVied.require
 ```
 
@@ -42,32 +42,6 @@ ENVied.FORCE_SSL # => false
 
 ## Configuration
 
-### Groups
-
-Groups give you more flexibility to define when variables are needed.  
-It's similar to groups in a Gemfile:
-
-```ruby
-ENVied.configure do
-  variable :FORCE_SSL, :Boolean
-
-  group :production do
-    variable :NEW_RELIC_LICENSE_KEY
-  end
-end
-
-# For local development you would typically do:
-ENVied.require(:default) #=> Only ENV['FORCE_SSL'] is required
-# On the server:
-ENVied.require(:default, :production) #=> ...also ENV['NEW_RELIC_LICENSE_KEY'] is required
-
-# BTW the following are equivalent:
-ENVied.require
-ENVied.require(:default)
-ENVied.require('default')
-ENVied.require(nil)
-```
-
 ### Types
 
 The following types are supported:
@@ -81,6 +55,33 @@ The following types are supported:
 * `:Hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
 * `:Array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
 
+### Groups
+
+Groups give you more flexibility to define when variables are needed.  
+It's similar to groups in a Gemfile:
+
+```ruby
+# file: Envfile
+variable :FORCE_SSL, :Boolean
+
+group :production do
+  variable :NEW_RELIC_LICENSE_KEY
+end
+```
+
+```ruby
+# For local development you would typically do:
+ENVied.require(:default) #=> Only ENV['FORCE_SSL'] is required
+# On the production server:
+ENVied.require(:default, :production) #=> ...also ENV['NEW_RELIC_LICENSE_KEY'] is required
+
+# BTW the following are equivalent:
+ENVied.require
+ENVied.require(:default)
+ENVied.require('default')
+ENVied.require(nil)
+```
+
 ### Defaults
 
 In order to let other developers easily bootstrap the application, you can assign defaults to variables.
@@ -89,13 +90,14 @@ Defaults can be a value or a `Proc` (see example below).
 Note that 'easily bootstrap' is quite the opposite of 'fail-fast when not all ENV-variables are present'. Therefor you should explicitly state whén defaults are allowed:
 
 ```ruby
-ENVied.configure(enable_defaults: ENV['RACK_ENV'] == 'development') do
-  variable :FORCE_SSL, :Boolean, default: false
-  variable :PORT, :Integer, default: proc {|envied| envied.FORCE_SSL ? 443 : 80 }
-end
+# Envfile
+enable_defaults! { ENV['RACK_ENV'] == 'development' }
+
+variable :FORCE_SSL, :Boolean, default: false
+variable :PORT, :Integer, default: proc {|envied| envied.FORCE_SSL ? 443 : 80 }
 ```
 
-Please remember that ENVied only **reads** from ENV; it doesn't set ENV-variables.
+Please remember that ENVied only **reads** from ENV; it doesn't mutate ENV.
 Don't let setting a default for, say `RAILS_ENV`, give you the impression that `ENV['RAILS_ENV']` is set.  
 As a rule of thumb you should only use defaults:
 * for local development
@@ -104,36 +106,37 @@ As a rule of thumb you should only use defaults:
 ### A more extensive example:
 
 ```ruby
+# Envfile
 # We allow defaults for local development (and local tests), but want our CI
 # to mimic our production as much as possible.
 # New developers that don't have RACK_ENV set, will in this way not be presented with a huge
 # list of missing variables, as defaults are still enabled.
 not_production_nor_ci = ->{ !(ENV['RACK_ENV'] == 'production' || ENV['CI']) }
-ENVied.configure(enable_defaults: &not_production_nor_ci) do
-  # Your code will likely not use ENVied.RACK_ENV (better use Rails.env),
-  # we want it to be present though; heck, we're using it in this file!
-  variable :RACK_ENV
+enable_defaults(&not_production_nor_ci)
 
-  variable :FORCE_SSL, :Boolean, default: false
-  variable :PORT, :Integer, default: 3000
-  # generate the default value using the value of PORT:
-  variable :PUBLIC_HOST_WITH_PORT, :String, default: proc {|envied| "localhost:#{envied.PORT}" }
+# Your code will likely not use ENVied.RACK_ENV (better use Rails.env),
+# we want it to be present though; heck, we're using it in this file!
+variable :RACK_ENV
 
-  group :production do
-    variable :MAIL_PAAS_USERNAME
-    variable :DATABASE_URL
-  end
+variable :FORCE_SSL, :Boolean, default: false
+variable :PORT, :Integer, default: 3000
+# generate the default value using the value of PORT:
+variable :PUBLIC_HOST_WITH_PORT, :String, default: proc {|envied| "localhost:#{envied.PORT}" }
 
-  group :ci do
-    # ci-only stuff
-  end
+group :production do
+  variable :MAIL_PAAS_USERNAME
+  variable :DATABASE_URL
+end
 
-  group :not_ci do
-    # CI needs no puma-threads, and sidekiq-stuff etc.
-    # Define that here:
-    variable :MIN_THREADS, :Integer, default: 1
-    # more...
-  end
+group :ci do
+  # ci-only stuff
+end
+
+group :not_ci do
+  # CI needs no puma-threads, and sidekiq-stuff etc.
+  # Define that here:
+  variable :MIN_THREADS, :Integer, default: 1
+  # more...
 end
 
 # Depending on our situation, we can now require the groups needed:
@@ -158,9 +161,13 @@ Add this line to your application's Gemfile:
 
     gem 'envied'
 
-And then execute:
+Then bundle:
 
     $ bundle
+
+And generate the `Envfile`:
+
+    $ bundle exec envied init
 
 ## Testing
 
