@@ -27,12 +27,12 @@ describe ENVied do
     end
 
     def configure(options = {}, &block)
-      described_class.configure(options, &block)
+      described_class.configuration(options, &block)
       self
     end
 
     def configured_with(hash = {})
-      described_class.configure do
+      described_class.configuration do
         hash.each do |name, type|
           variable(name, *type)
         end
