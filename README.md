@@ -103,7 +103,7 @@ As a rule of thumb you should only use defaults:
 * for local development
 * for ENV-variables that your application introduces (i.e. for `ENV['STAFF_EMAILS']` not for `ENV['REDIS_URL']`)
 
-### A more extensive example:
+### A more extensive example
 
 ```ruby
 # Envfile
@@ -112,7 +112,7 @@ As a rule of thumb you should only use defaults:
 # New developers that don't have RACK_ENV set, will in this way not be presented with a huge
 # list of missing variables, as defaults are still enabled.
 not_production_nor_ci = ->{ !(ENV['RACK_ENV'] == 'production' || ENV['CI']) }
-enable_defaults(&not_production_nor_ci)
+enable_defaults!(&not_production_nor_ci)
 
 # Your code will likely not use ENVied.RACK_ENV (better use Rails.env),
 # we want it to be present though; heck, we're using it in this file!
