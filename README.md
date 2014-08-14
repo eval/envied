@@ -47,7 +47,7 @@ ENVied.FORCE_SSL # => false
 The following types are supported:
 
 * `:String` (implied)
-* `:Boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'yes','no' for resp. true or false)
+* `:Boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'no'/'yes' for resp. false and true)
 * `:Integer`
 * `:Symbol`
 * `:Date` (e.g. '2014-3-26')
@@ -161,11 +161,11 @@ Add this line to your application's Gemfile:
 
     gem 'envied'
 
-Then bundle:
+...then bundle:
 
     $ bundle
 
-And generate the `Envfile`:
+...and generate the `Envfile`:
 
     $ bundle exec envied init
 
