@@ -154,6 +154,15 @@ ENVied.require(:default, :test, :ci)
 ENVied.require(:default, ENV['RACK_ENV'], (ENV['CI'] ? :ci : :not_ci))
 ```
 
+## command-line interface
+
+```bash
+$ envied help
+Commands:
+  envied check           # Checks whether all ENV-variables are present and valid
+  envied help [COMMAND]  # Describe available commands or one specific command
+  envied init            # Generates a default Envfile in the current working directory
+```
 
 ## Installation
 
