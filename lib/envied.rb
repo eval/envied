@@ -101,15 +101,15 @@ class ENVied
 
   def self.ensure_configured!
     # Backward compat: load Envfile only when it's present
-    configure_via_envfile if envfile_exists?
+    configure_via_envfile if envfile_exist?
   end
 
   def self.envfile
     File.expand_path('Envfile')
   end
 
-  def self.envfile_exists?
-    File.exists?(envfile)
+  def self.envfile_exist?
+    File.exist?(envfile)
   end
 
   def self.configure_via_envfile
@@ -158,7 +158,7 @@ class ENVied
   # A list of all configured variable names.
   #
   # @example
-  #   ENVied.configured_variable_names
+  #   ENVied.required_variable_names
   #   # => [:DATABASE_URL]
   #
   # @return [Array<Symbol>] the list of variable names
