@@ -69,7 +69,7 @@ describe ENVied do
       specify do
         expect {
           ENVied.require
-        }.to raise_error /set the following ENV-variables: a/
+        }.to raise_error(/set the following ENV-variables: a/)
       end
     end
 
@@ -79,7 +79,7 @@ describe ENVied do
       specify do
         expect {
           ENVied.require
-        }.to raise_error /ENV\['A'\] \('NaN' can't be coerced to Integer/
+        }.to raise_error(/ENV\['A'\] \('NaN' can't be coerced to Integer/)
       end
     end
 
@@ -175,7 +175,7 @@ describe ENVied do
         it 'is required when requiring the group' do
           expect {
             described_class.require(:foo)
-          }.to raise_error /bar/
+          }.to raise_error(/bar/)
         end
 
         it 'is not required when requiring another group' do
@@ -197,7 +197,7 @@ describe ENVied do
           [:default, 'default'].each do |groups|
             expect {
               described_class.require(*groups)
-            }.to raise_error /moar/
+            }.to raise_error(/moar/)
           end
         end
       end

@@ -33,7 +33,7 @@ class ENVied
     end
 
     def self.enable_defaults
-      @enable_defaults.respond_to?(:call) ?
+      (@enable_defaults ||= false).respond_to?(:call) ?
         @enable_defaults.call :
         @enable_defaults
     end
@@ -46,7 +46,7 @@ class ENVied
     class << self
       alias_method :defaults_enabled?, :enable_defaults
       alias_method :enable_defaults=, :enable_defaults!
-      attr_accessor :current_group
+      attr_writer :current_group
     end
 
     def self.current_group
