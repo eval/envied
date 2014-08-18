@@ -1,6 +1,10 @@
+# 0.6.1 / 2014-08-13
+
+* Add `envied check` to check whether defined variables are present and valid.
+
 # 0.6.0 / 2014-08-13
 
-* Configuration should now be put in `Envfile`
+* The configuration now lives in `Envfile` by default.
 
 # 0.5.0 / 2014-07-02
 
