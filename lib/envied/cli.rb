@@ -11,9 +11,9 @@ class ENVied
       template("Envfile.tt")
     end
 
-    desc "check", "Checks whether all ENV-variables are present and valid"
+    desc "check", "Checks whether defined variables are present and valid"
     long_desc <<-LONG
-      Checks whether all defined variables are present and valid.
+      Checks whether defined variables are present and valid.
 
       On success the process will exit with status 0.
       Else the missing/invalid variables will be shown, and the process will exit with status 1.
@@ -24,9 +24,10 @@ class ENVied
       puts "All variables for group(s) #{options[:groups]} are present and valid"
     end
 
-    desc "check:heroku", "Checks the ENV-variables of your Heroku app"
+    desc "check:heroku", "Checks your Heroku app for presence and validity of defined variables"
+
     long_desc <<-LONG
-      Checks the config of your Heroku app for presence and validity of all defined variables.
+      Checks the config of your Heroku app for presence and validity of defined variables.
 
       On success the process will exit with status 0.
       Else the missing/invalid variables will be shown, and the process will exit with status 1.
