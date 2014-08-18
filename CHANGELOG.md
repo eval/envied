@@ -1,3 +1,7 @@
+# 0.6.2 / unreleased
+
+* Add `envied check:heroku` to do a check on your Heroku app.
+
 # 0.6.1 / 2014-08-13
 
 * Add `envied check` to check whether defined variables are present and valid.

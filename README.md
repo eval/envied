@@ -159,7 +159,8 @@ ENVied.require(:default, ENV['RACK_ENV'], (ENV['CI'] ? :ci : :not_ci))
 ```bash
 $ envied help
 Commands:
-  envied check           # Checks whether all ENV-variables are present and valid
+  envied check           # Checks whether defined variables are present and valid
+  envied check:heroku    # Checks your Heroku app for presence and validity of defined variables
   envied help [COMMAND]  # Describe available commands or one specific command
   envied init            # Generates a default Envfile in the current working directory
 ```
