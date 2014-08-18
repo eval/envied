@@ -34,7 +34,10 @@ class ENVied
     LONG
     option :groups, type: :array, default: %w(default production), banner: 'default production'
     define_method "check:heroku" do
-      config = `exec heroku config`
+      heroku_bin = File.exist?('/usr/local/heroku/bin') ?
+                    '/usr/local/heroku/bin/heroku' :
+                    'heroku'
+      config = `exec #{heroku_bin} config`
       heroku_env = Hash[config.split("\n")[1..-1].each_with_object([]) do |i, res|
         res << i.split(":", 2).map(&:strip)
       end]
