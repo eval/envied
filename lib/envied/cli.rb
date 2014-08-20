@@ -34,16 +34,34 @@ class ENVied
     LONG
     option :groups, type: :array, default: %w(default production), banner: 'default production'
     define_method "check:heroku" do
-      heroku_bin = File.exist?('/usr/local/heroku/bin') ?
-                    '/usr/local/heroku/bin/heroku' :
-                    'heroku'
-      config = `exec #{heroku_bin} config`
+      #p `bundle exec $(which heroku) help`
+      #config = `exec /usr/local/heroku/bin/heroku help`
+      if STDIN.tty?
+        error <<-ERR
+Please pipe the contents of `heroku config` to this task.
+I.e. `heroku config | bundle exec envied check:heroku`"
+ERR
+        exit 1
+      end
+      config = STDIN.read
       heroku_env = Hash[config.split("\n")[1..-1].each_with_object([]) do |i, res|
         res << i.split(":", 2).map(&:strip)
       end]
       ENV.replace({}).update(heroku_env)
       ENVied.require(*options[:groups])
       puts "All variables for group(s) #{options[:groups]} are present and valid in your Heroku app"
+    end
+
+    desc "check:heroku:binstub", "Generate a script for the check:heroku-task"
+    option :dest, banner: "where to put the script", default: 'bin/heroku-env-check'
+    option :app, banner: "name of the heroku app"
+    option :groups, type: :array, default: %w(default production), banner: 'default production'
+    define_method "check:heroku:binstub" do
+      @app = options[:app]
+      @dest = @app ? File.join(*%W(bin #{@app}-env-check)) : options[:dest]
+      @groups = options[:groups]
+      full_dest = File.expand_path(@dest)
+      template("heroku-env-check.tt", full_dest)
     end
   end
 end

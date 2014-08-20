@@ -1,0 +1,6 @@
+#!/bin/sh
+<%- if @app %>
+HEROKU_APP=<%= @app %> exec heroku config | bundle exec envied check:heroku --groups <%= @groups.join(",") %>
+<%- else %>
+exec heroku config | bundle exec envied check:heroku --groups <%= @groups.join(",") %>
+<%- end %>
