@@ -2,6 +2,8 @@
 
 * Add `envied check:heroku` to do a check on your Heroku app.
 
+* Add `envied check:heroku:binstub` to generate script for convenient 'check:heroku'
+
 # 0.6.1 / 2014-08-13
 
 * Add `envied check` to check whether defined variables are present and valid.
