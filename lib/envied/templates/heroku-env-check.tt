@@ -1,4 +1,7 @@
 #!/bin/sh
+
+# Check the config of a Heroku app against the defined variables in `Envfile`
+
 <%- if @app %>
 HEROKU_APP=<%= @app %> exec heroku config | bundle exec envied check:heroku --groups <%= @groups.join(",") %>
 <%- else %>
