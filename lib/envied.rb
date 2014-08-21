@@ -187,7 +187,7 @@ class ENVied
     var_value = env_value_or_default(variable)
     return true if var_value.respond_to?(:call)
 
-    variable.coerce var_value
+    !variable.coerce(var_value).nil?
   rescue Virtus::CoercionError
     return false
   end
