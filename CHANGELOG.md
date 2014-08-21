@@ -1,4 +1,4 @@
-# 0.6.2 / unreleased
+# 0.6.2 / 2014-08-20
 
 * Add `envied check:heroku` to do a check on your Heroku app.
 
