@@ -99,6 +99,10 @@ class ENVied
     @instance = group_configuration.new(env)
   end
 
+  def self.spring_enabled?
+    defined?(Spring) && Spring.respond_to?(:watcher)
+  end
+
   def self.ensure_configured!
     # Backward compat: load Envfile only when it's present
     configure_via_envfile if envfile_exist?
