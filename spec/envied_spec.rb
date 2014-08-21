@@ -83,6 +83,20 @@ describe ENVied do
       end
     end
 
+    context 'bug: default value "false" is not coercible' do
+      before {
+        configure(enable_defaults: true) do
+          variable :FORCE_SSL, :Boolean, default: false
+        end
+      }
+
+      specify do
+        expect {
+          ENVied.require
+        }.not_to raise_error
+      end
+    end
+
     describe 'defaults' do
       describe 'setting' do
         subject { described_class.configuration }
