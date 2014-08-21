@@ -158,7 +158,7 @@ ENVied.require(:default, ENV['RACK_ENV'], (ENV['CI'] ? :ci : :not_ci))
 
 tl;dr use the `init:rails`-task to generate the necessary files for a Rails app (see [installation](#installation)).
 
-With [](https://github.com/rails/spring) being part of Rails, the exact moment to do a `ENVied.require` is a bit tricky.  
+With [Spring](https://github.com/rails/spring) being part of the default Rails setup, the exact moment to do a `ENVied.require` is a bit tricky.  
 
 The first time you execute a springified command (say `bin/rails console`), Spring will start the process (the server) from which forks are created to execute subsequent commands.  
 Currently [a bug in Spring](https://github.com/rails/spring/pull/267#issue-28580171) causes the initialization of the new process to use the server's `ENV` instead of the actual `ENV`.  
