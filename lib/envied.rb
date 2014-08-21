@@ -100,10 +100,14 @@ class ENVied
   end
 
   def self.springified_require(*args)
+    springify { ENVied.require(*args) }
+  end
+
+  def self.springify(&block)
     if defined?(Spring) && Spring.respond_to?(:watcher)
-      Spring.after_fork { ENVied.require(*args) }
+      Spring.after_fork(&block)
     else
-      self.require(*args)
+      block.call
     end
   end
 
