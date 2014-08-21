@@ -158,23 +158,23 @@ ENVied.require(:default, ENV['RACK_ENV'], (ENV['CI'] ? :ci : :not_ci))
 
 tl;dr use the `init:rails`-task to generate the necessary files for a Rails app (see [installation](#installation)).
 
-With [https://github.com/rails/spring] being part of Rails, the exact moment to do a `ENVied.require` is a bit tricky.  
+With [](https://github.com/rails/spring) being part of Rails, the exact moment to do a `ENVied.require` is a bit tricky.  
 
 The first time you execute a springified command (say `bin/rails console`), Spring will start the process (the server) from which forks are created to execute subsequent commands.  
 Currently [a bug in Spring](https://github.com/rails/spring/pull/267#issue-28580171) causes the initialization of the new process to use the server's `ENV` instead of the actual `ENV`.  
 
 So if your `ENV` is not valid the first time you start Spring...:
 
-  # spring server *not* running
-  $ bin/rails console
-  # spring server started
-  # error raised: Please set the following ENV-variables: FORCE_SSL (RuntimeError)
+    # spring server *not* running
+    $ bin/rails console
+    # spring server started
+    # error raised: Please set the following ENV-variables: FORCE_SSL (RuntimeError)
 
 ...it won't be valid for subsequent commands (even when you provide the correct variables):
 
-  # spring server still running
-  # FORCE_SSL=1 bin/rails console
-  # error raised: Please set the following ENV-variables: FORCE_SSL (RuntimeError)
+    # spring server still running
+    # FORCE_SSL=1 bin/rails console
+    # error raised: Please set the following ENV-variables: FORCE_SSL (RuntimeError)
 
 So while doing a `ENVied.require` in `config/application.rb` would seem perfectly fine, it won't work in the default 'springified' Rails setup.
 
