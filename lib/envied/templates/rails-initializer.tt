@@ -1,7 +1,1 @@
-env_check = proc { ENVied.require(:default, ENV['RAILS_ENV']) }
-
-if ENVied.spring_enabled?
-  Spring.after_fork(&env_check)
-else
-  env_check.call
-end
+ENVied.springified_require(:default, ENV['RAILS_ENV'])

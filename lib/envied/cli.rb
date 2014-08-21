@@ -11,7 +11,7 @@ class ENVied
       template("Envfile.tt")
     end
 
-    desc "init:rails", "Generates a default Envfile in the current working directory"
+    desc "init:rails", "Generate all files needed for a Rails project"
     define_method "init:rails" do
       init
       template("rails-initializer.tt", 'config/initializers/envied.rb')

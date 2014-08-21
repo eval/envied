@@ -99,8 +99,12 @@ class ENVied
     @instance = group_configuration.new(env)
   end
 
-  def self.spring_enabled?
-    defined?(Spring) && Spring.respond_to?(:watcher)
+  def self.springified_require(*args)
+    if defined?(Spring) && Spring.respond_to?(:watcher)
+      Spring.after_fork { ENVied.require(*args) }
+    else
+      self.require(*args)
+    end
   end
 
   def self.ensure_configured!
