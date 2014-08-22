@@ -1,3 +1,7 @@
+# 0.6.3 / 2014-08-22
+
+* Fix bug: 'false' was not a coercible value.
+
 # 0.6.2 / 2014-08-20
 
 * Add `envied check:heroku` to do a check on your Heroku app.
