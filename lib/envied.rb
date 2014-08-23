@@ -99,6 +99,18 @@ class ENVied
     @instance = group_configuration.new(env)
   end
 
+  def self.springified_require(*args)
+    springify { ENVied.require(*args) }
+  end
+
+  def self.springify(&block)
+    if defined?(Spring) && Spring.respond_to?(:watcher)
+      Spring.after_fork(&block)
+    else
+      block.call
+    end
+  end
+
   def self.ensure_configured!
     # Backward compat: load Envfile only when it's present
     configure_via_envfile if envfile_exist?

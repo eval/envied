@@ -11,6 +11,12 @@ class ENVied
       template("Envfile.tt")
     end
 
+    desc "init:rails", "Generate all files needed for a Rails project"
+    define_method "init:rails" do
+      init
+      template("rails-initializer.tt", 'config/initializers/envied.rb')
+    end
+
     desc "check", "Checks whether you environment contains the defined variables"
     long_desc <<-LONG
       Checks whether defined variables are present and valid in your shell.
