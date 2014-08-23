@@ -2,7 +2,7 @@
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
-Features:
+## Features:
 
 * check for presence and correctness of ENV-variables
 * access to typed ENV-variables (integers, booleans etc. instead of just strings)
