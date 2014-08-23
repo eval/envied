@@ -2,11 +2,25 @@
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
-This gem will provide:
+Features:
 
-* A fail-fast check for presence of ENV-variables
-* A fail-fast check whether the values can be coerced to the correct type
-* Access to typed ENV-variables (instead of just strings)
+* check for presence and correctness of ENV-variables
+* access to typed ENV-variables (integers, booleans etc. instead of just strings)
+* check the presence and correctness of Heroku config
+
+## Contents
+
+* [Quickstart](#quickstart)
+* [Installation](#installation)
+* [Configuration](#configuration)
+  * [Types](#types)
+  * [Groups](#groups)
+  * [Defaults](#defaults)
+* [Rails](#rails)
+* [Command-line interface](#command-line-interface)
+* [Testing](#testing)
+* [Developing](#developing)
+* [Contributing](#contributing)
 
 ## Quickstart
 
@@ -39,6 +53,24 @@ Variables accessed via ENVied are of the correct type:
 ENVied.PORT # => 3001
 ENVied.FORCE_SSL # => false
 ```
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'envied'
+
+...then bundle:
+
+    $ bundle
+
+...then for Rails applications:
+
+    $ bundle exec envied init:rails
+
+...or for non-Rails applications:
+
+    $ bundle exec envied init
 
 ## Configuration
 
@@ -156,12 +188,14 @@ ENVied.require(:default, ENV['RACK_ENV'], (ENV['CI'] ? :ci : :not_ci))
 
 ## Rails
 
-tl;dr use the `init:rails`-task to generate the necessary files for a Rails app (see [installation](#installation)).
+**tl;dr** use the `init:rails`-task to generate the necessary files for a Rails app (see [installation](#installation)).
 
-With [Spring](https://github.com/rails/spring) being part of the default Rails setup, the exact moment to do a `ENVied.require` is a bit tricky.  
+---
 
-The first time you execute a springified command (say `bin/rails console`), Spring will start the process (the server) from which forks are created to execute subsequent commands.  
-Currently [a bug in Spring](https://github.com/rails/spring/pull/267#issue-28580171) causes the initialization of the new process to use the server's `ENV` instead of the actual `ENV`.  
+With the [Spring](https://github.com/rails/spring) preloader (which is part of the default Rails setup nowadays) it's a bit tricky when to do `ENVied.require`.
+
+The first time you execute a command (say `bin/rails console`), Spring will start the server from which subsequent commands fork from.  
+Currently [a bug in Spring](https://github.com/rails/spring/pull/267#issue-28580171) causes the initialization of the forked process to use the server's `ENV` instead of the actual `ENV`.  
 
 So if your `ENV` is not valid the first time you start Spring...:
 
@@ -190,8 +224,7 @@ ENVied.springify do
 end
 ```
 
-
-## command-line interface
+## Command-line interface
 
 ```bash
 $ envied help
@@ -203,24 +236,6 @@ Commands:
   envied init                  # Generates a default Envfile in the current working directory
   envied init:rails            # Generate all files needed for a Rails project
 ```
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'envied'
-
-...then bundle:
-
-    $ bundle
-
-...then for Rails applications:
-
-    $ bundle exec envied init:rails
-
-...or for non-Rails applications:
-
-    $ bundle exec envied init
 
 ## Testing
 
@@ -237,7 +252,6 @@ bin/rake
 ```bash
 bin/pry --gem
 ```
-
 
 ## Contributing
 
