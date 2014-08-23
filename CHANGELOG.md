@@ -1,3 +1,7 @@
+# 0.7.0 / 2014-08-24
+
+* Add init:rails-task for setup in Rails applications.
+
 # 0.6.3 / 2014-08-22
 
 * Fix bug: 'false' was not a coercible value.
