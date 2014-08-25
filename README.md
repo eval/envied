@@ -16,6 +16,7 @@
   * [Types](#types)
   * [Groups](#groups)
   * [Defaults](#defaults)
+  * [More examples](#more-examples)
 * [Rails](#rails)
 * [Command-line interface](#command-line-interface)
 * [Testing](#testing)
@@ -135,56 +136,10 @@ As a rule of thumb you should only use defaults:
 * for local development
 * for ENV-variables that your application introduces (i.e. for `ENV['STAFF_EMAILS']` not for `ENV['REDIS_URL']`)
 
-### A more extensive example
+### More examples
 
-```ruby
-# Envfile
-# We allow defaults for local development (and local tests), but want our CI
-# to mimic our production as much as possible.
-# New developers that don't have RACK_ENV set, will in this way not be presented with a huge
-# list of missing variables, as defaults are still enabled.
-not_production_nor_ci = ->{ !(ENV['RACK_ENV'] == 'production' || ENV['CI']) }
-enable_defaults!(&not_production_nor_ci)
-
-# Your code will likely not use ENVied.RACK_ENV (better use Rails.env),
-# we want it to be present though; heck, we're using it in this file!
-variable :RACK_ENV
-
-variable :FORCE_SSL, :Boolean, default: false
-variable :PORT, :Integer, default: 3000
-# generate the default value using the value of PORT:
-variable :PUBLIC_HOST_WITH_PORT, :String, default: proc {|envied| "localhost:#{envied.PORT}" }
-
-group :production do
-  variable :MAIL_PAAS_USERNAME
-  variable :DATABASE_URL
-end
-
-group :ci do
-  # ci-only stuff
-end
-
-group :not_ci do
-  # CI needs no puma-threads, and sidekiq-stuff etc.
-  # Define that here:
-  variable :MIN_THREADS, :Integer, default: 1
-  # more...
-end
-
-# Depending on our situation, we can now require the groups needed:
-# At local machines:
-ENVied.require(:default, :development, :not_ci) or
-ENVied.require(:default, :test, :not_ci)
-
-# At the server:
-ENVied.require(:default, :production, :not_ci)
-
-# At CI:
-ENVied.require(:default, :test, :ci)
-
-# All in one line:
-ENVied.require(:default, ENV['RACK_ENV'], (ENV['CI'] ? :ci : :not_ci))
-```
+* See the [examples](/examples)-folder for a more extensive Envfile
+* See [the Envfile](https://github.com/eval/bunny_drain/blob/c54d7d977afb5e23a92da7a2fd0d39f6a7e29bf1/Envfile) for the bunndy_drain application
 
 ## Rails
 
