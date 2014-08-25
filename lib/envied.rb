@@ -130,20 +130,20 @@ class ENVied
 
   def self.error_on_missing_variables!
     if missing_variable_names.any?
-      raise "Please set the following ENV-variables: #{missing_variable_names.sort.join(',')}"
+      raise "The following environment variables should be set: #{missing_variable_names.sort.join(', ')}."
     end
   end
 
   def self.error_on_uncoercible_variables!
     # TODO default values should have defined type
     if non_coercible_variables.any?
-      single_error = "ENV['%{name}'] ('%{value}' can't be coerced to %{type})"
-      errors = non_coercible_variables.map do |v|
+      single_error = "%{name} ('%{value}' can't be coerced to %{type})"
+      errors = non_coercible_variables.sort_by(&:name).map do |v|
         var_type = v.type.to_s.split("::").last
         single_error % { name: v.name, value: env_value_or_default(v), type: var_type }
       end.join ", "
 
-      raise "Some ENV-variables are not coercible: #{errors}"
+      raise "The following environment variables are not coercible:\n#{errors}."
     end
   end
 
