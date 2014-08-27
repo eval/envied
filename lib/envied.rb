@@ -1,5 +1,6 @@
 require 'envied/version'
 require 'envied/cli'
+require 'envied/coercer'
 require 'virtus'
 
 class ENVied
