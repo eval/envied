@@ -1,3 +1,11 @@
+# 0.7.1 / 2014-08-29
+
+* Total refactor (TM).
+
+* Fix bug in Heroku binstub.
+
+  It checked for group 'default,production' instead of 'default' and 'production'.
+
 # 0.7.0 / 2014-08-24
 
 * Add init:rails-task for setup in Rails applications.
