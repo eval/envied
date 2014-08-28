@@ -1,6 +1,8 @@
 require 'envied/version'
 require 'envied/cli'
 require 'envied/coercer'
+require 'envied/variable'
+require 'envied/configuration'
 require 'virtus'
 
 class ENVied
@@ -17,7 +19,7 @@ class ENVied
     end
   end
 
-  class Configuration
+  class ConfigurationOld
     include Virtus.model
 
     def self.variable(name, type = :String, options = {})

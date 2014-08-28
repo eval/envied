@@ -62,4 +62,10 @@ class ENVied::Coercer
   def coercer
     @coercer ||= Coercible::Coercer.new[String]
   end
+
+  def coercible?(string, type)
+    supported_type?(type) && coerce(string, type)
+  rescue Coercible::UnsupportedCoercion
+    false
+  end
 end
