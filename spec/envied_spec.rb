@@ -32,7 +32,7 @@ describe ENVied do
 
     def configure(options = {}, &block)
       ENVied.instance_eval do
-        @config = ENVied::Configuration.new.tap{|c| c.instance_eval(&block)}
+        @config = ENVied::Configuration.new(options).tap{|c| c.instance_eval(&block)}
       end
       self
     end
@@ -95,7 +95,7 @@ describe ENVied do
     context 'bug: default value "false" is not coercible' do
       before {
         configure(enable_defaults: true) do
-          variable :FORCE_SSL, :Boolean, default: false
+          variable :FORCE_SSL, :Boolean, default: true
         end
       }
 
@@ -108,35 +108,36 @@ describe ENVied do
 
     describe 'defaults' do
       describe 'setting' do
-        subject { described_class.configuration }
+        subject { described_class.config }
+        #subject { ENVied::Configuration.new }
 
-        it 'is disabled by default' do
-          expect(subject.enable_defaults).to_not be
-        end
+        #it 'is disabled by default' do
+        #  expect(subject.defaults_enabled?).to_not be
+        #end
 
         it 'can be enabled via #configure' do
           configure(enable_defaults: true){ }
 
-          expect(subject.enable_defaults).to be
+          expect(subject.defaults_enabled?).to be
         end
 
         it 'can be enabled via a configure-block' do
-          configure { self.enable_defaults = true }
+          configure { self.enable_defaults!(true) }
 
-          expect(subject.enable_defaults).to be
+          expect(subject.defaults_enabled?).to be
         end
 
         it 'can be assigned a Proc' do
-          configure { self.enable_defaults = -> { true } }
+          configure { self.enable_defaults! { true } }
 
-          expect(subject.enable_defaults).to be
+          expect(subject.defaults_enabled?).to be
         end
       end
 
       describe 'assigning' do
         it 'can be a value' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: 1
+            variable :A, :Integer, default: '1'
           end
           described_class.require
 
@@ -145,7 +146,7 @@ describe ENVied do
 
         it 'can be a Proc' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: proc { 1 }
+            variable :A, :Integer, default: proc { "1" }
           end
           described_class.require
 
@@ -154,7 +155,7 @@ describe ENVied do
 
         it 'is ignored if defaults are disabled' do
           configure(enable_defaults: false) do
-            variable :A, :Integer, default: 1
+            variable :A, :Integer, default: "1"
           end.and_no_ENV
 
           expect {
@@ -162,9 +163,9 @@ describe ENVied do
           }.to raise_error
         end
 
-        it 'is is ignored if ENV is provided' do
+        it 'is ignored if ENV is provided' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: 1
+            variable :A, :Integer, default: "1"
           end.and_ENV('A' => '2')
           described_class.require
 

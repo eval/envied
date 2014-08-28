@@ -6,5 +6,13 @@ class ENVied::Variable
     @type = type.to_sym
     @group = options.fetch(:group, :default).to_sym
     @default = options[:default]
+
+    #if !@default.is_a? String
+    #  raise ArgumentError, "Default values should be strings (variable #{@name})"
+    #end
+  end
+
+  def default_value(*args)
+    default.respond_to?(:call) ? default[*args] : default
   end
 end

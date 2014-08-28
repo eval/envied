@@ -1,12 +1,26 @@
 # 
 class ENVied
   class Configuration
-    attr_reader :current_group
+    attr_reader :current_group, :defaults_enabled
+
+    def initialize(options = {})
+      @defaults_enabled = options.fetch(:enable_defaults, false)
+    end
 
     def self.load
       new.tap do |v|
         v.instance_eval(File.read(File.expand_path('Envfile')))
       end
+    end
+
+    def enable_defaults!(value = nil, &block)
+      @defaults_enabled = (value.nil? ? block : value)
+    end
+
+    def defaults_enabled?
+      @defaults_enabled.respond_to?(:call) ?
+        @defaults_enabled.call :
+        @defaults_enabled
     end
 
     def variable(name, type = :String, options = {})
@@ -41,7 +55,7 @@ class ENVied
     end
 
     def uncoercible_variables
-      variables.reject(&method(:coercible?))
+      variables.reject(&method(:coerced?)).reject(&method(:coercible?))
     end
 
     def variables
@@ -66,16 +80,31 @@ class ENVied
       ENV[var.name.to_s]
     end
 
+    def default_value_of(var)
+      var.default_value(ENVied, var)
+    end
+
+    def value_to_coerce(var)
+      return env_value_of(var) unless env_value_of(var).nil?
+      config.defaults_enabled? ? default_value_of(var) : nil
+    end
+
     def coerce(var)
-      coercer.coerce(env_value_of(var), var.type)
+      coerced?(var) ?
+        value_to_coerce(var) :
+        coercer.coerce(value_to_coerce(var), var.type)
     end
 
     def coercible?(var)
-      coercer.coercible?(env_value_of(var), var.type)
+      coercer.coercible?(value_to_coerce(var), var.type)
     end
 
     def missing?(var)
-      !ENV.has_key?(var.name.to_s)
+      value_to_coerce(var).nil?
+    end
+
+    def coerced?(var)
+      coercer.coerced?(value_to_coerce(var))
     end
   end
 end
