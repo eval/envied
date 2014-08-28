@@ -20,12 +20,14 @@ class ENVied
 
   def self.report_missing
     names = env.missing_variables.map(&:name)
-    raise "Missing: #{names * ','}" if names.any?
+    raise "The following environment variables should be set: #{names * ', '}" if names.any?
   end
 
   def self.report_uncoercible
-    names = env.uncoercible_variables.map(&:name)
-    raise "Uncoercible: #{names * ','}" if names.any?
+    errors = env.uncoercible_variables.map do |v|
+      "%{name} ('%{value}' can't be coerced to %{type})" % {name: v.name, value: env.value_to_coerce(v), type: v.type }
+    end
+    raise "The following environment variables are not coercible: #{errors.join(", ")}" if errors.any?
   end
 
   def self.required_groups(*groups)

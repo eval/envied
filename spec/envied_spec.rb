@@ -76,8 +76,7 @@ describe ENVied do
       specify do
         expect {
           ENVied.require
-        #}.to raise_error(/The following environment variables should be set: a/)
-        }.to raise_error(/Missing: a/)
+        }.to raise_error(/The following environment variables should be set: a/)
       end
     end
 
@@ -87,8 +86,7 @@ describe ENVied do
       specify do
         expect {
           ENVied.require
-        #}.to raise_error(/A \('NaN' can't be coerced to Integer/)
-        }.to raise_error(/Uncoercible: A/)
+        }.to raise_error(/A \('NaN' can't be coerced to Integer/)
       end
     end
 
