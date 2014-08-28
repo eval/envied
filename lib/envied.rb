@@ -3,7 +3,6 @@ require 'envied/cli'
 require 'envied/coercer'
 require 'envied/variable'
 require 'envied/configuration'
-require 'virtus'
 
 class ENVied
   class << self
@@ -14,16 +13,16 @@ class ENVied
     @config ||= Configuration.load
     @env ||= EnvProxy.new(@config, groups: required_groups(*groups))
 
-    report_missing
-    report_uncoercible
+    error_on_missing_variables!
+    error_on_uncoercible_variables!
   end
 
-  def self.report_missing
+  def self.error_on_missing_variables!
     names = env.missing_variables.map(&:name)
     raise "The following environment variables should be set: #{names * ', '}" if names.any?
   end
 
-  def self.report_uncoercible
+  def self.error_on_uncoercible_variables!
     errors = env.uncoercible_variables.map do |v|
       "%{name} ('%{value}' can't be coerced to %{type})" % {name: v.name, value: env.value_to_coerce(v), type: v.type }
     end
@@ -33,6 +32,18 @@ class ENVied
   def self.required_groups(*groups)
     result = groups.compact
     result.any? ? result.map(&:to_sym) : [:default]
+  end
+
+  def self.springify(&block)
+    if spring_enabled?
+      Spring.after_fork(&block)
+    else
+      block.call
+    end
+  end
+
+  def self.spring_enabled?
+    defined?(Spring) && Spring.respond_to?(:watcher)
   end
 
   def self.method_missing(method, *args, &block)

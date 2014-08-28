@@ -1,4 +1,3 @@
-# 
 class ENVied
   class Configuration
     attr_reader :current_group, :defaults_enabled
