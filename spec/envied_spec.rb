@@ -1,10 +1,14 @@
 require 'spec_helper'
 
 describe ENVied do
-  subject { described_class }
+  describe 'class' do
+    subject { described_class }
 
-  it { should respond_to :require }
-  it { should respond_to :configure }
+    it { is_expected.to respond_to :require }
+  end
+
+  describe 'responding to methods that are variables' do
+  end
 
   before do
     reset_env
@@ -12,7 +16,7 @@ describe ENVied do
   end
 
   def reset_configuration
-    ENVied.instance_eval { @configuration = nil }
+    ENVied.instance_eval { @config = nil }
   end
 
   def reset_env
@@ -27,16 +31,19 @@ describe ENVied do
     end
 
     def configure(options = {}, &block)
-      described_class.configuration(options, &block)
+      ENVied.instance_eval do
+        @config = ENVied::Configuration.new(options).tap{|c| c.instance_eval(&block)}
+      end
       self
     end
 
     def configured_with(hash = {})
-      described_class.configuration do
+      config = ENVied::Configuration.new.tap do |c|
         hash.each do |name, type|
-          variable(name, *type)
+          c.variable(name, *type)
         end
       end
+      ENVied.instance_eval{ @config = config }
       self
     end
 
@@ -53,14 +60,14 @@ describe ENVied do
       configured_with(a: :Integer).and_ENV({'a' => '1'})
       described_class.require
 
-      is_expected.to respond_to :a
+      expect(described_class).to respond_to :a
     end
 
     it 'responds not to unconfigured variables' do
       unconfigured.and_ENV({'A' => '1'})
       described_class.require
 
-      is_expected.to_not respond_to :B
+      expect(described_class).to_not respond_to :B
     end
 
     context 'ENV contains not all configured variables' do
@@ -86,7 +93,7 @@ describe ENVied do
     context 'bug: default value "false" is not coercible' do
       before {
         configure(enable_defaults: true) do
-          variable :FORCE_SSL, :Boolean, default: false
+          variable :FORCE_SSL, :Boolean, default: true
         end
       }
 
@@ -99,35 +106,36 @@ describe ENVied do
 
     describe 'defaults' do
       describe 'setting' do
-        subject { described_class.configuration }
+        subject { described_class.config }
+        #subject { ENVied::Configuration.new }
 
-        it 'is disabled by default' do
-          expect(subject.enable_defaults).to_not be
-        end
+        #it 'is disabled by default' do
+        #  expect(subject.defaults_enabled?).to_not be
+        #end
 
         it 'can be enabled via #configure' do
           configure(enable_defaults: true){ }
 
-          expect(subject.enable_defaults).to be
+          expect(subject.defaults_enabled?).to be
         end
 
         it 'can be enabled via a configure-block' do
-          configure { self.enable_defaults = true }
+          configure { self.enable_defaults!(true) }
 
-          expect(subject.enable_defaults).to be
+          expect(subject.defaults_enabled?).to be
         end
 
         it 'can be assigned a Proc' do
-          configure { self.enable_defaults = -> { true } }
+          configure { self.enable_defaults! { true } }
 
-          expect(subject.enable_defaults).to be
+          expect(subject.defaults_enabled?).to be
         end
       end
 
       describe 'assigning' do
         it 'can be a value' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: 1
+            variable :A, :Integer, default: '1'
           end
           described_class.require
 
@@ -136,7 +144,7 @@ describe ENVied do
 
         it 'can be a Proc' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: proc { 1 }
+            variable :A, :Integer, default: proc { "1" }
           end
           described_class.require
 
@@ -145,7 +153,7 @@ describe ENVied do
 
         it 'is ignored if defaults are disabled' do
           configure(enable_defaults: false) do
-            variable :A, :Integer, default: 1
+            variable :A, :Integer, default: "1"
           end.and_no_ENV
 
           expect {
@@ -153,9 +161,9 @@ describe ENVied do
           }.to raise_error
         end
 
-        it 'is is ignored if ENV is provided' do
+        it 'is ignored if ENV is provided' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: 1
+            variable :A, :Integer, default: "1"
           end.and_ENV('A' => '2')
           described_class.require
 
@@ -257,7 +265,7 @@ describe ENVied do
         end
 
         it 'yields array from string' do
-          expect(ENVied.moar).to eq ['a','b','and, c']
+          expect(ENVied.moar).to eq ['a',' b',' and, c']
         end
       end
     end
