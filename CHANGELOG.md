@@ -1,3 +1,7 @@
+# 0.7.1 / unreleased
+
+* Add version-task (i.e. envied --version)
+
 # 0.7.1 / 2014-08-29
 
 * Total refactor (TM).

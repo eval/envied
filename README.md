@@ -184,6 +184,7 @@ end
 ```bash
 $ envied help
 Commands:
+  envied --version             # Shows version number
   envied check                 # Checks whether you environment contains the defined variables
   envied check:heroku          # Checks whether a Heroku config contains the defined variables
   envied check:heroku:binstub  # Generates a shell script for the check:heroku-task
