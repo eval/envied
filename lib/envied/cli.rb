@@ -5,6 +5,12 @@ class ENVied
     include Thor::Actions
     source_root File.expand_path('../templates', __FILE__)
 
+    desc "--version", "Shows version number"
+    def version
+      puts ENVied::VERSION
+    end
+    map %w(-v --version) => :version
+
     desc "init", "Generates a default Envfile in the current working directory"
     def init
       puts "Writing new Envfile to #{File.expand_path('Envfile')}"
