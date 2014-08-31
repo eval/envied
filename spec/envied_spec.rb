@@ -16,7 +16,7 @@ describe ENVied do
   end
 
   def reset_configuration
-    ENVied.instance_eval { @config = nil }
+    @config = ENVied::Configuration.new
   end
 
   def reset_env
@@ -30,20 +30,21 @@ describe ENVied do
       self
     end
 
+    def config
+      @config
+    end
+
     def configure(options = {}, &block)
-      ENVied.instance_eval do
-        @config = ENVied::Configuration.new(options).tap{|c| c.instance_eval(&block)}
-      end
+      @config = ENVied::Configuration.new(options, &block)
       self
     end
 
     def configured_with(hash = {})
-      config = ENVied::Configuration.new.tap do |c|
+      @config = ENVied::Configuration.new.tap do |c|
         hash.each do |name, type|
           c.variable(name, *type)
         end
       end
-      ENVied.instance_eval{ @config = config }
       self
     end
 
@@ -56,16 +57,23 @@ describe ENVied do
       and_ENV
     end
 
+    def envied_require(*args)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      options[:config] = options[:config] || config
+
+      ENVied.require(*args, options)
+    end
+
     it 'responds to configured variables' do
       configured_with(a: :Integer).and_ENV({'a' => '1'})
-      described_class.require
+      envied_require
 
       expect(described_class).to respond_to :a
     end
 
     it 'responds not to unconfigured variables' do
       unconfigured.and_ENV({'A' => '1'})
-      described_class.require
+      envied_require
 
       expect(described_class).to_not respond_to :B
     end
@@ -75,7 +83,7 @@ describe ENVied do
 
       specify do
         expect {
-          ENVied.require
+          envied_require
         }.to raise_error(/The following environment variables should be set: a/)
       end
     end
@@ -85,8 +93,16 @@ describe ENVied do
 
       specify do
         expect {
-          ENVied.require
+          envied_require
         }.to raise_error(/A \('NaN' can't be coerced to Integer/)
+      end
+    end
+
+    context 'configuring' do
+      it 'raises error when configuring variable of unknown type' do
+        expect {
+          configured_with(A: :Fixnum)
+        }.to raise_error
       end
     end
 
@@ -99,19 +115,18 @@ describe ENVied do
 
       specify do
         expect {
-          ENVied.require
+          envied_require
         }.not_to raise_error
       end
     end
 
     describe 'defaults' do
       describe 'setting' do
-        subject { described_class.config }
-        #subject { ENVied::Configuration.new }
+        subject { config }
 
-        #it 'is disabled by default' do
-        #  expect(subject.defaults_enabled?).to_not be
-        #end
+        it 'is disabled by default' do
+          expect(subject.defaults_enabled?).to_not be
+        end
 
         it 'can be enabled via #configure' do
           configure(enable_defaults: true){ }
@@ -137,7 +152,7 @@ describe ENVied do
           configure(enable_defaults: true) do
             variable :A, :Integer, default: '1'
           end
-          described_class.require
+          envied_require
 
           expect(described_class.A).to eq 1
         end
@@ -146,7 +161,7 @@ describe ENVied do
           configure(enable_defaults: true) do
             variable :A, :Integer, default: proc { "1" }
           end
-          described_class.require
+          envied_require
 
           expect(described_class.A).to eq 1
         end
@@ -157,7 +172,7 @@ describe ENVied do
           end.and_no_ENV
 
           expect {
-            described_class.require
+            envied_require
           }.to raise_error
         end
 
@@ -165,7 +180,7 @@ describe ENVied do
           configure(enable_defaults: true) do
             variable :A, :Integer, default: "1"
           end.and_ENV('A' => '2')
-          described_class.require
+          envied_require
 
           expect(described_class.A).to eq 2
         end
@@ -175,7 +190,7 @@ describe ENVied do
             variable :A, :Integer
             variable :B, :Integer, default: proc {|env| env.A * 2 }
           end.and_ENV('A' => '1')
-          described_class.require
+          envied_require
 
           expect(described_class.B).to eq 2
         end
@@ -196,19 +211,19 @@ describe ENVied do
 
         it 'is required when requiring the group' do
           expect {
-            described_class.require(:foo)
+            envied_require(:foo)
           }.to raise_error(/bar/)
         end
 
         it 'is not required when requiring another group' do
           expect {
-            described_class.require(:bat)
+            envied_require(:bat)
           }.to_not raise_error
         end
 
         it 'wont define non-required variables on ENVied' do
           stub_const("ENV", {'moar' => 'yes'})
-          described_class.require(:default)
+          envied_require(:default)
 
           expect {
             described_class.bar
@@ -218,7 +233,7 @@ describe ENVied do
         it 'requires variables without a group when requiring the default group' do
           [:default, 'default'].each do |groups|
             expect {
-              described_class.require(*groups)
+              envied_require(*groups)
             }.to raise_error(/moar/)
           end
         end
@@ -230,7 +245,7 @@ describe ENVied do
             variable :foo, :Hash
             variable :bar, :Hash
           end.and_ENV('foo' => 'a=1&b=&c', 'bar' => '')
-          ENVied.require
+          envied_require
         end
 
         it 'yields hash from string' do
@@ -251,7 +266,7 @@ describe ENVied do
           it 'has no default by default' do
             # fixes a bug where variables of type :Hash had a default even
             # when none was configured.
-            expect { ENVied.require(:default) }.to raise_error
+            expect { envied_require }.to raise_error
           end
         end
       end
@@ -261,7 +276,7 @@ describe ENVied do
           configure do
             variable :moar, :Array
           end.and_ENV('moar' => 'a, b, and\, c')
-          ENVied.require
+          envied_require
         end
 
         it 'yields array from string' do
