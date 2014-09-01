@@ -1,5 +1,6 @@
 require 'envied/version'
 require 'envied/cli'
+require 'envied/env_proxy'
 require 'envied/coercer'
 require 'envied/variable'
 require 'envied/configuration'
