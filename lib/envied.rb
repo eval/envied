@@ -10,12 +10,19 @@ class ENVied
     attr_reader :env, :config
   end
 
-  def self.require(*groups)
-    @config ||= Configuration.load
-    @env ||= EnvProxy.new(@config, groups: required_groups(*groups))
-
+  def self.require(*args)
+    env!(*args)
     error_on_missing_variables!
     error_on_uncoercible_variables!
+  end
+
+  def self.env!(*args)
+    @env = begin
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      config = options.fetch(:config) { Configuration.load }
+      groups = required_groups(*args)
+      EnvProxy.new(config, groups: groups)
+    end
   end
 
   def self.error_on_missing_variables!
