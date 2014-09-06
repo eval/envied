@@ -17,6 +17,7 @@ class ENVied
     def extract
       var_occurences = ENVied::EnvVarExtractor.new(globs: options[:globs]).extract
 
+      puts "Found %d occurrences of %d variables:" % [var_occurences.values.flatten.size, var_occurences.size]
       var_occurences.sort.each do |var, occs|
         puts var
         occs.each do |occ|

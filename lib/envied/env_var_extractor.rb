@@ -3,7 +3,7 @@ class ENVied
     def self.defaults
       @defaults ||= begin
         {
-          extensions: %w(ru thor rake rb yml ruby yaml erb builder markerb),
+          extensions: %w(ru thor rake rb yml ruby yaml erb builder markerb haml),
           globs: %w(*.* Thorfile Rakefile {app,config,db,lib,script,test,spec}/*)
         }
       end
@@ -38,14 +38,14 @@ class ENVied
     end
 
 
-    # Extract all keys recursively from ENV used in the code in `globs`.
+    # Extract all keys recursively from files found via `globs`.
     # Any occurence of `ENV['A']` or `ENV.fetch('A')` in code (not in comments), will result
     # in 'A' being extracted.
     #
-    # @param globs [Array<String>] the collection of folders to go through
+    # @param globs [Array<String>] the collection of globs
     #
     # @example
-    #   EnvVarExtractor.extract_from(*%w(app lib))
+    #   EnvVarExtractor.new.extract(*%w(app lib))
     #   # => {'A' => [{:path => 'app/models/user.rb', :line => 2}, {:path => ..., :line => ...}],
     #         'B' => [{:path => 'config/application.rb', :line => 12}]}
     #
