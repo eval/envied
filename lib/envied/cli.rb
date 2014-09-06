@@ -12,7 +12,7 @@ class ENVied
     end
     map %w(-v --version) => :version
 
-    desc "extract", "Shows the variables used in the project"
+    desc "extract", "Shows candidate variables (i.e. occurences of ENV['X'])"
     option :globs, type: :array, default: ENVied::EnvVarExtractor.defaults[:globs], banner: "*.* lib/*"
     def extract
       var_occurences = ENVied::EnvVarExtractor.new(globs: options[:globs]).extract

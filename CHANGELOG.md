@@ -1,6 +1,18 @@
-# 0.7.1 / unreleased
+# 0.7.2 / unreleased
 
-* Add version-task (i.e. envied --version)
+## Added:
+* extract-task: see all ENV-variables used in your project.
+
+  ```bash
+  $ bin/envied extract
+  Found 63 occurrences of 45 variables:
+  BUNDLE_GEMFILE
+  * config/boot.rb:4
+  * config/boot.rb:6
+  ...
+  ```
+
+* version-task (i.e. bin/envied --version)
 
 # 0.7.1 / 2014-08-29
 
