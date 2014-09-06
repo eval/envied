@@ -1,4 +1,5 @@
 require 'thor'
+require 'envied/env_var_extractor'
 
 class ENVied
   class Cli < Thor
@@ -12,9 +13,9 @@ class ENVied
     map %w(-v --version) => :version
 
     desc "extract", "Extract all occurrences of ENV's from your codebase"
+    option :globs, type: :array, default: ENVied::EnvVarExtractor.defaults[:globs], banner: "*.* lib/*"
     def extract
-      require 'envied/env_var_extractor'
-      var_occurences = ENVied::EnvVarExtractor.new(dirs: %w(*.* Rakefile {app,config,db,lib,script,test,spec}/*)).extract
+      var_occurences = ENVied::EnvVarExtractor.new(globs: options[:globs]).extract
 
       var_occurences.sort.each do |var, occs|
         puts var
