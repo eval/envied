@@ -11,6 +11,13 @@ class ENVied
     end
     map %w(-v --version) => :version
 
+    desc "extract", "Extract all occurrences of ENV's from your codebase"
+    def extract
+      require 'envied/env_var_extractor'
+      require 'pp'
+      pp ENVied::EnvVarExtractor.new.extract
+    end
+
     desc "init", "Generates a default Envfile in the current working directory"
     def init
       puts "Writing new Envfile to #{File.expand_path('Envfile')}"
