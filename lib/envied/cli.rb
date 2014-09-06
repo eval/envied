@@ -1,4 +1,5 @@
 require 'thor'
+require 'envied/env_var_extractor'
 
 class ENVied
   class Cli < Thor
@@ -10,6 +11,21 @@ class ENVied
       puts ENVied::VERSION
     end
     map %w(-v --version) => :version
+
+    desc "extract", "Shows the variables used in the project"
+    option :globs, type: :array, default: ENVied::EnvVarExtractor.defaults[:globs], banner: "*.* lib/*"
+    def extract
+      var_occurences = ENVied::EnvVarExtractor.new(globs: options[:globs]).extract
+
+      puts "Found %d occurrences of %d variables:" % [var_occurences.values.flatten.size, var_occurences.size]
+      var_occurences.sort.each do |var, occs|
+        puts var
+        occs.sort_by{|i| i[:path].size }.each do |occ|
+          puts "* %s:%s" % occ.values_at(:path, :line)
+        end
+        puts
+      end
+    end
 
     desc "init", "Generates a default Envfile in the current working directory"
     def init
