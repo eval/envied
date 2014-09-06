@@ -12,7 +12,7 @@ class ENVied
     end
     map %w(-v --version) => :version
 
-    desc "extract", "Extract all occurrences of ENV's from your codebase"
+    desc "extract", "Shows the variables used in the project"
     option :globs, type: :array, default: ENVied::EnvVarExtractor.defaults[:globs], banner: "*.* lib/*"
     def extract
       var_occurences = ENVied::EnvVarExtractor.new(globs: options[:globs]).extract
@@ -20,7 +20,7 @@ class ENVied
       puts "Found %d occurrences of %d variables:" % [var_occurences.values.flatten.size, var_occurences.size]
       var_occurences.sort.each do |var, occs|
         puts var
-        occs.each do |occ|
+        occs.sort_by{|i| i[:path].size }.each do |occ|
           puts "* %s:%s" % occ.values_at(:path, :line)
         end
         puts
