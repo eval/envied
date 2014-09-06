@@ -39,9 +39,9 @@ class ENVied
       template("rails-initializer.tt", 'config/initializers/envied.rb')
     end
 
-    desc "check", "Checks whether you environment contains the defined variables"
+    desc "check", "Checks whether you environment contains required variables"
     long_desc <<-LONG
-      Checks whether defined variables are present and valid in your shell.
+      Checks whether required variables are present and valid in your shell.
 
       On success the process will exit with status 0.
       Else the missing/invalid variables will be shown, and the process will exit with status 1.
@@ -52,7 +52,7 @@ class ENVied
       puts "All variables for group(s) #{options[:groups]} are present and valid"
     end
 
-    desc "check:heroku", "Checks whether a Heroku config contains the defined variables"
+    desc "check:heroku", "Checks whether a Heroku config contains required variables"
 
     long_desc <<-LONG
       Checks the config of your Heroku app against the local Envfile.
