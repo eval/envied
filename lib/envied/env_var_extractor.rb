@@ -3,7 +3,7 @@ class ENVied
     def self.defaults
       @defaults ||= begin
         {
-          extensions: %w(rb yml ruby yaml erb builder markerb),
+          extensions: %w(ru thor rake rb yml ruby yaml erb builder markerb),
           dirs: %w(.)
         }
       end
@@ -54,11 +54,11 @@ class ENVied
       results = Hash.new { |hash, key| hash[key] = [] }
 
       Array(dirs).each do |dir|
-        Dir.glob("#{dir}/*").each do |item|
+        Dir.glob(dir).each do |item|
           next if File.basename(item)[0] == ?.
 
           if File.directory?(item)
-            results.merge!(extract(item))
+            results.merge!(extract("#{item}/*"))
           else
             next unless extensions.detect {|ext| File.extname(item)[ext] }
             File.readlines(item).each_with_index do |line, ix|
