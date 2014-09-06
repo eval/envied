@@ -14,8 +14,15 @@ class ENVied
     desc "extract", "Extract all occurrences of ENV's from your codebase"
     def extract
       require 'envied/env_var_extractor'
-      require 'pp'
-      pp ENVied::EnvVarExtractor.new.extract
+      var_occurences = ENVied::EnvVarExtractor.new(dirs: %w(*.* Rakefile {app,config,db,lib,script,test,spec}/*)).extract
+
+      var_occurences.sort.each do |var, occs|
+        puts var
+        occs.each do |occ|
+          puts "* %s:%s" % occ.values_at(:path, :line)
+        end
+        puts
+      end
     end
 
     desc "init", "Generates a default Envfile in the current working directory"
