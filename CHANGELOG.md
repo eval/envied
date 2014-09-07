@@ -1,4 +1,4 @@
-# 0.7.2 / unreleased
+# 0.7.2 / 2014-9-7
 
 ## Added:
 * extract-task: see all ENV-variables used in your project.
