@@ -3,6 +3,14 @@
 ## Fixed:
 * extract: Multiple variables on line are correctly captured.
 
+## Removed:
+* extract: test/spec-folder are no longer part of the default globs.
+
+  Use the option `--tests` to include it:
+  ```bash
+  $ bundle exec envied extract --tests
+  ```
+
 # 0.7.2 / 2014-9-7
 
 ## Added:

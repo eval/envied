@@ -4,7 +4,7 @@ class ENVied
       @defaults ||= begin
         {
           extensions: %w(ru thor rake rb yml ruby yaml erb builder markerb haml),
-          globs: %w(*.* Thorfile Rakefile {app,config,db,lib,script,test,spec}/*)
+          globs: %w(*.* Thorfile Rakefile {app,config,db,lib,script}/*)
         }
       end
     end

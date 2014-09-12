@@ -12,10 +12,20 @@ class ENVied
     end
     map %w(-v --version) => :version
 
-    desc "extract", "Shows candidate variables (i.e. occurences of ENV['X'])"
+    desc "extract", "Grep code to find ENV-variables"
+    long_desc <<-LONG
+      Greps source-files to find all ENV-variables your code is using.
+
+      This task helps you find potential variables to put in your Envfile.
+
+      By default the test/spec-folders are excluded. Use `--tests` to include them.
+    LONG
     option :globs, type: :array, default: ENVied::EnvVarExtractor.defaults[:globs], banner: "*.* lib/*"
+    option :tests, type: :boolean, default: false, desc: "include tests/specs"
     def extract
-      var_occurences = ENVied::EnvVarExtractor.new(globs: options[:globs]).extract
+      globs = options[:globs]
+      globs << "{test,spec}/*" if options[:tests]
+      var_occurences = ENVied::EnvVarExtractor.new(globs: globs).extract
 
       puts "Found %d occurrences of %d variables:" % [var_occurences.values.flatten.size, var_occurences.size]
       var_occurences.sort.each do |var, occs|
