@@ -1,3 +1,8 @@
+# unreleased
+
+## Fixed:
+* extract: Multiple variables on line are correctly captured.
+
 # 0.7.2 / 2014-9-7
 
 ## Added:

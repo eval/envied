@@ -13,19 +13,6 @@ class ENVied
       self.class.defaults
     end
 
-    def self.env_var_re
-      @env_var_re ||= begin
-        /^[^\#]*           # not matching comments
-          ENV
-          (?:              # non-capture...
-            \[['"] |       # either ENV['
-            \.fetch\(['"]  # or ENV.fetch('
-          )
-          ([a-zA-Z_]+)     # capture variable name
-        /x
-      end
-    end
-
     attr_reader :globs, :extensions
 
     def initialize(options = {})
@@ -37,6 +24,22 @@ class ENVied
       new(options.merge(globs: Array(globs))).extract
     end
 
+    # Greps all ENV-variables from non-comment-parts of line.
+    # Captures 'A' in lines like `ENV['A']`, but also `ENV.fetch('A')`.
+    #
+    # @param line [String] the line to grep
+    #
+    # @example
+    #   extractor.new.capture_variables("config.force_ssl = ENV['FORCE_SSL']")
+    #   # => ["FORCE_SSL"]
+    #   extractor.new.capture_variables("# comment about ENV['FORCE_SSL']")
+    #   # => []
+    #
+    # @return [Array<String>] the names o
+    def capture_variables(line)
+      noncomment, _ = line.split("#", 2)
+      noncomment.scan(/ENV(?:\[|\.fetch\()['"]([a-zA-Z_]+)/).flatten
+    end
 
     # Extract all keys recursively from files found via `globs`.
     # Any occurence of `ENV['A']` or `ENV.fetch('A')` in code (not in comments), will result
@@ -61,8 +64,8 @@ class ENVied
             results.merge!(extract("#{item}/*"))
           else
             next unless extensions.detect {|ext| File.extname(item)[ext] }
-            File.readlines(item, :encoding=>"UTF-8").each_with_index do |line, ix|
-              if variable = line[self.class.env_var_re, 1]
+            File.readlines(item).each_with_index do |line, ix|
+              capture_variables(line).each do |variable|
                 results[variable] << { :path => item, :line => ix.succ }
               end
             end
