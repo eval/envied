@@ -185,10 +185,10 @@ end
 $ envied help
 Commands:
   envied --version             # Shows version number
-  envied check                 # Checks whether you environment contains the defined variables
-  envied check:heroku          # Checks whether a Heroku config contains the defined variables
+  envied check                 # Checks whether you environment contains required variables
+  envied check:heroku          # Checks whether a Heroku config contains required variables
   envied check:heroku:binstub  # Generates a shell script for the check:heroku-task
-  envied extract               # Shows candidate variables (i.e. occurences of ENV['X'])
+  envied extract               # Grep code to find ENV-variables
   envied help [COMMAND]        # Describe available commands or one specific command
   envied init                  # Generates a default Envfile in the current working directory
   envied init:rails            # Generate all files needed for a Rails project
