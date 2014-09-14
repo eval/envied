@@ -139,7 +139,7 @@ As a rule of thumb you should only use defaults:
 ### More examples
 
 * See the [examples](/examples)-folder for a more extensive Envfile
-* See [the Envfile](https://github.com/eval/bunny_drain/blob/c54d7d977afb5e23a92da7a2fd0d39f6a7e29bf1/Envfile) for the bunndy_drain application
+* See [the Envfile](https://github.com/eval/bunny_drain/blob/c54d7d977afb5e23a92da7a2fd0d39f6a7e29bf1/Envfile) for the bunny_drain application
 
 ## Rails
 
