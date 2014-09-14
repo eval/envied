@@ -108,6 +108,14 @@ ENVied.require(:default) #=> Only ENV['FORCE_SSL'] is required
 # On the production server:
 ENVied.require(:default, :production) #=> ...also ENV['NEW_RELIC_LICENSE_KEY'] is required
 
+# You can also pass it a string with the groups separated by comma's:
+ENVied.require('default, production')
+
+# This allows for easily requiring groups using the ENV:
+ENVied.require(ENV['ENVIED_GROUPS'])
+# ...then from the prompt:
+$ ENVIED_GROUPS='default,production' bin/rails server
+
 # BTW the following are equivalent:
 ENVied.require
 ENVied.require(:default)

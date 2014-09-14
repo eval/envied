@@ -39,13 +39,20 @@ class ENVied
 
     desc "init", "Generates a default Envfile in the current working directory"
     def init
-      puts "Writing new Envfile to #{File.expand_path('Envfile')}"
+      puts "Writing Envfile to #{File.expand_path('Envfile')}"
       template("Envfile.tt")
+
+      puts <<-INIT
+Add the following snippet to your app so it's run during initialization:
+ENVied.require(*ENV['ENVIED_GROUPS'] || [:default, ENV['RACK_ENV']])
+INIT
     end
 
     desc "init:rails", "Generate all files needed for a Rails project"
     define_method "init:rails" do
-      init
+      puts "Writing Envfile to #{File.expand_path('Envfile')}"
+      template("Envfile.tt")
+
       template("rails-initializer.tt", 'config/initializers/envied.rb')
     end
 

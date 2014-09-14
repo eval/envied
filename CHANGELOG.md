@@ -1,5 +1,16 @@
 # unreleased
 
+## Added:
+* ENVied.require accepts string with groups, e.g. 'default,production'
+
+  This way it's possible to easily require groups using the ENV:
+  ```
+  # config/initializers/envied.rb
+  ENVied.require(*ENV['ENVIED_GROUPS'] || Rails.groups)
+
+  $ ENVIED_GROUPS='default,production' bin/rails server
+  ```
+
 ## Fixed:
 * extract: Multiple variables on line are correctly captured.
 

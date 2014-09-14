@@ -198,6 +198,28 @@ describe ENVied do
     end
 
     describe "groups" do
+      describe 'requiring' do
+        it 'yields :default when nothing passed to require' do
+          envied_require
+          expect(ENVied.env.groups).to eq [:default]
+        end
+
+        it 'yields groupnames passed to it as string' do
+          envied_require('bar')
+          expect(ENVied.env.groups).to eq [:bar]
+        end
+
+        it 'yields groupnames passed to it as symbols' do
+          envied_require(:foo)
+          expect(ENVied.env.groups).to eq [:foo]
+        end
+
+        it 'yields the groups passed via a string with groupnames' do
+          envied_require('foo,bar')
+          expect(ENVied.env.groups).to eq [:foo, :bar]
+        end
+      end
+
       context 'a variable in a group' do
         before do
           configure do
