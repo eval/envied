@@ -197,17 +197,17 @@ Commands:
 ## Testing
 
 ```bash
-bundle install --binstubs
+bundle install
 
-bin/rspec
+bundle exec rspec
 # or
-bin/rake
+bundle exec rake
 ```
 
 ## Developing
 
 ```bash
-bin/pry --gem
+bundle exec pry --gem
 ```
 
 ## Contributing
