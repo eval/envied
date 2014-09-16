@@ -31,8 +31,8 @@ After [successful installation](#installation), define some variables in `Envfil
 
 ```ruby
 # file: Envfile
-variable :FORCE_SSL, :Boolean
-variable :PORT, :Integer
+variable :FORCE_SSL, :boolean
+variable :PORT, :integer
 ```
 
 ### 2) Check for presence and coercibility
@@ -79,14 +79,14 @@ Add this line to your application's Gemfile:
 
 The following types are supported:
 
-* `:String` (implied)
-* `:Boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'no'/'yes' for resp. false and true)
-* `:Integer`
-* `:Symbol`
-* `:Date` (e.g. '2014-3-26')
-* `:Time` (e.g. '14:00')
-* `:Hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
-* `:Array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
+* `:string` (implied)
+* `:boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'no'/'yes' for resp. false and true)
+* `:integer`
+* `:symbol`
+* `:date` (e.g. '2014-3-26')
+* `:time` (e.g. '14:00')
+* `:hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
+* `:array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
 
 ### Groups
 
@@ -95,10 +95,10 @@ It's similar to groups in a Gemfile:
 
 ```ruby
 # file: Envfile
-variable :FORCE_SSL, :Boolean
+variable :FORCE_SSL, :boolean
 
 group :production do
-  variable :NEW_RELIC_LICENSE_KEY
+  variable :SECRET_KEY_BASE
 end
 ```
 
@@ -106,7 +106,7 @@ end
 # For local development you would typically do:
 ENVied.require(:default) #=> Only ENV['FORCE_SSL'] is required
 # On the production server:
-ENVied.require(:default, :production) #=> ...also ENV['NEW_RELIC_LICENSE_KEY'] is required
+ENVied.require(:default, :production) #=> ...also ENV['SECRET_KEY_BASE'] is required
 
 # You can also pass it a string with the groups separated by comma's:
 ENVied.require('default, production')
