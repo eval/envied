@@ -1,10 +1,10 @@
-## unreleased
+## 0.8.0 / 2014-10-04
 
 ### Added
 
  * the `check` and `check:heroku` task now have a `--quiet` option
 
-    This way no output will appear on STDOUT.
+    This prevents output on STDOUT for a successful check.  
     Handy for wrapper-scripts:
 
         # some bash-script 'ensure-env'
@@ -25,11 +25,11 @@
 
 ### Fixed
 
- * extract: Multiple variables on line are correctly captured.
+ * extract-task would report at most one variable per line of code.
 
 ### Deprecated
 
- * prefer downcased variable types: `variable :PORT, :integer`
+ * titlecase variable types. Use downcased instead: `variable :PORT, :integer`
 
 ### Removed
 
@@ -39,13 +39,13 @@
 
         $ bundle exec envied extract --tests
 
-## 0.7.2 / 2014-9-7
+## 0.7.2 / 2014-09-07
 
 ### Added
 
  * extract-task: see all ENV-variables used in your project.
 
-        $ bin/envied extract
+        $ envied extract
         Found 63 occurrences of 45 variables:
         BUNDLE_GEMFILE
         * config/boot.rb:4
