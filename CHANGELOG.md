@@ -15,6 +15,10 @@
 
  * extract: Multiple variables on line are correctly captured.
 
+### Deprecated
+
+ * prefer downcased variable types: `variable :PORT, :integer`
+
 ### Removed
 
  * extract: test/spec-folder are no longer part of the default globs.
