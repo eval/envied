@@ -1,122 +1,118 @@
-# unreleased
+## unreleased
 
-## Added:
-* ENVied.require accepts string with groups, e.g. 'default,production'
+### Added
 
-  This way it's possible to easily require groups using the ENV:
-  ```
-  # config/initializers/envied.rb
-  ENVied.require(*ENV['ENVIED_GROUPS'] || Rails.groups)
+ * ENVied.require accepts string with groups, e.g. 'default,production'
 
-  $ ENVIED_GROUPS='default,production' bin/rails server
-  ```
+    This way it's possible to easily require groups using the ENV:
 
-## Fixed:
-* extract: Multiple variables on line are correctly captured.
+        # config/initializers/envied.rb
+        ENVied.require(*ENV['ENVIED_GROUPS'] || Rails.groups)
 
-## Removed:
-* extract: test/spec-folder are no longer part of the default globs.
+        $ ENVIED_GROUPS='default,production' bin/rails server
 
-  Use the option `--tests` to include it:
-  ```bash
-  $ bundle exec envied extract --tests
-  ```
+### Fixed
 
-# 0.7.2 / 2014-9-7
+ * extract: Multiple variables on line are correctly captured.
 
-## Added:
-* extract-task: see all ENV-variables used in your project.
+### Removed
 
-  ```bash
-  $ bin/envied extract
-  Found 63 occurrences of 45 variables:
-  BUNDLE_GEMFILE
-  * config/boot.rb:4
-  * config/boot.rb:6
-  ...
-  ```
+ * extract: test/spec-folder are no longer part of the default globs.
 
-* version-task (i.e. bin/envied --version)
+    Use the option `--tests` to include it:
 
-# 0.7.1 / 2014-08-29
+        $ bundle exec envied extract --tests
 
-* Total refactor (TM).
+## 0.7.2 / 2014-9-7
 
-* Fix bug in Heroku binstub.
+### Added
 
-  It checked for group 'default,production' instead of 'default' and 'production'.
+ * extract-task: see all ENV-variables used in your project.
 
-# 0.7.0 / 2014-08-24
+        $ bin/envied extract
+        Found 63 occurrences of 45 variables:
+        BUNDLE_GEMFILE
+        * config/boot.rb:4
+        * config/boot.rb:6
+        ...
 
-* Add init:rails-task for setup in Rails applications.
+ * version-task (i.e. bin/envied --version)
 
-# 0.6.3 / 2014-08-22
+## 0.7.1 / 2014-08-29
 
-* Fix bug: 'false' was not a coercible value.
+ * Total refactor (TM).
 
-# 0.6.2 / 2014-08-20
+ * Fix bug in Heroku binstub.
 
-* Add `envied check:heroku` to do a check on your Heroku app.
+    It checked for group 'default,production' instead of 'default' and 'production'.
 
-* Add `envied check:heroku:binstub` to generate script for convenient 'check:heroku'
+## 0.7.0 / 2014-08-24
 
-# 0.6.1 / 2014-08-13
+ * Add init:rails-task for setup in Rails applications.
 
-* Add `envied check` to check whether defined variables are present and valid.
+## 0.6.3 / 2014-08-22
 
-# 0.6.0 / 2014-08-13
+ * Fix bug: 'false' was not a coercible value.
 
-* The configuration now lives in `Envfile` by default.
+## 0.6.2 / 2014-08-20
 
-# 0.5.0 / 2014-07-02
+ * Add `envied check:heroku` to do a check on your Heroku app.
 
-* add Array Hash types
+ * Add `envied check:heroku:binstub` to generate script for convenient 'check:heroku'
 
-  ```ruby
-  # in env.rb
-  ENVied.configure { variable :TAGS, :Array; variable :HASH, :Hash }
-  ENVied.require
+## 0.6.1 / 2014-08-13
 
-  $ HASH=a=1&b=2 TAGS=tag1,tag2 ruby -renvied -r./env.rb -e 'p ENVied.TAGS'
-  # ["tag1", "tag2"]
-  $ HASH='a=1&b=2' TAGS=tag1,tag2 ruby -renvied -r./env.rb -e 'p ENVied.HASH'
-  # {'a' => '1', 'b' => '2'}
-  ```
+ * Add `envied check` to check whether defined variables are present and valid.
 
-# 0.4.0 / 2014-05-16
+## 0.6.0 / 2014-08-13
 
-* groups added
+ * The configuration now lives in `Envfile` by default.
 
-  This allows for more fine-grained requiring.  
-  See the section in the [README](https://github.com/eval/envied/tree/v0.4.0#groups).
+## 0.5.0 / 2014-07-02
 
-* configuring is now simpler:
+ * add Array Hash types
 
-  ```ruby
-  ENVied.configure { variable :RACK_ENV }
-  # vs
-  ENVied.configure {|env| env.variable :RACK_ENV }
-  ```
+        # in env.rb
+        ENVied.configure { variable :TAGS, :Array; variable :HASH, :Hash }
+        ENVied.require
 
-* Deprecate `require!`. Use `require` instead.
+        $ HASH=a=1&b=2 TAGS=tag1,tag2 ruby -renvied -r./env.rb -e 'p ENVied.TAGS'
+        # ["tag1", "tag2"]
+        $ HASH='a=1&b=2' TAGS=tag1,tag2 ruby -renvied -r./env.rb -e 'p ENVied.HASH'
+        # {'a' => '1', 'b' => '2'}
 
-  Just like requiring groups with Bundler.
+## 0.4.0 / 2014-05-16
 
-* Deprecate lowercase methods for uppercase ENV-variables.
+ * groups added
 
-  `ENV['RACK_ENV']` is no longer accessible as `ENVied.rack_env`, only as `ENVied.RACK_ENV`.  
-  This is not only what you would expect, but it also reduces the chance of clashing with existing class-methods.
+    This allows for more fine-grained requiring.  
+    See the section in the [README](https://github.com/eval/envied/tree/v0.4.0#groups).
 
-# 0.3.0 / 2014-03-14
+ * configuring is now simpler:
 
-* defaults need to be enabled explicitly:
+        ENVied.configure { variable :RACK_ENV }
+        # vs
+        ENVied.configure {|env| env.variable :RACK_ENV }
 
-  `ENVied.configure(enable_defaults: Rails.env.development?) { ... }`
+ * Deprecate `require!`. Use `require` instead.
 
-# 0.2.0 / 2014-03-14
+    Just like requiring groups with Bundler.
 
-* add defaults
+ * Deprecate lowercase methods for uppercase ENV-variables.
 
-# 0.1.0 / 2014-03-13
+    `ENV['RACK_ENV']` is no longer accessible as `ENVied.rack_env`, only as `ENVied.RACK_ENV`.  
+    This is not only what you would expect, but it also reduces the chance of clashing with existing class-methods.
 
-* add defaults
+## 0.3.0 / 2014-03-14
+
+ * defaults need to be enabled explicitly:
+
+    `ENVied.configure(enable_defaults: Rails.env.development?) { ... }`
+
+## 0.2.0 / 2014-03-14
+
+ * add defaults
+
+## 0.1.0 / 2014-03-13
+
+ * add defaults
