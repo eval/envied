@@ -2,6 +2,18 @@
 
 ### Added
 
+ * the `check` and `check:heroku` task now have a `--quiet` option
+
+    This way no output will appear on STDOUT.
+    Handy for wrapper-scripts:
+
+        # some bash-script 'ensure-env'
+        #!/usr/bin/env bash
+        bundle exec envied check --quiet --groups default && $@
+
+        $ ./ensure-env echo 'works!'
+        works!
+
  * ENVied.require accepts string with groups, e.g. 'default,production'
 
     This way it's possible to easily require groups using the ENV:
