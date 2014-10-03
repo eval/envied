@@ -64,9 +64,12 @@ INIT
       Else the missing/invalid variables will be shown, and the process will exit with status 1.
     LONG
     option :groups, type: :array, default: %w(default), banner: 'default production'
+    option :quiet, type: :boolean, desc: 'Communicate success of the check only via the exit status.'
     def check
       ENVied.require(*options[:groups])
-      puts "All variables for group(s) #{options[:groups]} are present and valid"
+      unless options[:quiet]
+        puts "All variables for group(s) #{options[:groups]} are present and valid"
+      end
     end
 
     desc "check:heroku", "Checks whether a Heroku config contains required variables"
@@ -84,6 +87,7 @@ INIT
       Else the missing/invalid variables will be shown, and the process will exit with status 1.
     LONG
     option :groups, type: :array, default: %w(default production), banner: 'default production'
+    option :quiet, type: :boolean, desc: 'Communicate success of the check only via the exit status.'
     define_method "check:heroku" do
       if STDIN.tty?
         error <<-ERR
@@ -98,7 +102,9 @@ ERR
       end]
       ENV.replace({}).update(heroku_env)
       ENVied.require(*options[:groups])
-      puts "All variables for group(s) #{options[:groups]} are present and valid in your Heroku app"
+      unless options[:quiet]
+        puts "All variables for group(s) #{options[:groups]} are present and valid in your Heroku app"
+      end
     end
 
     desc "check:heroku:binstub", "Generates a shell script for the check:heroku-task"
