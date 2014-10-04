@@ -142,7 +142,7 @@ Please remember that ENVied only **reads** from ENV; it doesn't mutate ENV.
 Don't let setting a default for, say `RAILS_ENV`, give you the impression that `ENV['RAILS_ENV']` is set.  
 As a rule of thumb you should only use defaults:
 * for local development
-* for ENV-variables that your application introduces (i.e. for `ENV['STAFF_EMAILS']` not for `ENV['REDIS_URL']`)
+* for ENV-variables that are solely used by your application (i.e. for `ENV['STAFF_EMAILS']`, not for `ENV['RAILS_ENV']`)
 
 ### More examples
 
@@ -151,7 +151,8 @@ As a rule of thumb you should only use defaults:
 
 ## Rails & Spring
 
-**tl;dr** use the `init:rails`-task to generate the necessary files for a Rails app (see [installation](#installation)).
+**tl;dr** use the `init:rails`-task to generate the necessary files for a Rails app (see [installation](#installation)).  
+Remember: the environment as seen by Spring is not up-to-date until *after* initialization - this is good enough for checking the environment, but too late to use it to configure your app.
 
 ---
 
@@ -193,14 +194,14 @@ end
 ```bash
 $ envied help
 Commands:
-  envied --version             # Shows version number
-  envied check                 # Checks whether you environment contains required variables
-  envied check:heroku          # Checks whether a Heroku config contains required variables
-  envied check:heroku:binstub  # Generates a shell script for the check:heroku-task
-  envied extract               # Grep code to find ENV-variables
-  envied help [COMMAND]        # Describe available commands or one specific command
-  envied init                  # Generates a default Envfile in the current working directory
-  envied init:rails            # Generate all files needed for a Rails project
+  envied check                   # Checks whether you environment contains required variables
+  envied check:heroku            # Checks whether a Heroku config contains required variables
+  envied check:heroku:binstub    # Generates a shell script for the check:heroku-task
+  envied extract                 # Grep code to find ENV-variables
+  envied help [COMMAND]          # Describe available commands or one specific command
+  envied init                    # Generates a default Envfile in the current working directory
+  envied init:rails              # Generate all files needed for a Rails project
+  envied version, --version, -v  # Shows version number
 ```
 
 ## Testing
