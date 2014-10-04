@@ -38,7 +38,7 @@ class ENVied
     # @return [Array<String>] the names o
     def capture_variables(line)
       noncomment, _ = line.split("#", 2)
-      noncomment.scan(/ENV(?:\[|\.fetch\()['"]([a-zA-Z_]+)/).flatten
+      noncomment.scan(/ENV(?:\[|\.fetch\()['"]([^'"]+)['"]/).flatten
     end
 
     # Extract all keys recursively from files found via `globs`.

@@ -13,7 +13,8 @@ describe ENVied::EnvVarExtractor do
       %{self.a = ENV.fetch("A")]} => %w(A),
       %{self.a = ENV.fetch("A")]} => %w(A),
       %{# self.a = ENV["A"]} => %w(),
-      %{self.a = ENV["A"] && self.b = ENV["B"]} => %w(A B)
+      %{self.a = ENV["A"] && self.b = ENV["B"]} => %w(A B),
+      %{self.a = ENV["A3"]} => %w(A3)
     }.each do |line, expected|
       it "captures #{expected} from #{line.inspect}" do
         expect(capture_variables(line)).to contain_exactly(*expected)
