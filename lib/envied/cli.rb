@@ -6,7 +6,7 @@ class ENVied
     include Thor::Actions
     source_root File.expand_path('../templates', __FILE__)
 
-    desc "--version", "Shows version number"
+    desc "version, --version, -v", "Shows version number"
     def version
       puts ENVied::VERSION
     end
@@ -16,7 +16,7 @@ class ENVied
     long_desc <<-LONG
       Greps source-files to find all ENV-variables your code is using.
 
-      This task helps you find potential variables to put in your Envfile.
+      This task helps you find variables to put in your Envfile.
 
       By default the test/spec-folders are excluded. Use `--tests` to include them.
     LONG
@@ -43,7 +43,7 @@ class ENVied
       template("Envfile.tt")
 
       puts <<-INIT
-Add the following snippet to your app so it's run during initialization:
+Add the following snippet (or similar) to your app's initialization:
 ENVied.require(*ENV['ENVIED_GROUPS'] || [:default, ENV['RACK_ENV']])
 INIT
     end
@@ -81,7 +81,7 @@ INIT
 
       heroku config | bundle exec envied check:heroku
 
-      It's more convenient to generate a shell script using the check:heroku:binstub-task.
+      Use the check:heroku:binstub-task to turn this into a bash-script.
 
       On success the process will exit with status 0.
       Else the missing/invalid variables will be shown, and the process will exit with status 1.

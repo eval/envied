@@ -2,6 +2,7 @@
 
 ### Added
 
+ * the `check:heroku:binstub` task uses ENV['HEROKU_APP'] as app-option if present
  * the `check` and `check:heroku` task now have a `--quiet` option
 
     This prevents output on STDOUT for a successful check.  
