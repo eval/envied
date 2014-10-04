@@ -27,6 +27,7 @@
 ### Fixed
 
  * extract-task would report at most one variable per line of code.
+ * extract-task would not extract variable names with digits
 
 ### Deprecated
 
