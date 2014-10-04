@@ -114,14 +114,16 @@ ERR
       The same as the check:heroku-task, but all in one script (no need to pipe `heroku config` to it etc.).
 
     LONG
-    option :dest, banner: "where to put the script", default: 'bin/heroku-env-check'
-    option :app, banner: "name of Heroku app"
+    option :dest, banner: "where to put the script", desc: "Default: bin/<app>-env-check or bin/heroku-env-check"
+    option :app, banner: "name of Heroku app", desc: "uses ENV['HEROKU_APP'] as default if present", default: ENV['HEROKU_APP']
     option :groups, type: :array, default: %w(default production), banner: 'default production'
     define_method "check:heroku:binstub" do
       require 'fileutils'
       @app = options[:app]
-      @dest = @app ? File.join(*%W(bin #{@app}-env-check)) : options[:dest]
+      @dest = options[:dest]
+      @dest ||= File.join(*%W(bin #{(@app || 'heroku')}-env-check))
       @groups = options[:groups]
+
       full_dest = File.expand_path(@dest)
       template("heroku-env-check.tt", full_dest)
       FileUtils.chmod 0755, full_dest
