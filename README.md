@@ -17,7 +17,7 @@
   * [Groups](#groups)
   * [Defaults](#defaults)
   * [More examples](#more-examples)
-* [Rails](#rails)
+* [Rails](#rails--spring)
 * [Command-line interface](#command-line-interface)
 * [Testing](#testing)
 * [Developing](#developing)
