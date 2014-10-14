@@ -15,8 +15,8 @@ class ENVied
       end
     end
 
-    def enable_defaults!(value = nil, &block)
-      @defaults_enabled = (value.nil? ? block : value)
+    def enable_defaults!(value = true, &block)
+      @defaults_enabled = block_given? ? block.call : value
     end
 
     def defaults_enabled?
