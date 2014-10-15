@@ -2,11 +2,13 @@
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
+For the rationale behind this project, see this [blogpost](http://www.gertgoet.com/2014/10/14/envied-or-how-i-stopped-worrying-about-ruby-s-env.html).
+
 ## Features:
 
 * check for presence and correctness of ENV-variables
 * access to typed ENV-variables (integers, booleans etc. instead of just strings)
-* check the presence and correctness of Heroku config
+* check the presence and correctness of a Heroku config
 
 ## Contents
 
