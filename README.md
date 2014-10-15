@@ -21,6 +21,7 @@ For the rationale behind this project, see this [blogpost](http://www.gertgoet.c
   * [More examples](#more-examples)
 * [Rails](#rails--spring)
 * [Command-line interface](#command-line-interface)
+* [How do I...](#how-do-i)
 * [Testing](#testing)
 * [Developing](#developing)
 * [Contributing](#contributing)
@@ -160,6 +161,8 @@ See this [wiki-page](https://github.com/eval/envied/wiki/Spring-gotchas) for mor
 
 ## Command-line interface
 
+For help on a specific command, use `envied help <command>`.
+
 ```bash
 $ envied help
 Commands:
@@ -171,6 +174,41 @@ Commands:
   envied init                    # Generates a default Envfile in the current working directory
   envied init:rails              # Generate all files needed for a Rails project
   envied version, --version, -v  # Shows version number
+```
+
+## How do I
+
+### ...find all ENV-variables my app is currently using?
+
+```
+$ bundle exec envied extract
+```
+
+This comes in handy when you're not using ENVied yet. It will find all `ENV['EKY']` and `ENV.fetch('KEY')` statements in your project.
+
+It assumes a standard project layout (see the default value for the globs-option).
+
+### ...check the config of a Heroku app?
+
+The easiest/quickest is to run:
+
+```
+$ heroku config | bundle exec envied check:heroku
+```
+
+This is equivalent to having the heroku config as your local environment and running `envied check --groups default production`.
+
+You want to run this right before a deploy to Heroku. This prevents that your app will crash during bootup because ENV-variables are missing from heroku config.
+
+You can turn the above into a handy binstub like so:
+```
+$ bundle exec envied check:heroku:binstub
+# created bin/heroku-env-check
+```
+
+This way you can do stuff like:
+```
+$ ./bin/heroku-env-check && git push live master
 ```
 
 ## Testing
