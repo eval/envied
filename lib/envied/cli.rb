@@ -63,7 +63,7 @@ INIT
       On success the process will exit with status 0.
       Else the missing/invalid variables will be shown, and the process will exit with status 1.
     LONG
-    option :groups, type: :array, default: %w(default), banner: 'default production'
+    option :groups, type: :array, desc: "uses ENV['ENVIED_GROUPS'] as default if present", default: ENV['ENVIED_GROUPS'] || %w(default), banner: 'default production'
     option :quiet, type: :boolean, desc: 'Communicate success of the check only via the exit status.'
     def check
       ENVied.require(*options[:groups])

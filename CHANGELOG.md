@@ -1,3 +1,13 @@
+## unreleased
+
+### Added
+
+ * the `check` task uses ENV['ENVIED_GROUPS'] as default groups-option if present
+
+### Fixed
+
+ * calling `enable_defaults!` without arguments now does what it says
+
 ## 0.8.0 / 2014-10-04
 
 ### Added
