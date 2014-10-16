@@ -100,10 +100,13 @@ ERR
       heroku_env = Hash[config.split("\n")[1..-1].each_with_object([]) do |i, res|
         res << i.split(":", 2).map(&:strip)
       end]
+
       ENV.replace({}).update(heroku_env)
-      ENVied.require(*options[:groups])
+
+      requested_groups = ENV['ENVIED_GROUPS'] || options[:groups]
+      ENVied.require(*requested_groups)
       unless options[:quiet]
-        puts "All variables for group(s) #{options[:groups]} are present and valid in your Heroku app"
+        puts "All variables for group(s) #{requested_groups} are present and valid in your Heroku app"
       end
     end
 
