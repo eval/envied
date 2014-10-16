@@ -3,9 +3,17 @@ class ENVied
     attr_reader :current_group, :defaults_enabled, :coercer
 
     def initialize(options = {}, &block)
-      @defaults_enabled = options.fetch(:enable_defaults, false)
       @coercer = options.fetch(:coercer, Coercer.new)
+      @defaults_enabled = options.fetch(:enable_defaults, defaults_enabled_default)
       instance_eval(&block) if block_given?
+    end
+
+    def defaults_enabled_default
+      if ENV['ENVIED_ENABLE_DEFAULTS'].nil?
+        false
+      else
+        @coercer.coerce(ENV['ENVIED_ENABLE_DEFAULTS'], :boolean)
+      end
     end
 
     def self.load(options = {})

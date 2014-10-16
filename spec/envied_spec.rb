@@ -128,6 +128,13 @@ describe ENVied do
           expect(subject.defaults_enabled?).to_not be
         end
 
+        it 'yields ENV["ENVIED_ENABLE_DEFAULTS"] if not set otherwise' do
+          stub_const("ENV", {'ENVIED_ENABLE_DEFAULTS' => '1'})
+          configure
+
+          expect(subject.defaults_enabled?).to be
+        end
+
         it 'can be enabled via #configure' do
           configure(enable_defaults: true){ }
 
@@ -202,6 +209,12 @@ describe ENVied do
         it 'yields :default when nothing passed to require' do
           envied_require
           expect(ENVied.env.groups).to eq [:default]
+        end
+
+        it 'takes ENV["ENVIED_GROUPS"] into account when nothing passed to require' do
+          and_ENV('ENVIED_GROUPS' => 'baz')
+          envied_require
+          expect(ENVied.env.groups).to eq [:baz]
         end
 
         it 'yields groupnames passed to it as string' do

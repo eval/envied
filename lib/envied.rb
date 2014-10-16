@@ -11,16 +11,17 @@ class ENVied
   end
 
   def self.require(*args)
-    env!(*args)
+    options = args.last.is_a?(Hash) ? args.pop : {}
+    requested_groups = (args && !args.empty?) ? args : ENV['ENVIED_GROUPS']
+    env!(requested_groups, options)
     error_on_missing_variables!
     error_on_uncoercible_variables!
   end
 
-  def self.env!(*args)
+  def self.env!(requested_groups, options = {})
     @env = begin
-      options = args.last.is_a?(Hash) ? args.pop : {}
       config = options.fetch(:config) { Configuration.load }
-      groups = required_groups(*args)
+      groups = required_groups(*requested_groups)
       EnvProxy.new(config, groups: groups)
     end
   end
