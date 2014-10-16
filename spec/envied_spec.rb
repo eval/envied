@@ -135,7 +135,7 @@ describe ENVied do
         end
 
         it 'can be enabled via a configure-block' do
-          configure { self.enable_defaults!(true) }
+          configure { self.enable_defaults! }
 
           expect(subject.defaults_enabled?).to be
         end
