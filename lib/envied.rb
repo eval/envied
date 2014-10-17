@@ -15,8 +15,10 @@ class ENVied
     options = args.last.is_a?(Hash) ? args.pop : {}
     requested_groups = (args && !args.empty?) ? args : ENV['ENVIED_GROUPS']
     env!(requested_groups, options)
-    error_on_missing_variables!
-    error_on_uncoercible_variables!
+    error_on_missing_variables!(options)
+    error_on_uncoercible_variables!(options)
+
+    ensure_spring_after_fork_require(args, options)
   end
 
   def self.env!(requested_groups, options = {})
@@ -27,22 +29,22 @@ class ENVied
     end
   end
 
-  def self.error_on_missing_variables!
+  def self.error_on_missing_variables!(options = {})
     names = env.missing_variables.map(&:name)
     if names.any?
       msg = "The following environment variables should be set: #{names * ', '}."
-      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled?
+      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
       raise msg
     end
   end
 
-  def self.error_on_uncoercible_variables!
+  def self.error_on_uncoercible_variables!(options = {})
     errors = env.uncoercible_variables.map do |v|
       "%{name} ('%{value}' can't be coerced to %{type})" % {name: v.name, value: env.value_to_coerce(v), type: v.type }
     end
     if errors.any?
       msg = "The following environment variables are not coercible: #{errors.join(", ")}."
-      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled?
+      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
       raise msg
     end
   end
@@ -51,6 +53,12 @@ class ENVied
     splitter = ->(group){ group.is_a?(String) ? group.split(/ *, */) : group }
     result = groups.compact.map(&splitter).flatten
     result.any? ? result.map(&:to_sym) : [:default]
+  end
+
+  def self.ensure_spring_after_fork_require(args, options = {})
+    if spring_enabled? && !options[:via_spring]
+      Spring.after_fork { ENVied.require(args, options.merge(:via_spring => true)) }
+    end
   end
 
   def self.springify(&block)

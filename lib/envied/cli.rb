@@ -53,8 +53,12 @@ INIT
       puts "Writing Envfile to #{File.expand_path('Envfile')}"
       template("Envfile.tt")
       inject_into_file "config/application.rb", "\nENVied.require(*ENV['ENVIED_GROUPS'] || Rails.groups)", after: /^Bundler.require.+$/
-      legacy_initializer = 'config/initializers/envied.rb'
-      comment_lines legacy_initializer, /ENVied.require/ if File.exists?(legacy_initializer)
+      legacy_initializer = Dir['config/initializers/*envied*.rb'].first
+      if File.exists?(legacy_initializer)
+        puts "Removing 'ENVied.require' from #{legacy_initializer.inspect}."
+        puts "(you might want to remove the whole file)"
+        comment_lines legacy_initializer, /ENVied.require/
+      end
     end
 
     desc "check", "Checks whether you environment contains required variables"
