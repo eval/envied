@@ -52,7 +52,7 @@ INIT
     define_method "init:rails" do
       puts "Writing Envfile to #{File.expand_path('Envfile')}"
       template("Envfile.tt")
-      inject_into_file "config/application.rb", "\nENVied.require(*ENV['ENVIED_GROUPS'] || Rails.groups)", after: %r{require 'rails/all'}
+      inject_into_file "config/application.rb", "\nENVied.require(*ENV['ENVIED_GROUPS'] || Rails.groups)", after: /^ *Bundler.require.+$/
       legacy_initializer = Dir['config/initializers/*envied*.rb'].first
       if legacy_initializer && File.exists?(legacy_initializer)
         puts "Removing 'ENVied.require' from #{legacy_initializer.inspect}."
