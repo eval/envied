@@ -137,8 +137,8 @@ Note that 'easily bootstrap' is quite the opposite of 'fail-fast when not all EN
 # Envfile
 enable_defaults! { ENV['RACK_ENV'] == 'development' }
 
-variable :FORCE_SSL, :Boolean, default: false
-variable :PORT, :Integer, default: proc {|envied| envied.FORCE_SSL ? 443 : 80 }
+variable :FORCE_SSL, :boolean, default: 'false'
+variable :PORT, :integer, default: proc {|envied| envied.FORCE_SSL ? 443 : 80 }
 ```
 
 Please remember that ENVied only **reads** from ENV; it doesn't mutate ENV.
