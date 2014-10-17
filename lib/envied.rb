@@ -8,6 +8,7 @@ require 'envied/configuration'
 class ENVied
   class << self
     attr_reader :env, :config
+    alias_method :required?, :env
   end
 
   def self.require(*args)
@@ -28,14 +29,22 @@ class ENVied
 
   def self.error_on_missing_variables!
     names = env.missing_variables.map(&:name)
-    raise "The following environment variables should be set: #{names * ', '}" if names.any?
+    if names.any?
+      msg = "The following environment variables should be set: #{names * ', '}."
+      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled?
+      raise msg
+    end
   end
 
   def self.error_on_uncoercible_variables!
     errors = env.uncoercible_variables.map do |v|
       "%{name} ('%{value}' can't be coerced to %{type})" % {name: v.name, value: env.value_to_coerce(v), type: v.type }
     end
-    raise "The following environment variables are not coercible: #{errors.join(", ")}" if errors.any?
+    if errors.any?
+      msg = "The following environment variables are not coercible: #{errors.join(", ")}."
+      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled?
+      raise msg
+    end
   end
 
   def self.required_groups(*groups)
@@ -45,6 +54,11 @@ class ENVied
   end
 
   def self.springify(&block)
+    if defined?(ActiveSupport::Deprecation.warn) && !required?
+      ActiveSupport::Deprecation.warn(<<-MSG)
+It's no longer recommended to `ENVied.require` within ENVied.springify's block. Please re-run `envied init:rails` to upgrade.
+MSG
+    end
     if spring_enabled?
       Spring.after_fork(&block)
     else

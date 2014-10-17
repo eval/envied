@@ -1,6 +1,0 @@
-ENVied.springify do
-  ENVied.require(*ENV['ENVIED_GROUPS'] || Rails.groups)
-
-  # Put any initialization based on ENV-variables below, e.g.:
-  # Rails.configuration.force_ssl = ENVied.FORCE_SSL
-end

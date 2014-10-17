@@ -52,8 +52,9 @@ INIT
     define_method "init:rails" do
       puts "Writing Envfile to #{File.expand_path('Envfile')}"
       template("Envfile.tt")
-
-      template("rails-initializer.tt", 'config/initializers/envied.rb')
+      inject_into_file "config/application.rb", "\nENVied.require(*ENV['ENVIED_GROUPS'] || Rails.groups)", after: /^Bundler.require.+$/
+      legacy_initializer = 'config/initializers/envied.rb'
+      comment_lines legacy_initializer, /ENVied.require/ if File.exists?(legacy_initializer)
     end
 
     desc "check", "Checks whether you environment contains required variables"

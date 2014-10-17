@@ -204,8 +204,17 @@ describe ENVied do
       end
     end
 
+    describe "::required?" do
+      it 'yields true-ish when ::require is called' do
+        expect {
+          envied_require
+        }.to change { ENVied.required? }.from(nil).to(anything)
+      end
+    end
+
     describe "groups" do
       describe 'requiring' do
+
         it 'yields :default when nothing passed to require' do
           envied_require
           expect(ENVied.env.groups).to eq [:default]
