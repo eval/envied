@@ -6,6 +6,7 @@
 
 ### Fixed
 
+ * running `check:heroku` takes Heroku's value of ENVIED_GROUPS into account
  * calling `enable_defaults!` without arguments now does what it says
 
 ## 0.8.0 / 2014-10-04
