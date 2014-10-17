@@ -152,13 +152,6 @@ As a rule of thumb you should only use defaults:
 * See the [examples](/examples)-folder for a more extensive Envfile
 * See [the Envfile](https://github.com/eval/bunny_drain/blob/c54d7d977afb5e23a92da7a2fd0d39f6a7e29bf1/Envfile) for the bunny_drain application
 
-## Rails & Spring
-
-Long story short: Checking the presence of ENV variables using `ENVied.require` *will* work (use the `init:rails`-task and you're all set).  
-What won't work: relying on values from `ENV` (and thus `ENVied`) somewhere in `config/**/*.rb` **if these values vary between environments**.
-
-See this [wiki-page](https://github.com/eval/envied/wiki/Spring-gotchas) for more background info.
-
 ## Command-line interface
 
 For help on a specific command, use `envied help <command>`.
