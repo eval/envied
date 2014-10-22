@@ -177,7 +177,7 @@ Commands:
 $ bundle exec envied extract
 ```
 
-This comes in handy when you're not using ENVied yet. It will find all `ENV['EKY']` and `ENV.fetch('KEY')` statements in your project.
+This comes in handy when you're not using ENVied yet. It will find all `ENV['KEY']` and `ENV.fetch('KEY')` statements in your project.
 
 It assumes a standard project layout (see the default value for the globs-option).
 
