@@ -1,3 +1,9 @@
+## unreleased
+
+### Fixed
+
+ * Envfile: type string is also correctly implied when providing a default.
+
 ## 0.8.1 / 2014-10-18
 
 ### Added

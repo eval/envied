@@ -33,7 +33,10 @@ class ENVied
         @defaults_enabled
     end
 
-    def variable(name, type = :String, options = {})
+    def variable(name, *args)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      type = args.first || :string
+
       unless coercer.supported_type?(type)
         raise ArgumentError,
           "Variable type (of #{name}) should be one of #{coercer.supported_types}"

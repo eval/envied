@@ -15,4 +15,9 @@ class ENVied::Variable
   def default_value(*args)
     default.respond_to?(:call) ? default[*args] : default
   end
+
+  def ==(other)
+    self.class == other.class &&
+      [name, type, group, default] == [other.name, other.type, other.group, other.default]
+  end
 end
