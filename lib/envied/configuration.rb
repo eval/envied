@@ -45,9 +45,11 @@ class ENVied
       variables << ENVied::Variable.new(name, type, options)
     end
 
-    def group(name, &block)
-      @current_group = name.to_sym
-      yield
+    def group(*names, &block)
+      names.each do |name|
+        @current_group = name.to_sym
+        yield
+      end
     ensure
       @current_group = nil
     end

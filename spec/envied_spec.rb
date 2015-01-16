@@ -283,6 +283,28 @@ describe ENVied do
         end
       end
 
+      context 'a variable in multiple groups' do
+        before do
+          configure do
+            variable :moar
+
+            group :foo, :moo do
+              variable :bar
+            end
+          end.and_no_ENV
+        end
+
+        it 'is required when requiring any of the groups' do
+          expect {
+            envied_require(:foo)
+          }.to raise_error(/bar/)
+
+          expect {
+            envied_require(:moo)
+          }.to raise_error(/bar/)
+        end
+      end
+
       describe 'Hashable' do
         before do
           configure do
