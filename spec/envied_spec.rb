@@ -98,6 +98,37 @@ describe ENVied do
       end
     end
 
+    context 'ENV variables with "allow_blank" set to false' do
+      before do
+        configuration = configure do
+          variable :STRING_1, :string, allow_blank: false
+          variable :STRING_2, :string, allow_blank: false
+          variable :STRING_3, :string
+
+          variable :ARRAY_1, :array, allow_blank: false
+          variable :ARRAY_2, :array, allow_blank: false
+          variable :ARRAY_3, :array
+
+          variable :HASH_1, :hash, allow_blank: false
+          variable :HASH_2, :hash, allow_blank: false
+          variable :HASH_3, :hash
+        end
+
+        configuration.and_ENV(
+          'STRING_1' => '1', 'STRING_2' => '', 'STRING_3' => '',
+          'BOOL_1' => 'yes', 'BOOL_2' => '', 'BOOL_3' => 'false',
+          'ARRAY_1' => '1,2', 'ARRAY_2' => ',', 'ARRAY_3' => '',
+          'HASH_1' => 'a=1', 'HASH_2' => '', 'HASH_3' => ''
+        )
+      end
+
+      it 'should raise an error specifying which ENV variables are blank' do
+        expect { envied_require }.to(
+          raise_error('The following environment variables are empty: STRING_2, ARRAY_2, HASH_2.')
+        )
+      end
+    end
+
     context 'configuring' do
       it 'raises error when configuring variable of unknown type' do
         expect {

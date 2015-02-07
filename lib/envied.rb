@@ -17,6 +17,7 @@ class ENVied
     env!(requested_groups, options)
     error_on_missing_variables!(options)
     error_on_uncoercible_variables!(options)
+    error_on_blank_variables!(options)
 
     ensure_spring_after_fork_require(args, options)
   end
@@ -44,6 +45,15 @@ class ENVied
     end
     if errors.any?
       msg = "The following environment variables are not coercible: #{errors.join(", ")}."
+      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
+      raise msg
+    end
+  end
+
+  def self.error_on_blank_variables!(options = {})
+    names = env.blank_variables.map(&:name)
+    if names.any?
+      msg = "The following environment variables are empty: #{names * ', '}."
       msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
       raise msg
     end

@@ -17,6 +17,10 @@ class ENVied
       variables.reject(&method(:coerced?)).reject(&method(:coercible?))
     end
 
+    def blank_variables
+      variables.select(&method(:blank?)).reject(&:allow_blank)
+    end
+
     def variables
       @variables ||= begin
         config.variables.select {|v| groups.include?(v.group) }
@@ -64,6 +68,14 @@ class ENVied
 
     def coerced?(var)
       coercer.coerced?(value_to_coerce(var))
+    end
+
+    # Given a value for an ENVied::Variable, determine if the value is
+    # empty or nil.
+    def blank?(var)
+      val = coerce(var)
+      return true if val.nil?
+      val.respond_to?(:empty?) ? val.empty? : val.nil?
     end
   end
 end

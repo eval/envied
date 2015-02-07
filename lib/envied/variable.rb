@@ -1,11 +1,12 @@
 class ENVied::Variable
-  attr_reader :name, :type, :group, :default
+  attr_reader :name, :type, :group, :default, :allow_blank
 
   def initialize(name, type, options = {})
     @name = name.to_sym
     @type = type.to_sym
     @group = options.fetch(:group, :default).to_sym
     @default = options[:default]
+    @allow_blank = options.fetch(:allow_blank) { true }
 
     #if !@default.is_a? String
     #  raise ArgumentError, "Default values should be strings (variable #{@name})"
