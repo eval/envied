@@ -12,6 +12,7 @@ describe ENVied do
 
   before do
     reset_env
+    reset_envied_config
     reset_configuration
   end
 
@@ -21,6 +22,10 @@ describe ENVied do
 
   def reset_env
     ENVied.instance_eval { @env = nil }
+  end
+
+  def reset_envied_config
+    ENVied.instance_eval { @config = nil }
   end
 
   context 'configured' do
@@ -76,6 +81,13 @@ describe ENVied do
       envied_require
 
       expect(described_class).to_not respond_to :B
+    end
+
+    it 'sets ENVied.config' do
+      configured_with(a: :Integer).and_ENV({'a' => '1'})
+      envied_require
+
+      expect(ENVied.config).to_not be(nil)
     end
 
     context 'ENV contains not all configured variables' do

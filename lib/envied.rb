@@ -23,9 +23,9 @@ class ENVied
 
   def self.env!(requested_groups, options = {})
     @env = begin
-      config = options.fetch(:config) { Configuration.load }
+      @config = options.fetch(:config) { Configuration.load }
       groups = required_groups(*requested_groups)
-      EnvProxy.new(config, groups: groups)
+      EnvProxy.new(@config, groups: groups)
     end
   end
 
