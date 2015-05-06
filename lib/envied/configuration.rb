@@ -1,6 +1,6 @@
 class ENVied
   class Configuration
-    attr_reader :current_group, :defaults_enabled, :coercer
+    attr_reader :current_group, :current_conditional, :defaults_enabled, :coercer
 
     def initialize(options = {}, &block)
       @coercer = options.fetch(:coercer, Coercer.new)
@@ -42,6 +42,10 @@ class ENVied
           "Variable type (of #{name}) should be one of #{coercer.supported_types}"
       end
       options[:group] = current_group if current_group
+      if current_conditional
+        options[:conditional] = current_conditional
+        variables << current_conditional
+      end
       variables << ENVied::Variable.new(name, type, options)
     end
 
@@ -50,6 +54,19 @@ class ENVied
       yield
     ensure
       @current_group = nil
+    end
+
+    def conditional(name, *args, &block)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      type = args.first || :boolean
+      unless coercer.supported_type?(type)
+        raise ArgumentError,
+          "Variable type (of #{name}) should be one of #{coercer.supported_types}"
+      end
+      @current_conditional = ENVied::Variable.new(name.to_sym, type, options)
+      yield
+    ensure
+      @current_conditional = nil
     end
 
     def variables

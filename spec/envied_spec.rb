@@ -224,6 +224,58 @@ describe ENVied do
       end
     end
 
+    describe "conditionals" do
+      context 'a variable in a conditional' do
+        before do
+          configure do
+            conditional :foo do
+              variable :bar
+            end
+          end.and_no_ENV
+        end
+
+        it 'is not required when the conditional is false' do
+          stub_const("ENV", {'foo' => 'false'})
+          expect {
+            envied_require
+          }.not_to raise_error
+        end
+
+        it 'is required when the conditional is true' do
+          stub_const("ENV", {'foo' => 'true'})
+          expect {
+            envied_require
+          }.to raise_error(/bar/)
+        end
+
+        it 'wont define non-required variables on ENVied' do
+          stub_const("ENV", {'foo' => 'false'})
+          envied_require
+
+          expect {
+            described_class.bar
+          }.to raise_error
+        end
+      end
+
+      context 'an empty conditional group' do
+        before do
+          configure do
+            conditional :foo do
+            end
+          end.and_no_ENV
+        end
+
+        it 'wont define the conditional on ENVied' do
+          envied_require
+
+          expect {
+            described_class.foo
+          }.to raise_error
+        end
+      end
+    end
+
     describe "groups" do
       describe 'requiring' do
 

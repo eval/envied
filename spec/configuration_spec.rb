@@ -28,6 +28,35 @@ describe ENVied::Configuration do
     end
   end
 
+  describe '#conditional' do
+    def with_envfile(&block)
+      @config = described_class.new(&block)
+    end
+    attr_reader :config
+
+    it 'adds the conditional variable and the variable within the conditional' do
+      with_envfile do
+        conditional :foo do
+          variable :bar, default: 'bar'
+        end
+      end
+
+      foo_var = ENVied::Variable.new(:foo, :boolean)
+      expect(config.variables).to include foo_var
+      expect(config.variables).to include ENVied::Variable.new(:bar, :string, default: 'bar', conditional: foo_var)
+    end
+
+    it 'sets boolean as type when no type is given' do
+      with_envfile do
+        conditional :foo, default: 'false' do
+          variable :bar, default: 'bar'
+        end
+      end
+
+      expect(config.variables).to include ENVied::Variable.new(:foo, :boolean, default: 'false')
+    end
+  end
+
   describe 'defaults' do
     it 'is disabled by default' do
       expect(subject.defaults_enabled?).to_not be

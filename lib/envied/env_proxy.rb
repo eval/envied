@@ -32,7 +32,10 @@ class ENVied
     end
 
     def has_key?(name)
-      variables_by_name[name.to_sym]
+      variable = variables_by_name[name.to_sym]
+      return unless variable
+      return variable unless variable.conditional
+      coerce(variable.conditional)
     end
 
     def env_value_of(var)
@@ -59,7 +62,8 @@ class ENVied
     end
 
     def missing?(var)
-      value_to_coerce(var).nil?
+      return value_to_coerce(var).nil? unless var.conditional
+      coerce(var.conditional)
     end
 
     def coerced?(var)

@@ -18,6 +18,7 @@ For the rationale behind this project, see this [blogpost](http://www.gertgoet.c
   * [Types](#types)
   * [Groups](#groups)
   * [Defaults](#defaults)
+  * [Conditionals](#conditionals)
   * [More examples](#more-examples)
 * [Rails](#rails--spring)
 * [Command-line interface](#command-line-interface)
@@ -146,6 +147,29 @@ Don't let setting a default for, say `RAILS_ENV`, give you the impression that `
 As a rule of thumb you should only use defaults:
 * for local development
 * for ENV-variables that are solely used by your application (i.e. for `ENV['STAFF_EMAILS']`, not for `ENV['RAILS_ENV']`)
+
+### Conditionals
+
+Conditionals give you a way to define optional variables.
+
+```ruby
+# file: Envfile
+variable :DB_MASTER_HOST
+variable :DB_MASTER_PORT
+...
+
+conditional :DB_USING_SLAVE do
+  variable :DB_SLAVE_HOST
+  variable :DB_SLAVE_PORT
+  ...
+end
+```
+
+In the above example, if `DB_USING_SLAVE` is `false` then none of the variables
+defined inside of the conditional block are required. The conditional variable
+itself, in this case `DB_USING_SLAVE`, is required.
+
+You can define a type and default on a conditional.
 
 ### More examples
 
