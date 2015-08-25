@@ -11,6 +11,11 @@ class ENVied::Coercer
       require 'rack/utils'
       ::Rack::Utils.parse_query(str)
     end
+
+    def to_uri(str)
+      require 'uri'
+      ::URI.parse(str)
+    end
   end
   Coercible::Coercer::String.send(:include, CoercerExts)
 
@@ -38,7 +43,7 @@ class ENVied::Coercer
 
   def self.supported_types
     @supported_types ||= begin
-      [:hash, :array, :time, :date, :symbol, :boolean, :integer, :string].sort
+      [:hash, :array, :time, :date, :symbol, :boolean, :integer, :string, :uri].sort
     end
   end
 
