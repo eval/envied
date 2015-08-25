@@ -95,5 +95,13 @@ describe ENVied::Coercer do
         end
       end
     end
+
+    describe 'uri coercion' do
+      let(:coerce){ coerce_to(:Uri) }
+
+      it 'converts strings to uris' do
+        expect(coerce['http://www.google.com']).to be_a(URI)
+      end
+    end
   end
 end
