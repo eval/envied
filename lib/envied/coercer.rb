@@ -1,19 +1,5 @@
-require 'coercible'
-
 # Responsible for all string to type coercions.
 class ENVied::Coercer
-  module CoercerExts
-    def to_array(str)
-      str.split(/(?<!\\),/).map{|i| i.gsub(/\\,/,',') }
-    end
-
-    def to_hash(str)
-      require 'rack/utils'
-      ::Rack::Utils.parse_query(str)
-    end
-  end
-  Coercible::Coercer::String.send(:include, CoercerExts)
-
   # Coerce strings to specific type.
   #
   # @param string [String] the string to be coerced
@@ -64,11 +50,11 @@ class ENVied::Coercer
   end
 
   def coercer
-    @coercer ||= Coercible::Coercer.new[String]
+    @coercer ||= Coercible::Coercer.new[ENVied::Coercer::String]
   end
 
   def coerced?(value)
-    !value.kind_of?(String)
+    !value.kind_of?(::String)
   end
 
   def coercible?(string, type)
