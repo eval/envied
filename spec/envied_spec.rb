@@ -96,7 +96,7 @@ describe ENVied do
       specify do
         expect {
           envied_require
-        }.to raise_error(/The following environment variables should be set: a/)
+        }.to raise_error(RuntimeError, 'The following environment variables should be set: a.')
       end
     end
 
@@ -114,7 +114,7 @@ describe ENVied do
       it 'raises error when configuring variable of unknown type' do
         expect {
           configured_with(A: :Fixnum)
-        }.to raise_error
+        }.to raise_error(ArgumentError, 'Variable type (of A) should be one of [:array, :boolean, :date, :hash, :integer, :string, :symbol, :time]')
       end
     end
 
@@ -192,7 +192,7 @@ describe ENVied do
 
           expect {
             envied_require
-          }.to raise_error
+          }.to raise_error(RuntimeError, 'The following environment variables should be set: A.')
         end
 
         it 'is ignored if ENV is provided' do
@@ -283,7 +283,7 @@ describe ENVied do
 
           expect {
             described_class.bar
-          }.to raise_error
+          }.to raise_error(NoMethodError)
         end
 
         it 'requires variables without a group when requiring the default group' do
@@ -322,7 +322,7 @@ describe ENVied do
           it 'has no default by default' do
             # fixes a bug where variables of type :Hash had a default even
             # when none was configured.
-            expect { envied_require }.to raise_error
+            expect { envied_require }.to raise_error(RuntimeError, 'The following environment variables should be set: baz.')
           end
         end
       end
