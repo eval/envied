@@ -189,7 +189,7 @@ The easiest/quickest is to run:
 $ heroku config | bundle exec envied check:heroku
 ```
 
-This is equivalent to having the heroku config as your local environment and running `envied check --groups default production`.
+This is equivalent to having the heroku config as your local environment and running `envied check:heroku --groups default production`.
 
 You want to run this right before a deploy to Heroku. This prevents that your app will crash during bootup because ENV-variables are missing from heroku config.
 
