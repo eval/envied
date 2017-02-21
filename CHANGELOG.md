@@ -1,5 +1,13 @@
 ## unreleased
 
+...
+
+## 0.8.2 / 2017-02-21
+
+### Added
+
+ * Rails 5 support
+
 ### Fixed
 
  * Envfile: type string is also correctly implied when providing a default.
@@ -33,7 +41,7 @@
  * the `check:heroku:binstub` task uses ENV['HEROKU_APP'] as app-option if present
  * the `check` and `check:heroku` task now have a `--quiet` option
 
-    This prevents output on STDOUT for a successful check.  
+    This prevents output on STDOUT for a successful check.
     Handy for wrapper-scripts:
 
         # some bash-script 'ensure-env'
@@ -131,7 +139,7 @@
 
  * groups added
 
-    This allows for more fine-grained requiring.  
+    This allows for more fine-grained requiring.
     See the section in the [README](https://github.com/eval/envied/tree/v0.4.0#groups).
 
  * configuring is now simpler:
@@ -146,7 +154,7 @@
 
  * Deprecate lowercase methods for uppercase ENV-variables.
 
-    `ENV['RACK_ENV']` is no longer accessible as `ENVied.rack_env`, only as `ENVied.RACK_ENV`.  
+    `ENV['RACK_ENV']` is no longer accessible as `ENVied.rack_env`, only as `ENVied.RACK_ENV`.
     This is not only what you would expect, but it also reduces the chance of clashing with existing class-methods.
 
 ## 0.3.0 / 2014-03-14
