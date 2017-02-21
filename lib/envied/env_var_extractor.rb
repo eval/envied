@@ -42,7 +42,7 @@ class ENVied
     end
 
     # Extract all keys recursively from files found via `globs`.
-    # Any occurence of `ENV['A']` or `ENV.fetch('A')` in code (not in comments), will result
+    # Any occurrence of `ENV['A']` or `ENV.fetch('A')` in code (not in comments), will result
     # in 'A' being extracted.
     #
     # @param globs [Array<String>] the collection of globs

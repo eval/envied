@@ -25,10 +25,10 @@ class ENVied
     def extract
       globs = options[:globs]
       globs << "{test,spec}/*" if options[:tests]
-      var_occurences = ENVied::EnvVarExtractor.new(globs: globs).extract
+      var_occurrences = ENVied::EnvVarExtractor.new(globs: globs).extract
 
-      puts "Found %d occurrences of %d variables:" % [var_occurences.values.flatten.size, var_occurences.size]
-      var_occurences.sort.each do |var, occs|
+      puts "Found %d occurrences of %d variables:" % [var_occurrences.values.flatten.size, var_occurrences.size]
+      var_occurrences.sort.each do |var, occs|
         puts var
         occs.sort_by{|i| i[:path].size }.each do |occ|
           puts "* %s:%s" % occ.values_at(:path, :line)
