@@ -1,12 +1,13 @@
-## unreleased
+## Unreleased
 
-...
+* Various typo fixes [#24](../../pull/24)[#28](../../pull/28)
+* Resolved warnings when running tests
 
 ## 0.8.2 / 2017-02-21
 
 ### Added
 
- * Rails 5 support
+ * Rails 5 support [#25](../../pull/25)
 
 ### Fixed
 
