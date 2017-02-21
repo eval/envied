@@ -1,7 +1,7 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'envied/version'
+require "envied/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "envied"
@@ -18,11 +18,11 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = '>= 1.9.3'
-  spec.add_dependency "coercible", '~> 1.0'
-  spec.add_dependency "rack", "~> 1.4"
+  spec.required_ruby_version = ">= 1.9.3"
+  spec.add_dependency "coercible", "~> 1.0"
+  spec.add_dependency "rack", ">= 1.4", (RUBY_VERSION < "2.2.2" ? "< 2" : "< 3")
   spec.add_dependency "thor", "~> 0.15"
   spec.add_development_dependency "bundler", "~> 1.5"
   spec.add_development_dependency "rake"
-  spec.add_development_dependency "rspec", '~> 3.0'
+  spec.add_development_dependency "rspec", "~> 3.0"
 end
