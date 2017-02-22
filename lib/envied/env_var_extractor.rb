@@ -24,7 +24,7 @@ class ENVied
       new(options.merge(globs: Array(globs))).extract
     end
 
-    # Greps all ENV-variables from non-comment-parts of line.
+    # Greps all ENV-variables from a line of text.
     # Captures 'A' in lines like `ENV['A']`, but also `ENV.fetch('A')`.
     #
     # @param line [String] the line to grep
@@ -32,17 +32,14 @@ class ENVied
     # @example
     #   extractor.new.capture_variables("config.force_ssl = ENV['FORCE_SSL']")
     #   # => ["FORCE_SSL"]
-    #   extractor.new.capture_variables("# comment about ENV['FORCE_SSL']")
-    #   # => []
     #
     # @return [Array<String>] the names o
     def capture_variables(line)
-      noncomment, _ = line.split("#", 2)
-      noncomment.scan(/ENV(?:\[|\.fetch\()['"]([^'"]+)['"]/).flatten
+      line.scan(/ENV(?:\[|\.fetch\()['"]([^'"]+)['"]/).flatten
     end
 
     # Extract all keys recursively from files found via `globs`.
-    # Any occurrence of `ENV['A']` or `ENV.fetch('A')` in code (not in comments), will result
+    # Any occurrence of `ENV['A']` or `ENV.fetch('A')`, will result
     # in 'A' being extracted.
     #
     # @param globs [Array<String>] the collection of globs
