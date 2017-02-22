@@ -6,8 +6,8 @@ require "envied/version"
 Gem::Specification.new do |spec|
   spec.name          = "envied"
   spec.version       = ENVied::VERSION
-  spec.authors       = ["Gert Goet"]
-  spec.email         = ["gert@thinkcreate.nl"]
+  spec.authors       = ["Gert Goet", "Javier Julio"]
+  spec.email         = ["gert@thinkcreate.nl", "jjfutbol@gmail.com"]
   spec.summary       = %q{Ensure presence and type of ENV-variables}
   spec.description   = %q{Ensure presence and type of your app's ENV-variables.}
   spec.homepage      = "https://github.com/eval/envied"
