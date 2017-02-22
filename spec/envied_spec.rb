@@ -114,7 +114,7 @@ describe ENVied do
       it 'raises error when configuring variable of unknown type' do
         expect {
           configured_with(A: :Fixnum)
-        }.to raise_error(ArgumentError, 'Variable type (of A) should be one of [:array, :boolean, :date, :hash, :integer, :string, :symbol, :time]')
+        }.to raise_error(ArgumentError, /Variable type \(of A\) should be one of \[/)
       end
     end
 
@@ -337,6 +337,20 @@ describe ENVied do
 
         it 'yields array from string' do
           expect(ENVied.moar).to eq ['a',' b',' and, c']
+        end
+      end
+
+      describe 'URIable' do
+        before do
+          configure do
+            variable :site_url, :Uri
+          end.and_ENV('site_url' => 'https://www.google.com')
+          envied_require
+        end
+
+        it 'yields a URI from string' do
+          expect(ENVied.site_url).to be_a URI
+          expect(ENVied.site_url.host).to eq 'www.google.com'
         end
       end
     end
