@@ -28,6 +28,15 @@ describe ENVied::Coercer do
       end
     end
 
+    describe 'float coercion' do
+      let(:coerce){ coerce_to(:Float) }
+
+      it 'converts strings to floats' do
+        expect(coerce['1.05']).to eq 1.05
+        expect(coerce['-1.234']).to eq(-1.234)
+      end
+    end
+
     describe 'boolean coercion' do
       let(:coerce){ coerce_to(:Boolean) }
 
