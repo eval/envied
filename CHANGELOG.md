@@ -1,5 +1,8 @@
 ## Unreleased
 
+* Added float type which resolves [#30](../../pull/30)
+* Added uri type [#22](../../pull/22)
+* Updated extractor to find interpolated ENV vars which fixes [#21](../../pull/21)
 * Various typo fixes [#24](../../pull/24)[#28](../../pull/28)
 * Resolved warnings when running tests
 
