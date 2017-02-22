@@ -2,6 +2,7 @@ require 'envied/version'
 require 'envied/cli'
 require 'envied/env_proxy'
 require 'envied/coercer'
+require 'envied/coercer/envied_string'
 require 'envied/variable'
 require 'envied/configuration'
 
