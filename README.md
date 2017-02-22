@@ -1,4 +1,4 @@
-# ENVied [![travis](https://secure.travis-ci.org/eval/envied.png?branch=master)](https://secure.travis-ci.org/#!/eval/envied)
+# ENVied [![Build Status](https://travis-ci.org/eval/envied.svg?branch=master)](https://travis-ci.org/eval/envied)
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
@@ -85,15 +85,17 @@ The following types are supported:
 * `:string` (implied)
 * `:boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'no'/'yes' for resp. false and true)
 * `:integer`
+* `:float`
 * `:symbol`
 * `:date` (e.g. '2014-3-26')
 * `:time` (e.g. '14:00')
 * `:hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
 * `:array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
+* `:uri` (e.g. 'http://www.google.com' becomes `URI.parse('http://www.google.com')`
 
 ### Groups
 
-Groups give you more flexibility to define when variables are needed.  
+Groups give you more flexibility to define when variables are needed.
 It's similar to groups in a Gemfile:
 
 ```ruby
@@ -142,7 +144,7 @@ variable :PORT, :integer, default: proc {|envied| envied.FORCE_SSL ? 443 : 80 }
 ```
 
 Please remember that ENVied only **reads** from ENV; it doesn't mutate ENV.
-Don't let setting a default for, say `RAILS_ENV`, give you the impression that `ENV['RAILS_ENV']` is set.  
+Don't let setting a default for, say `RAILS_ENV`, give you the impression that `ENV['RAILS_ENV']` is set.
 As a rule of thumb you should only use defaults:
 * for local development
 * for ENV-variables that are solely used by your application (i.e. for `ENV['STAFF_EMAILS']`, not for `ENV['RAILS_ENV']`)
@@ -208,10 +210,7 @@ $ ./bin/heroku-env-check && git push live master
 
 ```bash
 bundle install
-
 bundle exec rspec
-# or
-bundle exec rake
 ```
 
 ## Developing
