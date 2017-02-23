@@ -1,5 +1,6 @@
 ## Unreleased
 
+* Replaced rack dependency with CGI from stdlib for supporting hash type
 * Now requiring Ruby 2.1.x and up
 * Added float type which resolves [#30](../../pull/30)
 * Added uri type [#22](../../pull/22)
