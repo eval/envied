@@ -6,8 +6,8 @@ class ENVied::Coercer::ENViedString < Coercible::Coercer::String
   end
 
   def to_hash(str)
-    require 'rack/utils'
-    ::Rack::Utils.parse_query(str)
+    require 'cgi'
+    ::CGI.parse(str).map { |key, values| [key, values[0]] }.to_h
   end
 
   def to_uri(str)
