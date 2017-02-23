@@ -26,6 +26,12 @@ describe ENVied::Coercer do
         expect(coerce['1']).to eq 1
         expect(coerce['-1']).to eq(-1)
       end
+
+      it 'fails for float' do
+        expect {
+          coerce['1.23']
+        }.to raise_error(Coercible::UnsupportedCoercion)
+      end
     end
 
     describe 'float coercion' do
