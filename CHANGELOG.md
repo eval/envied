@@ -1,5 +1,6 @@
 ## Unreleased
 
+* Now requiring Ruby 2.1.x and up
 * Added float type which resolves [#30](../../pull/30)
 * Added uri type [#22](../../pull/22)
 * Updated extractor to find interpolated ENV vars which fixes [#21](../../pull/21)
