@@ -105,6 +105,10 @@ variable :FORCE_SSL, :boolean
 group :production do
   variable :SECRET_KEY_BASE
 end
+
+group :development, :staging do
+  variable :DEV_KEY
+end
 ```
 
 ```ruby
