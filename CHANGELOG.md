@@ -1,11 +1,12 @@
 ## Unreleased
 
-* Replaced rack dependency with CGI from stdlib for supporting hash type
+* Support multiple groups [#16](../../pull/16)
+* Replaced rack dependency with stdlib solution using CGI for supporting hash type
 * Now requiring Ruby 2.1.x and up
 * Added float type which resolves [#30](../../pull/30)
 * Added uri type [#22](../../pull/22)
 * Updated extractor to find interpolated ENV vars which fixes [#21](../../pull/21)
-* Various typo fixes [#24](../../pull/24)[#28](../../pull/28)
+* Various typo fixes [#24](../../pull/24) and [#28](../../pull/28)
 * Resolved warnings when running tests
 
 ## 0.8.2 / 2017-02-21
