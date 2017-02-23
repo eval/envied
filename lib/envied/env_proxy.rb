@@ -39,13 +39,8 @@ class ENVied
       ENV[var.name.to_s]
     end
 
-    def default_value_of(var)
-      var.default_value(ENVied, var)
-    end
-
     def value_to_coerce(var)
-      return env_value_of(var) unless env_value_of(var).nil?
-      config.defaults_enabled? ? default_value_of(var) : nil
+      env_value_of(var)
     end
 
     def coerce(var)

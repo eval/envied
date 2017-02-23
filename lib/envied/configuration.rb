@@ -1,19 +1,10 @@
 class ENVied
   class Configuration
-    attr_reader :current_group, :defaults_enabled, :coercer
+    attr_reader :current_group, :coercer
 
     def initialize(options = {}, &block)
       @coercer = options.fetch(:coercer, Coercer.new)
-      @defaults_enabled = options.fetch(:enable_defaults, defaults_enabled_default)
       instance_eval(&block) if block_given?
-    end
-
-    def defaults_enabled_default
-      if ENV['ENVIED_ENABLE_DEFAULTS'].nil?
-        false
-      else
-        @coercer.coerce(ENV['ENVIED_ENABLE_DEFAULTS'], :boolean)
-      end
     end
 
     def self.load(options = {})
@@ -21,16 +12,6 @@ class ENVied
       new(options).tap do |v|
         v.instance_eval(File.read(envfile), envfile)
       end
-    end
-
-    def enable_defaults!(value = true, &block)
-      @defaults_enabled = block_given? ? block.call : value
-    end
-
-    def defaults_enabled?
-      @defaults_enabled.respond_to?(:call) ?
-        @defaults_enabled.call :
-        @defaults_enabled
     end
 
     def variable(name, *args)
