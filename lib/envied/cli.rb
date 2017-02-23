@@ -48,6 +48,13 @@ ENVied.require(*ENV['ENVIED_GROUPS'] || [:default, ENV['RACK_ENV']])
 INIT
     end
 
+    desc "sample", "Generate sample bash-script"
+    def sample
+      full_dest = File.expand_path('.envrc.sample')
+      @config = ENVied::Configuration.load
+      template("sample.tt", full_dest)
+    end
+
     desc "init:rails", "Generate all files needed for a Rails project"
     define_method "init:rails" do
       puts "Writing Envfile to #{File.expand_path('Envfile')}"
