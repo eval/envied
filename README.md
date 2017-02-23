@@ -46,8 +46,8 @@ ENVied.require
 ```
 
 This will throw an error if:
-* not both `ENV['FORCE_SSL']` and `ENV['PORT']` are present.
-* the values can't be coerced to resp. Boolean and Integer.
+* both `ENV['FORCE_SSL']` and `ENV['PORT']` are *not present*.
+* the values *cannot* be coerced to a boolean and integer.
 
 ### 3) Use coerced variables
 
@@ -100,7 +100,7 @@ It's similar to groups in a Gemfile:
 
 ```ruby
 # file: Envfile
-variable :FORCE_SSL, :boolean
+variable :FORCE_SSL, :boolean, default: 'false'
 
 group :production do
   variable :SECRET_KEY_BASE
@@ -137,7 +137,7 @@ ENVied.require(nil)
 In order to let other developers easily bootstrap the application, you can assign defaults to variables.
 Defaults can be a value or a `Proc` (see example below).
 
-Note that 'easily bootstrap' is quite the opposite of 'fail-fast when not all ENV-variables are present'. Therefor you should explicitly state whén defaults are allowed:
+Note that 'easily bootstrap' is quite the opposite of 'fail-fast when not all ENV-variables are present'. Therefore you should explicitly state when defaults are allowed:
 
 ```ruby
 # Envfile
@@ -225,8 +225,8 @@ bundle exec pry --gem
 
 ## Contributing
 
-1. Fork it ( http://github.com/eval/envied/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1. Fork it: http://github.com/eval/envied/fork
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Create a new pull request for your feature branch

@@ -12,8 +12,26 @@ variable :RACK_ENV
 
 variable :FORCE_SSL, :boolean, default: 'false'
 variable :PORT, :integer, default: '3000'
+
+variable :TAGS, :array, default: 'tag1,tag2'
+# ENVied.TAGS
+# => ['tag1', 'tag2']
+
 # generate the default value using the value of PORT:
-variable :PUBLIC_HOST_WITH_PORT, :string, default: proc {|envied| "localhost:#{envied.PORT}" }
+variable :PUBLIC_HOST_WITH_PORT, :string, default: proc { |envied|
+  "localhost:#{envied.PORT}"
+}
+
+# Or better yet, use the URI type:
+variable :SITE_URI, :uri, default: 'http://localhost:5000/'
+# So with that you could now do:
+# ```
+# config.action_mailer.default_url_options = {
+#   protocol: ENVied.SITE_URI.scheme,
+#   host: ENVied.SITE_URI.host
+# }
+# config.action_mailer.asset_host = ENVied.SITE_URI.to_s
+# ```
 
 group :production do
   variable :MAIL_PAAS_USERNAME
