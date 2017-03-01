@@ -10,6 +10,6 @@ describe ENVied::Variable do
   end
 
   describe 'an instance' do
-    subject { variable(:A, :String) }
+    subject { variable(:A, :string) }
   end
 end

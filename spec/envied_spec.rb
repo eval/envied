@@ -70,7 +70,7 @@ describe ENVied do
     end
 
     it 'responds to configured variables' do
-      configured_with(a: :Integer).and_ENV({'a' => '1'})
+      configured_with(a: :integer).and_ENV({'a' => '1'})
       envied_require
 
       expect(described_class).to respond_to :a
@@ -84,14 +84,14 @@ describe ENVied do
     end
 
     it 'sets ENVied.config' do
-      configured_with(a: :Integer).and_ENV({'a' => '1'})
+      configured_with(a: :integer).and_ENV({'a' => '1'})
       envied_require
 
       expect(ENVied.config).to_not be(nil)
     end
 
     context 'ENV contains not all configured variables' do
-      before { configured_with(a: :Integer).and_no_ENV }
+      before { configured_with(a: :integer).and_no_ENV }
 
       specify do
         expect {
@@ -101,19 +101,19 @@ describe ENVied do
     end
 
     context 'ENV variables are not coercible' do
-      before { configured_with(A: :Integer).and_ENV('A' => 'NaN') }
+      before { configured_with(A: :integer).and_ENV('A' => 'NaN') }
 
       specify do
         expect {
           envied_require
-        }.to raise_error(/A \('NaN' can't be coerced to Integer/)
+        }.to raise_error(/A \('NaN' can't be coerced to integer/)
       end
     end
 
     context 'configuring' do
       it 'raises error when configuring variable of unknown type' do
         expect {
-          configured_with(A: :Fixnum)
+          configured_with(A: :fixnum)
         }.to raise_error(ArgumentError, /Variable type \(of A\) should be one of \[/)
       end
     end
@@ -121,7 +121,7 @@ describe ENVied do
     context 'bug: default value "false" is not coercible' do
       before {
         configure(enable_defaults: true) do
-          variable :FORCE_SSL, :Boolean, default: true
+          variable :FORCE_SSL, :boolean, default: true
         end
       }
 
@@ -169,7 +169,7 @@ describe ENVied do
       describe 'assigning' do
         it 'can be a value' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: '1'
+            variable :A, :integer, default: '1'
           end
           envied_require
 
@@ -178,7 +178,7 @@ describe ENVied do
 
         it 'can be a Proc' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: proc { "1" }
+            variable :A, :integer, default: proc { "1" }
           end
           envied_require
 
@@ -187,7 +187,7 @@ describe ENVied do
 
         it 'is ignored if defaults are disabled' do
           configure(enable_defaults: false) do
-            variable :A, :Integer, default: "1"
+            variable :A, :integer, default: "1"
           end.and_no_ENV
 
           expect {
@@ -197,7 +197,7 @@ describe ENVied do
 
         it 'is ignored if ENV is provided' do
           configure(enable_defaults: true) do
-            variable :A, :Integer, default: "1"
+            variable :A, :integer, default: "1"
           end.and_ENV('A' => '2')
           envied_require
 
@@ -206,8 +206,8 @@ describe ENVied do
 
         it 'can be defined in terms of other variables' do
           configure(enable_defaults: true) do
-            variable :A, :Integer
-            variable :B, :Integer, default: proc {|env| env.A * 2 }
+            variable :A, :integer
+            variable :B, :integer, default: proc {|env| env.A * 2 }
           end.and_ENV('A' => '1')
           envied_require
 
@@ -320,8 +320,8 @@ describe ENVied do
       describe 'Hashable' do
         before do
           configure do
-            variable :foo, :Hash
-            variable :bar, :Hash
+            variable :foo, :hash
+            variable :bar, :hash
           end.and_ENV('foo' => 'a=1&b=&c', 'bar' => '')
           envied_require
         end
@@ -337,7 +337,7 @@ describe ENVied do
         context 'with defaults enabled' do
           before do
             configure(enable_defaults: true) do
-              variable :baz, :Hash
+              variable :baz, :hash
             end.and_no_ENV
           end
 
@@ -352,7 +352,7 @@ describe ENVied do
       describe 'Arrayable' do
         before do
           configure do
-            variable :moar, :Array
+            variable :moar, :array
           end.and_ENV('moar' => 'a, b, and\, c')
           envied_require
         end
@@ -365,7 +365,7 @@ describe ENVied do
       describe 'URIable' do
         before do
           configure do
-            variable :site_url, :Uri
+            variable :site_url, :uri
           end.and_ENV('site_url' => 'https://www.google.com')
           envied_require
         end

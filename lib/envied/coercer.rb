@@ -2,23 +2,6 @@ require 'coercible'
 
 # Responsible for all string to type coercions.
 class ENVied::Coercer
-  module CoercerExts
-    def to_array(str)
-      str.split(/(?<!\\),/).map{|i| i.gsub(/\\,/,',') }
-    end
-
-    def to_hash(str)
-      require 'cgi'
-      ::CGI.parse(str).map { |key, values| [key, values[0]] }.to_h
-    end
-
-    def to_uri(str)
-      require 'uri'
-      ::URI.parse(str)
-    end
-  end
-  Coercible::Coercer::String.send(:include, CoercerExts)
-
   # Coerce strings to specific type.
   #
   # @param string [String] the string to be coerced
@@ -69,7 +52,7 @@ class ENVied::Coercer
   end
 
   def coercer
-    @coercer ||= Coercible::Coercer.new[String]
+    @coercer ||= Coercible::Coercer.new[ENViedString]
   end
 
   def coerced?(value)
