@@ -18,9 +18,9 @@ class ENVied
     end
 
     def variables
-      @variables ||= begin
+      #@variables ||= begin
         config.variables.select {|v| groups.include?(v.group) }
-      end
+      #end
     end
 
     def variables_by_name

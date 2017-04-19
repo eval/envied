@@ -1,11 +1,11 @@
 class ENVied::Variable
-  attr_reader :name, :type, :group, :sample_value
+  attr_reader :name, :type, :group, :sample
 
   def initialize(name, type, options = {})
     @name = name.to_sym
     @type = type.to_sym
     @group = options.fetch(:group, :default).to_sym
-    @sample_value = options[:sample_value]
+    @sample = options[:sample]
   end
 
   def ==(other)
