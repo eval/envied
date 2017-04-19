@@ -4,5 +4,5 @@
 # source .envrc.sample
 
 <%- @config.variables.sort_by(&:name).each do |var| -%>
-export <%= var.name.to_s %>=<%= var.sample %>
+<%= var.sample_value.nil? ? '# ' : '' %>export <%= var.name.to_s %>=<%= var.sample_value.nil? ? '' : var.sample_value.inspect %><%= var.sample_comment.nil? ? '' : " # #{var.sample_comment}" %>
 <%- end %>
