@@ -1,4 +1,4 @@
-## Unreleased
+## 0.9.0 / 2017-03-01
 
 * Support multiple groups [#16](../../pull/16)
 * Replaced rack dependency with stdlib solution using CGI for supporting hash type

@@ -10,8 +10,8 @@ describe ENVied::Coercer do
       ->(str){ coercer.coerce(str, type) }
     end
 
-    describe 'string coercion' do
-      let(:coerce){ coerce_to(:String) }
+    describe 'to string' do
+      let(:coerce){ coerce_to(:string) }
 
       it 'yields the input untouched' do
         expect(coerce['1']).to eq '1'
@@ -19,17 +19,23 @@ describe ENVied::Coercer do
       end
     end
 
-    describe 'integer coercion' do
-      let(:coerce){ coerce_to(:Integer) }
+    describe 'to integer' do
+      let(:coerce){ coerce_to(:integer) }
 
       it 'converts strings to integers' do
         expect(coerce['1']).to eq 1
         expect(coerce['-1']).to eq(-1)
       end
+
+      it 'fails for float' do
+        expect {
+          coerce['1.23']
+        }.to raise_error(Coercible::UnsupportedCoercion)
+      end
     end
 
-    describe 'float coercion' do
-      let(:coerce){ coerce_to(:Float) }
+    describe 'to float' do
+      let(:coerce){ coerce_to(:float) }
 
       it 'converts strings to floats' do
         expect(coerce['1.05']).to eq 1.05
@@ -37,8 +43,8 @@ describe ENVied::Coercer do
       end
     end
 
-    describe 'boolean coercion' do
-      let(:coerce){ coerce_to(:Boolean) }
+    describe 'to boolean' do
+      let(:coerce){ coerce_to(:boolean) }
 
       it "converts 'true' and 'false'" do
         expect(coerce['true']).to eq true
@@ -51,8 +57,8 @@ describe ENVied::Coercer do
       end
     end
 
-    describe 'symbol coercion' do
-      let(:coerce){ coerce_to(:Symbol) }
+    describe 'to symbol' do
+      let(:coerce){ coerce_to(:symbol) }
 
       it 'converts strings to symbols' do
         expect(coerce['a']).to eq :a
@@ -60,24 +66,24 @@ describe ENVied::Coercer do
       end
     end
 
-    describe 'date coercion' do
-      let(:coerce){ coerce_to(:Date) }
+    describe 'to date' do
+      let(:coerce){ coerce_to(:date) }
 
       it 'converts strings to date' do
         expect(coerce['2014-12-25']).to eq Date.parse('2014-12-25')
       end
     end
 
-    describe 'time coercion' do
-      let(:coerce){ coerce_to(:Time) }
+    describe 'to time' do
+      let(:coerce){ coerce_to(:time) }
 
       it 'converts strings to time' do
         expect(coerce['4:00']).to eq Time.parse('4:00')
       end
     end
 
-    describe 'array coercion' do
-      let(:coerce){ coerce_to(:Array) }
+    describe 'to array' do
+      let(:coerce){ coerce_to(:array) }
 
       it 'converts strings to array' do
         {
@@ -90,8 +96,8 @@ describe ENVied::Coercer do
       end
     end
 
-    describe 'hash coercion' do
-      let(:coerce){ coerce_to(:Hash) }
+    describe 'to hash' do
+      let(:coerce){ coerce_to(:hash) }
 
       it 'converts strings to hashes' do
         {
@@ -105,8 +111,8 @@ describe ENVied::Coercer do
       end
     end
 
-    describe 'uri coercion' do
-      let(:coerce){ coerce_to(:Uri) }
+    describe 'to uri' do
+      let(:coerce){ coerce_to(:uri) }
 
       it 'converts strings to uris' do
         expect(coerce['http://www.google.com']).to be_a(URI)
