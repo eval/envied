@@ -192,7 +192,7 @@ It assumes a standard project layout (see the default value for the globs-option
 The easiest/quickest is to run:
 
 ```
-$ heroku config | bundle exec envied check:heroku
+$ heroku config --json | bundle exec envied check:heroku
 ```
 
 This is equivalent to having the heroku config as your local environment and running `envied check:heroku --groups default production`.
