@@ -1,4 +1,5 @@
 require 'thor'
+require 'json'
 require 'envied/env_var_extractor'
 
 class ENVied
@@ -84,7 +85,7 @@ INIT
 
       The Heroku config should be piped to this task:
 
-      heroku config | bundle exec envied check:heroku
+      heroku config --json | bundle exec envied check:heroku
 
       Use the check:heroku:binstub-task to turn this into a bash-script.
 
@@ -96,16 +97,12 @@ INIT
     define_method "check:heroku" do
       if STDIN.tty?
         error <<-ERR
-Please pipe the contents of `heroku config` to this task.
-I.e. `heroku config | bundle exec envied check:heroku`"
+Please pipe the contents of `heroku config --json` to this task.
+I.e. `heroku config --json | bundle exec envied check:heroku`"
 ERR
         exit 1
       end
-      config = STDIN.read
-      heroku_env = Hash[config.split("\n")[1..-1].each_with_object([]) do |i, res|
-        res << i.split(":", 2).map(&:strip)
-      end]
-
+      heroku_env = JSON.parse(STDIN.read)
       ENV.replace({}).update(heroku_env)
 
       requested_groups = ENV['ENVIED_GROUPS'] || options[:groups]
@@ -119,7 +116,7 @@ ERR
     long_desc <<-LONG
       Generates a shell script to check the Heroku config against the local Envfile.
 
-      The same as the check:heroku-task, but all in one script (no need to pipe `heroku config` to it etc.).
+      The same as the check:heroku-task, but all in one script (no need to pipe `heroku config --json` to it etc.).
 
     LONG
     option :dest, banner: "where to put the script", desc: "Default: bin/<app>-env-check or bin/heroku-env-check"
