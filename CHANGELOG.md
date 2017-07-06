@@ -1,3 +1,7 @@
+## 0.9.1 / 2017-07-06
+
+* Updates `envied check:heroku` to support multiline ENV variables [#42](../../pull/42)
+
 ## 0.9.0 / 2017-03-01
 
 * Support multiple groups [#16](../../pull/16)
