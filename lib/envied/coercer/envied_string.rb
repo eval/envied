@@ -15,6 +15,11 @@ class ENVied::Coercer::ENViedString < Coercible::Coercer::String
     ::URI.parse(str)
   end
 
+  def to_uri_with_scheme(str)
+    result = to_uri(str)
+    result.scheme.nil? ? raise_unsupported_coercion(str, __method__) : result
+  end
+
   def to_integer(str)
     Integer(str)
   rescue ArgumentError
