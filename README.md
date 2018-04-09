@@ -19,7 +19,6 @@ For the rationale behind this project, see this [blogpost](http://www.gertgoet.c
   * [Groups](#groups)
   * [Defaults](#defaults)
   * [More examples](#more-examples)
-* [Rails](#rails--spring)
 * [Command-line interface](#command-line-interface)
 * [How do I...?](#how-do-i)
 * [Testing](#testing)
