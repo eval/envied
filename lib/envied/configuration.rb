@@ -1,5 +1,7 @@
 class ENVied
   class Configuration
+    DEFAULT_TYPE = :string
+
     attr_reader :current_group, :defaults_enabled, :coercer
 
     def initialize(options = {}, &block)
@@ -35,7 +37,7 @@ class ENVied
 
     def variable(name, *args)
       options = args.last.is_a?(Hash) ? args.pop : {}
-      type = args.first || :string
+      type = args.first || DEFAULT_TYPE
 
       unless coercer.supported_type?(type)
         raise ArgumentError,
@@ -43,6 +45,10 @@ class ENVied
       end
       options[:group] = current_group if current_group
       variables << ENVied::Variable.new(name, type, options)
+    end
+
+    def type(name, &block)
+      coercer.custom_types[name] = Type.new(name, block)
     end
 
     def group(*names, &block)
@@ -58,5 +64,4 @@ class ENVied
       @variables ||= []
     end
   end
-
 end

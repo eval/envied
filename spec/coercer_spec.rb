@@ -118,5 +118,25 @@ describe ENVied::Coercer do
         expect(coerce['http://www.google.com']).to be_a(URI)
       end
     end
+
+    describe 'to custom type' do
+      require 'json'
+
+      let(:coerce) { coerce_to(:json) }
+
+      before do
+        coercer.custom_types[:json] =
+          ENVied::Type.new(
+            :json,
+            lambda do |raw_string|
+              JSON.parse(raw_string)
+            end
+          )
+      end
+
+      it 'converts strings to defined custom type' do
+        expect(coerce['{"a": 2}']).to eq("a" => 2)
+      end
+    end
   end
 end

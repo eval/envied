@@ -4,27 +4,55 @@ describe ENVied::Configuration do
   it { is_expected.to respond_to :variable }
   it { is_expected.to respond_to :enable_defaults! }
   it { is_expected.to respond_to :defaults_enabled? }
+  it { is_expected.to respond_to :type }
 
   describe '#variable' do
-    def with_envfile(&block)
-      @config = described_class.new(&block)
-    end
-    attr_reader :config
+    subject { config.variables }
 
-    it 'results in an added variable' do
-      with_envfile do
-        variable :foo, :boolean
+    context "with type" do
+      let(:config) do
+        described_class.new do
+          variable :foo, :boolean
+        end
       end
 
-      expect(config.variables).to include ENVied::Variable.new(:foo, :boolean)
+      it { is_expected.to include(ENVied::Variable.new(:foo, :boolean)) }
     end
 
-    it 'sets string as type when no type is given' do
-      with_envfile do
-        variable :bar, default: 'bar'
+    describe "with default" do
+      let(:config) do
+        described_class.new do
+          variable :bar, default: 'bar'
+        end
       end
 
-      expect(config.variables).to include ENVied::Variable.new(:bar, :string, default: 'bar')
+      it { is_expected.to include(ENVied::Variable.new(:bar, :string, default: 'bar')) }
+    end
+
+    describe 'without type' do
+      let(:config) do
+        described_class.new do
+          variable :bar
+        end
+      end
+
+      it { is_expected.to include(ENVied::Variable.new(:bar, :string)) }
+    end
+  end
+
+  describe '#type' do
+    subject { config.coercer.custom_types }
+
+    let(:coercer) { ->(raw_string) { Integer(raw_string) ** 2 } }
+    let(:config) do
+      block = coercer
+      described_class.new do
+        type(:power_integer, &block)
+      end
+    end
+
+    it 'creates type with given coercing block' do
+      is_expected.to include(power_integer: ENVied::Type.new(:power_integer, coercer))
     end
   end
 

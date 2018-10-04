@@ -92,9 +92,24 @@ The following types are supported:
 * `:array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
 * `:uri` (e.g. 'http://www.google.com' becomes `URI.parse('http://www.google.com')`
 
+#### Custom Types
+
+To defined your own type `#type` method can be used:
+
+```ruby
+# file: Envfile
+type :json do |raw_string|
+  JSON.parse(raw_string)
+end
+
+variable :CUSTOM_OPTIONS, :json
+```
+
+> NOTE: It is important to define any custom type before their usage. Otherwise you will get an `ArgumentError` exception.
+
 ### Groups
 
-Groups give you more flexibility to define when variables are needed.  
+Groups give you more flexibility to define when variables are needed.
 It's similar to groups in a Gemfile:
 
 ```ruby
@@ -146,7 +161,7 @@ variable :FORCE_SSL, :boolean, default: 'false'
 variable :PORT, :integer, default: proc {|envied| envied.FORCE_SSL ? 443 : 80 }
 ```
 
-Please remember that ENVied only **reads** from ENV; it doesn't mutate ENV.  
+Please remember that ENVied only **reads** from ENV; it doesn't mutate ENV.
 Don't let setting a default for, say `RAILS_ENV`, give you the impression that `ENV['RAILS_ENV']` is set.
 As a rule of thumb you should only use defaults:
 * for local development

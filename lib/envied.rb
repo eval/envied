@@ -4,6 +4,7 @@ require 'envied/env_proxy'
 require 'envied/coercer'
 require 'envied/coercer/envied_string'
 require 'envied/variable'
+require 'envied/type'
 require 'envied/configuration'
 
 class ENVied
