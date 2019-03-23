@@ -23,11 +23,8 @@ class ENVied
   end
 
   def self.env!(requested_groups, options = {})
-    @env = begin
-      @config = options.fetch(:config) { Configuration.load }
-      groups = required_groups(*requested_groups)
-      EnvProxy.new(@config, groups: groups)
-    end
+    @config = options.fetch(:config) { Configuration.load }
+    @env = EnvProxy.new(@config, groups: required_groups(*requested_groups))
   end
 
   def self.error_on_missing_variables!(options = {})
