@@ -2,6 +2,9 @@ require 'coercible'
 
 # Responsible for all string to type coercions.
 class ENVied::Coercer
+
+  UnsupportedCoercion = Class.new(StandardError)
+
   # Coerce strings to specific type.
   #
   # @param string [String] the string to be coerced
@@ -63,7 +66,7 @@ class ENVied::Coercer
     return false unless supported_type?(type)
     coerce(string, type)
     true
-  rescue Coercible::UnsupportedCoercion
+  rescue UnsupportedCoercion
     false
   end
 end
