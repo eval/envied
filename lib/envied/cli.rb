@@ -43,10 +43,8 @@ class ENVied
       puts "Writing Envfile to #{File.expand_path('Envfile')}"
       template("Envfile.tt")
 
-      puts <<-INIT
-Add the following snippet (or similar) to your app's initialization:
-ENVied.require(*ENV['ENVIED_GROUPS'] || [:default, ENV['RACK_ENV']])
-INIT
+      puts "Add the following snippet (or similar) to your app's initialization:"
+      puts "ENVied.require(*ENV['ENVIED_GROUPS'] || [:default, ENV['RACK_ENV']])"
     end
 
     desc "init:rails", "Generate all files needed for a Rails project"
@@ -79,7 +77,6 @@ INIT
     end
 
     desc "check:heroku", "Checks whether a Heroku config contains required variables"
-
     long_desc <<-LONG
       Checks the config of your Heroku app against the local Envfile.
 
@@ -96,10 +93,7 @@ INIT
     option :quiet, type: :boolean, desc: 'Communicate success of the check only via the exit status.'
     define_method "check:heroku" do
       if STDIN.tty?
-        error <<-ERR
-Please pipe the contents of `heroku config --json` to this task.
-I.e. `heroku config --json | bundle exec envied check:heroku`"
-ERR
+        error "Please pipe to this task i.e. `heroku config --json | bundle exec envied check:heroku`"
         exit 1
       end
       heroku_env = JSON.parse(STDIN.read)
@@ -117,7 +111,6 @@ ERR
       Generates a shell script to check the Heroku config against the local Envfile.
 
       The same as the check:heroku-task, but all in one script (no need to pipe `heroku config --json` to it etc.).
-
     LONG
     option :dest, banner: "where to put the script", desc: "Default: bin/<app>-env-check or bin/heroku-env-check"
     option :app, banner: "name of Heroku app", desc: "uses ENV['HEROKU_APP'] as default if present", default: ENV['HEROKU_APP']
