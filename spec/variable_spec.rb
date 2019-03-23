@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ENVied::Variable do
+RSpec.describe ENVied::Variable do
   def variable(*args)
     described_class.new(*args)
   end
