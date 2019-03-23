@@ -97,7 +97,7 @@ class ENVied
         exit 1
       end
       heroku_env = JSON.parse(STDIN.read)
-      ENV.replace({}).update(heroku_env)
+      ENV.replace(heroku_env)
 
       requested_groups = ENV['ENVIED_GROUPS'] || options[:groups]
       ENVied.require(*requested_groups)
