@@ -1,6 +1,4 @@
-require 'coercible'
-
-class ENVied::Coercer::ENViedString < Coercible::Coercer::String
+class ENVied::Coercer::ENViedString
   TRUE_VALUES = %w[1 on t true y yes].freeze
   FALSE_VALUES = %w[0 off f false n no].freeze
   BOOLEAN_MAP = (TRUE_VALUES.product([ true ]) + FALSE_VALUES.product([ false ])).to_h.freeze
