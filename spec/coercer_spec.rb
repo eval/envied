@@ -68,31 +68,27 @@ RSpec.describe ENVied::Coercer do
   describe '#coerce' do
     let(:coercer){ described_class.new }
 
-    def coerce_to(type)
-      ->(str){ coercer.coerce(str, type) }
+    def coerce(str, type)
+      coercer.coerce(str, type)
     end
 
     it 'fails with an invalid type' do
-      expect { coerce_to(:fixnum)[''] }.to raise_error(ArgumentError, "The type `:fixnum` is not supported.")
+      expect { coerce('', :fixnum) }.to raise_error(ArgumentError, "The type `:fixnum` is not supported.")
     end
 
     describe 'to string' do
-      let(:coerce){ coerce_to(:string) }
-
       it 'returns the input untouched' do
-        expect(coerce['1']).to eq '1'
-        expect(coerce[' 1']).to eq ' 1'
+        expect(coerce('1', :string)).to eq '1'
+        expect(coerce(' 1', :string)).to eq ' 1'
       end
 
       it 'fails when the value does not respond to #to_str' do
         value = Object.new
-        expect { coerce[value] }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        expect { coerce(value, :string) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
       end
     end
 
     describe 'to integer' do
-      let(:coerce){ coerce_to(:integer) }
-
       {
         '1' => 1,
         '+1' => 1,
@@ -102,23 +98,21 @@ RSpec.describe ENVied::Coercer do
         '1_000_00' => 1_000_00
       }.each do |value, integer|
         it "converts #{value.inspect} to an integer" do
-          expect(coerce[value]).to be_kind_of(Integer)
-          expect(coerce[value]).to eq integer
+          expect(coerce(value, :integer)).to be_kind_of(Integer)
+          expect(coerce(value, :integer)).to eq integer
         end
       end
 
       it 'fails with an invalid string' do
-        expect { coerce['non-integer'] }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        expect { coerce('non-integer', :integer) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
       end
 
       it 'fails with a float' do
-        expect { coerce['1.23'] }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        expect { coerce('1.23', :integer) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
       end
     end
 
     describe 'to float' do
-      let(:coerce){ coerce_to(:float) }
-
       {
         '1' => 1.0,
         '+1' => 1.0,
@@ -155,54 +149,48 @@ RSpec.describe ENVied::Coercer do
         '-1e-1' => -0.1,
       }.each do |value, float|
         it "converts #{value.inspect} to a float" do
-          expect(coerce[value]).to be_kind_of(Float)
-          expect(coerce[value]).to eq float
+          expect(coerce(value, :float)).to be_kind_of(Float)
+          expect(coerce(value, :float)).to eq float
         end
       end
 
       it 'fails with an invalid string' do
-        expect { coerce['non-float'] }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        expect { coerce('non-float', :float) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
       end
 
       it 'fails when string starts with e' do
-        expect { coerce['e1'] }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        expect { coerce('e1', :float) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
       end
     end
 
     describe 'to boolean' do
-      let(:coerce){ coerce_to(:boolean) }
-
       %w[ 1 on ON t true T TRUE y yes Y YES ].each do |value|
         it "converts #{value.inspect} to `true`" do
-          expect(coerce[value]).to eq true
+          expect(coerce(value, :boolean)).to eq true
         end
       end
 
       %w[ 0 off OFF f false F FALSE n no N NO ].each do |value|
         it "converts #{value.inspect} to `false`" do
-          expect(coerce[value]).to eq false
+          expect(coerce(value, :boolean)).to eq false
         end
       end
 
       it 'fails with an invalid boolean string' do
-        expect { coerce['non-boolean'] }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        expect { coerce('non-boolean', :boolean) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
       end
     end
 
     describe 'to symbol' do
-      let(:coerce){ coerce_to(:symbol) }
-
       it 'converts strings to symbols' do
-        expect(coerce['a']).to eq :a
-        expect(coerce['nice_symbol']).to eq :nice_symbol
+        expect(coerce('a', :symbol)).to eq :a
+        expect(coerce('nice_symbol', :symbol)).to eq :nice_symbol
       end
     end
 
     describe 'to date' do
-      let(:coerce){ coerce_to(:date) }
-
       it 'converts string to date' do
-        date = coerce['2019-03-22']
+        date = coerce('2019-03-22', :date)
 
         expect(date).to be_instance_of(Date)
         expect(date.year).to eq 2019
@@ -211,20 +199,18 @@ RSpec.describe ENVied::Coercer do
       end
 
       it 'converts other string formats to date' do
-        expect(coerce['March 22nd, 2019']).to eq Date.parse('2019-03-22')
-        expect(coerce['Sat, March 23rd, 2019']).to eq Date.parse('2019-03-23')
+        expect(coerce('March 22nd, 2019', :date)).to eq Date.parse('2019-03-22')
+        expect(coerce('Sat, March 23rd, 2019', :date)).to eq Date.parse('2019-03-23')
       end
 
       it 'fails with an invalid string' do
-        expect { coerce['non-date'] }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        expect { coerce('non-date', :date) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
       end
     end
 
     describe 'to time' do
-      let(:coerce){ coerce_to(:time) }
-
       it 'converts string to time without time part' do
-        time = coerce["2019-03-22"]
+        time = coerce("2019-03-22", :time)
 
         expect(time).to be_instance_of(Time)
         expect(time.year).to eq 2019
@@ -236,7 +222,7 @@ RSpec.describe ENVied::Coercer do
       end
 
       it 'converts string to time with time portion' do
-        time = coerce["March 22nd, 2019 9:30:55"]
+        time = coerce("March 22nd, 2019 9:30:55", :time)
 
         expect(time).to be_instance_of(Time)
         expect(time.year).to eq 2019
@@ -248,27 +234,23 @@ RSpec.describe ENVied::Coercer do
       end
 
       it 'fails with an invalid string' do
-        expect { coerce['2999'] }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        expect { coerce('2999', :time) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
       end
     end
 
     describe 'to array' do
-      let(:coerce){ coerce_to(:array) }
-
       it 'converts strings to array' do
         {
           'a,b' => ['a','b'],
           ' a, b' => [' a',' b'],
           'apples,and\, of course\, pears' => ['apples','and, of course, pears'],
         }.each do |value, array|
-          expect(coerce[value]).to eq array
+          expect(coerce(value, :array)).to eq array
         end
       end
     end
 
     describe 'to hash' do
-      let(:coerce){ coerce_to(:hash) }
-
       it 'converts strings to hashes' do
         {
           'a=1' => {'a' => '1'},
@@ -276,18 +258,16 @@ RSpec.describe ENVied::Coercer do
           'a=&b=2' => {'a' => '', 'b' => '2'},
           'a&b=2' => {'a' => nil, 'b' => '2'},
         }.each do |value, hash|
-          expect(coerce[value]).to eq hash
+          expect(coerce(value, :hash)).to eq hash
         end
       end
     end
 
     describe 'to uri' do
-      let(:coerce){ coerce_to(:uri) }
-
       it 'converts strings to uris' do
-        expect(coerce['https://www.google.com']).to be_a(URI)
-        expect(coerce['https://www.google.com'].scheme).to eq 'https'
-        expect(coerce['https://www.google.com'].host).to eq 'www.google.com'
+        expect(coerce('https://www.google.com', :uri)).to be_a(URI)
+        expect(coerce('https://www.google.com', :uri).scheme).to eq 'https'
+        expect(coerce('https://www.google.com', :uri).host).to eq 'www.google.com'
       end
     end
   end
