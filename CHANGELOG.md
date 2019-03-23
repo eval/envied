@@ -1,3 +1,7 @@
+## master / unreleased
+
+* Now requiring Ruby version 2.3+
+
 ## 0.9.1 / 2017-07-06
 
 * Updates `envied check:heroku` to support multiline ENV variables [#42](../../pull/42)

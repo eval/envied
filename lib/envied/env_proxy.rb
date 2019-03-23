@@ -18,13 +18,11 @@ class ENVied
     end
 
     def variables
-      @variables ||= begin
-        config.variables.select {|v| groups.include?(v.group) }
-      end
+      @variables ||= config.variables.select {|v| groups.include?(v.group) }
     end
 
     def variables_by_name
-      Hash[variables.map {|v| [v.name, v] }]
+      @variables_by_name ||= variables.map {|v| [v.name, v] }.to_h
     end
 
     def [](name)

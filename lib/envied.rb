@@ -23,11 +23,8 @@ class ENVied
   end
 
   def self.env!(requested_groups, options = {})
-    @env = begin
-      @config = options.fetch(:config) { Configuration.load }
-      groups = required_groups(*requested_groups)
-      EnvProxy.new(@config, groups: groups)
-    end
+    @config = options.fetch(:config) { Configuration.load }
+    @env = EnvProxy.new(@config, groups: required_groups(*requested_groups))
   end
 
   def self.error_on_missing_variables!(options = {})
@@ -58,15 +55,16 @@ class ENVied
 
   def self.ensure_spring_after_fork_require(args, options = {})
     if spring_enabled? && !options[:via_spring]
-      Spring.after_fork { ENVied.require(args, options.merge(:via_spring => true)) }
+      Spring.after_fork { ENVied.require(args, options.merge(via_spring: true)) }
     end
   end
 
   def self.springify(&block)
     if defined?(ActiveSupport::Deprecation.warn) && !required?
-      ActiveSupport::Deprecation.warn(<<-MSG)
-It's no longer recommended to `ENVied.require` within ENVied.springify's block. Please re-run `envied init:rails` to upgrade.
-MSG
+      ActiveSupport::Deprecation.warn(<<~MSG)
+        It's no longer recommended to `ENVied.require` within ENVied.springify's
+        block. Please re-run `envied init:rails` to upgrade.
+      MSG
     end
     if spring_enabled?
       Spring.after_fork(&block)
