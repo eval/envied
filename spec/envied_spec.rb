@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ENVied do
+RSpec.describe ENVied do
   describe 'class' do
     subject { described_class }
 

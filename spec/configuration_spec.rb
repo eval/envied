@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ENVied::Configuration do
+RSpec.describe ENVied::Configuration do
   it { is_expected.to respond_to :variable }
   it { is_expected.to respond_to :enable_defaults! }
   it { is_expected.to respond_to :defaults_enabled? }

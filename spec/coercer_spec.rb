@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ENVied::Coercer do
+RSpec.describe ENVied::Coercer do
   it { is_expected.to respond_to :coerce }
 
   describe '#coerce' do

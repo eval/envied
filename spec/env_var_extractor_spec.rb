@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe ENVied::EnvVarExtractor do
+RSpec.describe ENVied::EnvVarExtractor do
 
   describe "#capture_variables" do
     def capture_variables(text)
