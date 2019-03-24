@@ -1,11 +1,79 @@
 RSpec.describe ENVied::Coercer do
   it { is_expected.to respond_to :coerce }
+  it { is_expected.to respond_to :coerced? }
+  it { is_expected.to respond_to :coercible? }
+  it { is_expected.to respond_to :supported_types }
+  it { is_expected.to respond_to :supported_type? }
+
+  describe '.supported_types' do
+    it 'returns a sorted set of supported types' do
+      expect(described_class.supported_types).to eq %i(array boolean date float hash integer string symbol time uri)
+    end
+  end
+
+  describe '.supported_type?' do
+    it 'returns true for supported type' do
+      %i(array boolean date float hash integer string symbol time uri).each do |type|
+        expect(described_class.supported_type?(type)).to eq true
+      end
+    end
+
+    it 'returns false for unsupported type' do
+      expect(described_class.supported_type?(:fixnum)).to eq false
+    end
+  end
+
+  describe '#supported_types' do
+    it 'calls class method implementation' do
+      expect(described_class).to receive(:supported_types).and_call_original
+      described_class.new.supported_types
+    end
+  end
+
+  describe '#supported_type?' do
+    it 'calls class method implementation' do
+      expect(described_class).to receive(:supported_type?).with(:string).and_call_original
+      described_class.new.supported_type?(:string)
+    end
+  end
+
+  describe '#coerced?' do
+    let(:coercer) { described_class.new }
+
+    it 'returns true if value has been coerced (not a string)' do
+      expect(coercer.coerced?(1)).to eq true
+    end
+
+    it 'returns false if value is not a string' do
+      expect(coercer.coerced?('1')).to eq false
+    end
+  end
+
+  describe '#coercible?' do
+    let(:coercer) { described_class.new }
+
+    it 'returns false for unsupported type' do
+      expect(coercer.coercible?('value', :invalid_type)).to eq false
+    end
+
+    it 'returns false for a failed coercion' do
+      expect(coercer.coercible?('value', :boolean)).to eq false
+    end
+
+    it 'returns true for a coercible value' do
+      expect(coercer.coercible?('value', :string)).to eq true
+    end
+  end
 
   describe '#coerce' do
     let(:coercer){ described_class.new }
 
     def coerce_to(type)
       ->(str){ coercer.coerce(str, type) }
+    end
+
+    it 'fails with an invalid type' do
+      expect { coerce_to(:fixnum)[''] }.to raise_error(ArgumentError, "The type `:fixnum` is not supported.")
     end
 
     describe 'to string' do
@@ -88,8 +156,8 @@ RSpec.describe ENVied::Coercer do
           'a,b' => ['a','b'],
           ' a, b' => [' a',' b'],
           'apples,and\, of course\, pears' => ['apples','and, of course, pears'],
-        }.each do |i, o|
-          expect(coerce[i]).to eq o
+        }.each do |value, array|
+          expect(coerce[value]).to eq array
         end
       end
     end
@@ -103,8 +171,8 @@ RSpec.describe ENVied::Coercer do
           'a=1&b=2' => {'a' => '1', 'b' => '2'},
           'a=&b=2' => {'a' => '', 'b' => '2'},
           'a&b=2' => {'a' => nil, 'b' => '2'},
-        }.each do |i, o|
-          expect(coerce[i]).to eq o
+        }.each do |value, hash|
+          expect(coerce[value]).to eq hash
         end
       end
     end

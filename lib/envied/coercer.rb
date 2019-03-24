@@ -14,7 +14,7 @@ class ENVied::Coercer
   # @return [type] the coerced string.
   def coerce(string, type)
     unless supported_type?(type)
-      raise ArgumentError, "#{type.inspect} is not supported type"
+      raise ArgumentError, "The type `#{type.inspect}` is not supported."
     end
     coerce_method_for(type.to_sym)[string]
   end

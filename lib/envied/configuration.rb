@@ -8,14 +8,6 @@ class ENVied
       instance_eval(&block) if block_given?
     end
 
-    def defaults_enabled_default
-      if ENV['ENVIED_ENABLE_DEFAULTS'].nil?
-        false
-      else
-        @coercer.coerce(ENV['ENVIED_ENABLE_DEFAULTS'], :boolean)
-      end
-    end
-
     def self.load(options = {})
       envfile = File.expand_path('Envfile')
       new(options).tap do |v|
@@ -38,8 +30,7 @@ class ENVied
       type = args.first || :string
 
       unless coercer.supported_type?(type)
-        raise ArgumentError,
-          "Variable type (of #{name}) should be one of #{coercer.supported_types}"
+        raise ArgumentError, "#{type.inspect} is not a supported type. Should be one of #{coercer.supported_types}"
       end
       options[:group] = current_group if current_group
       variables << ENVied::Variable.new(name, type, options)
@@ -57,6 +48,15 @@ class ENVied
     def variables
       @variables ||= []
     end
-  end
 
+    private
+
+    def defaults_enabled_default
+      if ENV['ENVIED_ENABLE_DEFAULTS'].nil?
+        false
+      else
+        @coercer.coerce(ENV['ENVIED_ENABLE_DEFAULTS'], :boolean)
+      end
+    end
+  end
 end

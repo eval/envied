@@ -112,7 +112,7 @@ RSpec.describe ENVied do
       it 'raises error when configuring variable of unknown type' do
         expect {
           configured_with(A: :fixnum)
-        }.to raise_error(ArgumentError, /Variable type \(of A\) should be one of \[/)
+        }.to raise_error(ArgumentError, ":fixnum is not a supported type. Should be one of #{ENVied::Coercer.supported_types}")
       end
     end
 

@@ -1,9 +1,5 @@
-require 'rubygems'
-require 'bundler'
-Bundler.setup
-
-$:.unshift File.expand_path("../../lib", __FILE__)
-require 'envied'
+require "bundler/setup"
+require "envied"
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
