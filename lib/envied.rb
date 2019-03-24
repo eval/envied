@@ -29,7 +29,7 @@ class ENVied
   def self.error_on_missing_variables!(**options)
     names = env.missing_variables.map(&:name)
     if names.any?
-      msg = "The following environment variables should be set: #{names * ', '}."
+      msg = "The following environment variables should be set: #{names.join(', ')}."
       msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
       raise msg
     end
@@ -37,7 +37,7 @@ class ENVied
 
   def self.error_on_uncoercible_variables!(**options)
     errors = env.uncoercible_variables.map do |v|
-      "%{name} ('%{value}' can't be coerced to %{type})" % {name: v.name, value: env.value_to_coerce(v), type: v.type }
+      format("%{name} with %{value} (%{type})", name: v.name, value: env.value_to_coerce(v).inspect, type: v.type)
     end
     if errors.any?
       msg = "The following environment variables are not coercible: #{errors.join(", ")}."

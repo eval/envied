@@ -1,17 +1,7 @@
 RSpec.describe ENVied do
   describe 'class' do
     subject { described_class }
-
     it { is_expected.to respond_to :require }
-  end
-
-  describe 'responding to methods that are variables' do
-  end
-
-  before do
-    reset_env
-    reset_envied_config
-    reset_configuration
   end
 
   def reset_configuration
@@ -28,9 +18,10 @@ RSpec.describe ENVied do
 
   context 'configured' do
 
-    def unconfigured
-      configured_with
-      self
+    before do
+      reset_env
+      reset_envied_config
+      reset_configuration
     end
 
     def config
@@ -39,7 +30,6 @@ RSpec.describe ENVied do
 
     def configure(options = {}, &block)
       @config = ENVied::Configuration.new(options, &block)
-      self
     end
 
     def configured_with(hash = {})
@@ -48,16 +38,10 @@ RSpec.describe ENVied do
           c.variable(name, *type)
         end
       end
-      self
     end
 
-    def and_ENV(env = {})
+    def set_ENV(env = {})
       stub_const("ENV", env)
-      described_class
-    end
-
-    def and_no_ENV
-      and_ENV
     end
 
     def envied_require(*args, **options)
@@ -65,44 +49,56 @@ RSpec.describe ENVied do
       ENVied.require(*args, **options)
     end
 
-    it 'responds to configured variables' do
-      configured_with(a: :integer).and_ENV({'a' => '1'})
+    it 'does respond to configured variables' do
+      set_ENV('A' => '1')
+      configured_with(A: :integer)
       envied_require
 
-      expect(described_class).to respond_to :a
+      expect(described_class).to respond_to :A
     end
 
-    it 'responds not to unconfigured variables' do
-      unconfigured.and_ENV({'A' => '1'})
+    it 'does not respond to unconfigured variables' do
+      set_ENV('A' => '1')
+      configured_with
       envied_require
 
       expect(described_class).to_not respond_to :B
     end
 
     it 'sets ENVied.config' do
-      configured_with(a: :integer).and_ENV({'a' => '1'})
+      set_ENV('A' => '1')
+      configured_with(A: :integer)
       envied_require
 
-      expect(ENVied.config).to_not be(nil)
+      expect(ENVied.config).to be_instance_of(ENVied::Configuration)
     end
 
     context 'ENV contains not all configured variables' do
-      before { configured_with(a: :integer).and_no_ENV }
+      before do
+        set_ENV
+        configured_with(A: :integer)
+      end
 
       specify do
         expect {
           envied_require
-        }.to raise_error(RuntimeError, 'The following environment variables should be set: a.')
+        }.to raise_error(RuntimeError, 'The following environment variables should be set: A.')
       end
     end
 
     context 'ENV variables are not coercible' do
-      before { configured_with(A: :integer).and_ENV('A' => 'NaN') }
+      before do
+        set_ENV('A' => 'NaN', 'B' => 'invalid')
+        configured_with(A: :integer, B: :boolean)
+      end
 
       specify do
         expect {
           envied_require
-        }.to raise_error(/A \('NaN' can't be coerced to integer/)
+        }.to raise_error(
+          RuntimeError,
+          'The following environment variables are not coercible: A with "NaN" (integer), B with "invalid" (boolean).'
+        )
       end
     end
 
@@ -114,12 +110,13 @@ RSpec.describe ENVied do
       end
     end
 
+    # TODO: review needed, doesn't make sense?
     context 'bug: default value "false" is not coercible' do
-      before {
+      before do
         configure(enable_defaults: true) do
           variable :FORCE_SSL, :boolean, default: true
         end
-      }
+      end
 
       specify do
         expect {
@@ -133,32 +130,32 @@ RSpec.describe ENVied do
         subject { config }
 
         it 'is disabled by default' do
-          expect(subject.defaults_enabled?).to_not be
+          expect(subject.defaults_enabled?).to eq false
         end
 
-        it 'yields ENV["ENVIED_ENABLE_DEFAULTS"] if not set otherwise' do
-          stub_const("ENV", {'ENVIED_ENABLE_DEFAULTS' => '1'})
+        it 'is enabled if ENV["ENVIED_ENABLE_DEFAULTS"] is set' do
+          set_ENV('ENVIED_ENABLE_DEFAULTS' => '1')
           configure
 
-          expect(subject.defaults_enabled?).to be
+          expect(subject.defaults_enabled?).to eq true
         end
 
-        it 'can be enabled via #configure' do
-          configure(enable_defaults: true){ }
+        it 'can be enabled via config option' do
+          configure(enable_defaults: true) { }
 
-          expect(subject.defaults_enabled?).to be
+          expect(subject.defaults_enabled?).to eq true
         end
 
         it 'can be enabled via a configure-block' do
           configure { self.enable_defaults! }
 
-          expect(subject.defaults_enabled?).to be
+          expect(subject.defaults_enabled?).to eq true
         end
 
-        it 'can be assigned a Proc' do
+        it 'can be enabled via a Proc' do
           configure { self.enable_defaults! { true } }
 
-          expect(subject.defaults_enabled?).to be
+          expect(subject.defaults_enabled?).to eq true
         end
       end
 
@@ -182,29 +179,33 @@ RSpec.describe ENVied do
         end
 
         it 'is ignored if defaults are disabled' do
+          set_ENV
           configure(enable_defaults: false) do
             variable :A, :integer, default: "1"
-          end.and_no_ENV
+            variable :B, :integer, default: "1"
+          end
 
           expect {
             envied_require
-          }.to raise_error(RuntimeError, 'The following environment variables should be set: A.')
+          }.to raise_error(RuntimeError, 'The following environment variables should be set: A, B.')
         end
 
         it 'is ignored if ENV is provided' do
+          set_ENV('A' => '2')
           configure(enable_defaults: true) do
             variable :A, :integer, default: "1"
-          end.and_ENV('A' => '2')
+          end
           envied_require
 
           expect(described_class.A).to eq 2
         end
 
         it 'can be defined in terms of other variables' do
+          set_ENV('A' => '1')
           configure(enable_defaults: true) do
             variable :A, :integer
             variable :B, :integer, default: proc {|env| env.A * 2 }
-          end.and_ENV('A' => '1')
+          end
           envied_require
 
           expect(described_class.B).to eq 2
@@ -213,6 +214,7 @@ RSpec.describe ENVied do
     end
 
     describe "::required?" do
+      # TODO: change to always return boolean
       it 'yields true-ish when ::require is called' do
         expect {
           envied_require
@@ -229,7 +231,7 @@ RSpec.describe ENVied do
         end
 
         it 'takes ENV["ENVIED_GROUPS"] into account when nothing passed to require' do
-          and_ENV('ENVIED_GROUPS' => 'baz')
+          set_ENV('ENVIED_GROUPS' => 'baz')
           envied_require
           expect(ENVied.env.groups).to eq [:baz]
         end
@@ -252,19 +254,20 @@ RSpec.describe ENVied do
 
       context 'a variable in a group' do
         before do
+          set_ENV
           configure do
-            variable :moar
+            variable :MORE
 
             group :foo do
-              variable :bar
+              variable :BAR
             end
-          end.and_no_ENV
+          end
         end
 
         it 'is required when requiring the group' do
           expect {
             envied_require(:foo)
-          }.to raise_error(/bar/)
+          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
         end
 
         it 'is not required when requiring another group' do
@@ -274,11 +277,11 @@ RSpec.describe ENVied do
         end
 
         it 'wont define non-required variables on ENVied' do
-          stub_const("ENV", {'moar' => 'yes'})
+          set_ENV('MORE' => 'yes')
           envied_require(:default)
 
           expect {
-            described_class.bar
+            described_class.BAR
           }.to raise_error(NoMethodError)
         end
 
@@ -286,89 +289,95 @@ RSpec.describe ENVied do
           [:default, 'default'].each do |groups|
             expect {
               envied_require(*groups)
-            }.to raise_error(/moar/)
+            }.to raise_error(RuntimeError, 'The following environment variables should be set: MORE.')
           end
         end
       end
 
       context 'a variable in multiple groups' do
         before do
+          set_ENV
           configure do
-            variable :moar
+            variable :MORE
 
             group :foo, :moo do
-              variable :bar
+              variable :BAR
             end
-          end.and_no_ENV
+          end
         end
 
         it 'is required when requiring any of the groups' do
           expect {
             envied_require(:foo)
-          }.to raise_error(/bar/)
+          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
 
           expect {
             envied_require(:moo)
-          }.to raise_error(/bar/)
+          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
         end
       end
 
       describe 'Hashable' do
         before do
+          set_ENV('FOO' => 'a=1&b=&c', 'BAR' => '')
           configure do
-            variable :foo, :hash
-            variable :bar, :hash
-          end.and_ENV('foo' => 'a=1&b=&c', 'bar' => '')
+            variable :FOO, :hash
+            variable :BAR, :hash
+          end
           envied_require
         end
 
         it 'yields hash from string' do
-          expect(ENVied.foo).to eq Hash['a'=> '1', 'b' => '', 'c' => nil]
+          expect(ENVied.FOO).to eq({ 'a' => '1', 'b' => '', 'c' => nil })
         end
 
         it 'yields hash from an empty string' do
-          expect(ENVied.bar).to eq Hash.new
+          expect(ENVied.BAR).to eq({})
         end
 
         context 'with defaults enabled' do
           before do
+            set_ENV
             configure(enable_defaults: true) do
-              variable :baz, :hash
-            end.and_no_ENV
+              variable :BAZ, :hash
+            end
           end
 
           it 'has no default by default' do
             # fixes a bug where variables of type :Hash had a default even
             # when none was configured.
-            expect { envied_require }.to raise_error(RuntimeError, 'The following environment variables should be set: baz.')
+            expect { envied_require }.to raise_error(RuntimeError, 'The following environment variables should be set: BAZ.')
           end
         end
       end
 
       describe 'Arrayable' do
         before do
+          set_ENV('MORE' => 'a, b, and\, c')
           configure do
-            variable :moar, :array
-          end.and_ENV('moar' => 'a, b, and\, c')
+            variable :MORE, :array
+          end
           envied_require
         end
 
         it 'yields array from string' do
-          expect(ENVied.moar).to eq ['a',' b',' and, c']
+          expect(ENVied.MORE).to eq ['a',' b',' and, c']
         end
       end
 
       describe 'URIable' do
         before do
+          set_ENV('SITE_URL' => 'https://www.google.com')
           configure do
-            variable :site_url, :uri
-          end.and_ENV('site_url' => 'https://www.google.com')
+            variable :SITE_URL, :uri
+          end
           envied_require
         end
 
         it 'yields a URI from string' do
-          expect(ENVied.site_url).to be_a URI
-          expect(ENVied.site_url.host).to eq 'www.google.com'
+          expect(ENVied.SITE_URL).to be_a URI
+          expect(ENVied.SITE_URL.scheme).to eq 'https'
+          expect(ENVied.SITE_URL.host).to eq 'www.google.com'
         end
       end
     end
