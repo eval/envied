@@ -2,13 +2,13 @@ class ENVied
   class Configuration
     attr_reader :current_group, :defaults_enabled, :coercer
 
-    def initialize(options = {}, &block)
+    def initialize(**options, &block)
       @coercer = options.fetch(:coercer, Coercer.new)
       @defaults_enabled = options.fetch(:enable_defaults, defaults_enabled_default)
       instance_eval(&block) if block_given?
     end
 
-    def self.load(options = {})
+    def self.load(**options)
       envfile = File.expand_path('Envfile')
       new(options).tap do |v|
         v.instance_eval(File.read(envfile), envfile)
@@ -25,10 +25,7 @@ class ENVied
         @defaults_enabled
     end
 
-    def variable(name, *args)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-      type = args.first || :string
-
+    def variable(name, type = :string, **options)
       unless coercer.supported_type?(type)
         raise ArgumentError, "#{type.inspect} is not a supported type. Should be one of #{coercer.supported_types}"
       end

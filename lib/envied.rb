@@ -12,8 +12,7 @@ class ENVied
     alias_method :required?, :env
   end
 
-  def self.require(*args)
-    options = args.last.is_a?(Hash) ? args.pop : {}
+  def self.require(*args, **options)
     requested_groups = (args && !args.empty?) ? args : ENV['ENVIED_GROUPS']
     env!(requested_groups, options)
     error_on_missing_variables!(options)
@@ -22,12 +21,12 @@ class ENVied
     ensure_spring_after_fork_require(args, options)
   end
 
-  def self.env!(requested_groups, options = {})
+  def self.env!(requested_groups, **options)
     @config = options.fetch(:config) { Configuration.load }
     @env = EnvProxy.new(@config, groups: required_groups(*requested_groups))
   end
 
-  def self.error_on_missing_variables!(options = {})
+  def self.error_on_missing_variables!(**options)
     names = env.missing_variables.map(&:name)
     if names.any?
       msg = "The following environment variables should be set: #{names * ', '}."
@@ -36,7 +35,7 @@ class ENVied
     end
   end
 
-  def self.error_on_uncoercible_variables!(options = {})
+  def self.error_on_uncoercible_variables!(**options)
     errors = env.uncoercible_variables.map do |v|
       "%{name} ('%{value}' can't be coerced to %{type})" % {name: v.name, value: env.value_to_coerce(v), type: v.type }
     end
@@ -53,7 +52,7 @@ class ENVied
     result.any? ? result.map(&:to_sym) : [:default]
   end
 
-  def self.ensure_spring_after_fork_require(args, options = {})
+  def self.ensure_spring_after_fork_require(args, **options)
     if spring_enabled? && !options[:via_spring]
       Spring.after_fork { ENVied.require(args, options.merge(via_spring: true)) }
     end

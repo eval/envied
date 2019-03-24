@@ -60,11 +60,9 @@ RSpec.describe ENVied do
       and_ENV
     end
 
-    def envied_require(*args)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-      options[:config] = options[:config] || config
-
-      ENVied.require(*args, options)
+    def envied_require(*args, **options)
+      options[:config] = @config # we override so Configuration.load is not called
+      ENVied.require(*args, **options)
     end
 
     it 'responds to configured variables' do
