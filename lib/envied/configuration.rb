@@ -30,8 +30,7 @@ class ENVied
       type = args.first || :string
 
       unless coercer.supported_type?(type)
-        raise ArgumentError,
-          "Variable type (of #{name}) should be one of #{coercer.supported_types}"
+        raise ArgumentError, "#{type.inspect} is not a supported type. Should be one of #{coercer.supported_types}"
       end
       options[:group] = current_group if current_group
       variables << ENVied::Variable.new(name, type, options)

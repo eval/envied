@@ -72,6 +72,10 @@ RSpec.describe ENVied::Coercer do
       ->(str){ coercer.coerce(str, type) }
     end
 
+    it 'fails with an invalid type' do
+      expect { coerce_to(:fixnum)[''] }.to raise_error(ArgumentError, "The type `:fixnum` is not supported.")
+    end
+
     describe 'to string' do
       let(:coerce){ coerce_to(:string) }
 
