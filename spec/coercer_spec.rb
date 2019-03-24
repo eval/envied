@@ -180,8 +180,34 @@ RSpec.describe ENVied::Coercer do
     describe 'to uri' do
       let(:coerce){ coerce_to(:uri) }
 
-      it 'converts strings to uris' do
-        expect(coerce['http://www.google.com']).to be_a(URI)
+      it 'converts strings to generic uris' do
+        expect(coerce['server.example.com']).to be_a(URI::Generic)
+      end
+
+      it 'converts strings to ftp uris' do
+        expect(coerce['ftp://ftp.example.com']).to be_a(URI::FTP)
+      end
+    end
+
+    describe 'to uri_with_scheme' do
+      let(:coerce){ coerce_to(:uri_with_scheme) }
+
+      it 'converts strings to http uris' do
+        expect(coerce['http://www.google.com'].scheme).to eql 'http'
+      end
+
+      it 'converts strings to https uris' do
+        expect(coerce['https://github.com'].scheme).to eql 'https'
+      end
+
+      it 'converts strings to redis uris' do
+        expect(coerce['redis://example.com:6379'].scheme).to eql 'redis'
+      end
+
+      it 'fails for non uris' do
+        expect {
+          coerce['server.example.com']
+        }.to raise_error(Coercible::UnsupportedCoercion)
       end
     end
   end
