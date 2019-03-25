@@ -4,12 +4,12 @@ RSpec.describe ENVied::Configuration do
   it { is_expected.to respond_to :enable_defaults! }
   it { is_expected.to respond_to :defaults_enabled? }
 
-  describe '#variable' do
-    def with_envfile(&block)
-      @config = described_class.new(&block)
-    end
-    attr_reader :config
+  def with_envfile(**options, &block)
+    @config = ENVied::Configuration.new(options, &block)
+  end
+  attr_reader :config
 
+  describe 'variables' do
     it 'results in an added variable' do
       with_envfile do
         variable :foo, :boolean
@@ -55,14 +55,36 @@ RSpec.describe ENVied::Configuration do
       expect(subject.defaults_enabled?).to eq true
     end
 
+    it 'can be enabled through a config option' do
+      with_envfile(enable_defaults: true) { }
+
+      expect(config.defaults_enabled?).to eq true
+    end
+
     describe '#enable_defaults!' do
+      it 'can be enabled in a block by calling `enable_defaults!`' do
+        with_envfile do
+          enable_defaults!
+        end
+
+        expect(config.defaults_enabled?).to eq true
+      end
+
+      it 'can be enabled by calling `enable_defaults!` with a Proc' do
+        with_envfile do
+          enable_defaults! { true }
+        end
+
+        expect(config.defaults_enabled?).to eq true
+      end
+
       it 'defaults to true with no arguments' do
         expect {
           subject.enable_defaults!
         }.to change { subject.defaults_enabled? }.from(false).to(true)
       end
 
-      it 'can be passed a value' do
+      it 'can be passed a boolean value' do
         expect {
           subject.enable_defaults!(true)
         }.to change { subject.defaults_enabled? }.from(false).to(true)

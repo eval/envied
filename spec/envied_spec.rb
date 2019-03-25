@@ -24,10 +24,6 @@ RSpec.describe ENVied do
       reset_configuration
     end
 
-    def config
-      @config
-    end
-
     def configure(options = {}, &block)
       @config = ENVied::Configuration.new(options, &block)
     end
@@ -126,39 +122,6 @@ RSpec.describe ENVied do
     end
 
     describe 'defaults' do
-      describe 'setting' do
-        subject { config }
-
-        it 'is disabled by default' do
-          expect(subject.defaults_enabled?).to eq false
-        end
-
-        it 'is enabled if ENV["ENVIED_ENABLE_DEFAULTS"] is set' do
-          set_ENV('ENVIED_ENABLE_DEFAULTS' => '1')
-          configure
-
-          expect(subject.defaults_enabled?).to eq true
-        end
-
-        it 'can be enabled via config option' do
-          configure(enable_defaults: true) { }
-
-          expect(subject.defaults_enabled?).to eq true
-        end
-
-        it 'can be enabled via a configure-block' do
-          configure { self.enable_defaults! }
-
-          expect(subject.defaults_enabled?).to eq true
-        end
-
-        it 'can be enabled via a Proc' do
-          configure { self.enable_defaults! { true } }
-
-          expect(subject.defaults_enabled?).to eq true
-        end
-      end
-
       describe 'assigning' do
         it 'can be a value' do
           configure(enable_defaults: true) do
@@ -276,7 +239,7 @@ RSpec.describe ENVied do
           }.to_not raise_error
         end
 
-        it 'wont define non-required variables on ENVied' do
+        it 'will not define variables not part of the default group' do
           set_ENV('MORE' => 'yes')
           envied_require(:default)
 
