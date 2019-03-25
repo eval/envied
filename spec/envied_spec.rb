@@ -123,7 +123,7 @@ RSpec.describe ENVied do
 
     describe 'defaults' do
       describe 'assigning' do
-        it 'can be a value' do
+        it 'sets a default value for ENV variable' do
           configure(enable_defaults: true) do
             variable :A, :integer, default: '1'
           end
@@ -132,7 +132,7 @@ RSpec.describe ENVied do
           expect(described_class.A).to eq 1
         end
 
-        it 'can be a Proc' do
+        it 'sets a default value from calling a proc for ENV variable' do
           configure(enable_defaults: true) do
             variable :A, :integer, default: proc { "1" }
           end
@@ -141,7 +141,7 @@ RSpec.describe ENVied do
           expect(described_class.A).to eq 1
         end
 
-        it 'is ignored if defaults are disabled' do
+        it 'ignores setting defaults if they are disabled' do
           set_ENV
           configure(enable_defaults: false) do
             variable :A, :integer, default: "1"
@@ -153,7 +153,7 @@ RSpec.describe ENVied do
           }.to raise_error(RuntimeError, 'The following environment variables should be set: A, B.')
         end
 
-        it 'is ignored if ENV is provided' do
+        it 'ignores a default value if ENV variable is already provided' do
           set_ENV('A' => '2')
           configure(enable_defaults: true) do
             variable :A, :integer, default: "1"
@@ -163,7 +163,7 @@ RSpec.describe ENVied do
           expect(described_class.A).to eq 2
         end
 
-        it 'can be defined in terms of other variables' do
+        it 'can set a default value via a proc that references another ENV variable' do
           set_ENV('A' => '1')
           configure(enable_defaults: true) do
             variable :A, :integer
@@ -176,9 +176,9 @@ RSpec.describe ENVied do
       end
     end
 
-    describe "::required?" do
+    describe ".required?" do
       # TODO: change to always return boolean
-      it 'yields true-ish when ::require is called' do
+      it 'returns true-ish if `ENVied.require` was called' do
         expect {
           envied_require
         }.to change { ENVied.required? }.from(nil).to(anything)
@@ -187,7 +187,6 @@ RSpec.describe ENVied do
 
     describe "groups" do
       describe 'requiring' do
-
         it 'yields :default when nothing passed to require' do
           envied_require
           expect(ENVied.env.groups).to eq [:default]
