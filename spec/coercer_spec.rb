@@ -181,7 +181,9 @@ RSpec.describe ENVied::Coercer do
       let(:coerce){ coerce_to(:uri) }
 
       it 'converts strings to uris' do
-        expect(coerce['http://www.google.com']).to be_a(URI)
+        expect(coerce['https://www.google.com']).to be_a(URI)
+        expect(coerce['https://www.google.com'].scheme).to eq 'https'
+        expect(coerce['https://www.google.com'].host).to eq 'www.google.com'
       end
     end
   end
