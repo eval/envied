@@ -4,44 +4,37 @@ RSpec.describe ENVied do
     it { is_expected.to respond_to :require }
   end
 
-  def reset_configuration
-    @config = ENVied::Configuration.new
-  end
-
-  def reset_env
-    ENVied.instance_eval { @env = nil }
-  end
-
-  def reset_envied_config
-    ENVied.instance_eval { @config = nil }
+  def reset_envied
+    ENVied.instance_eval do
+      @env = nil
+      @config = nil
+    end
   end
 
   context 'configured' do
 
     before do
-      reset_env
-      reset_envied_config
-      reset_configuration
-    end
-
-    def configure(options = {}, &block)
-      @config = ENVied::Configuration.new(options, &block)
-    end
-
-    def configured_with(hash = {})
-      @config = ENVied::Configuration.new.tap do |c|
-        hash.each do |name, type|
-          c.variable(name, *type)
-        end
-      end
+      reset_envied
     end
 
     def set_ENV(env = {})
       stub_const("ENV", env)
     end
 
+    def configure(**options, &block)
+      @config = ENVied::Configuration.new(options, &block)
+    end
+
+    def configured_with(**hash)
+      @config = ENVied::Configuration.new.tap do |config|
+        hash.each do |name, type|
+          config.variable(name, type)
+        end
+      end
+    end
+
     def envied_require(*args, **options)
-      options[:config] = @config # we override so Configuration.load is not called
+      options[:config] = @config || ENVied::Configuration.new # Prevent `Configuration.load` from being called
       ENVied.require(*args, **options)
     end
 
