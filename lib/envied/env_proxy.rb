@@ -3,7 +3,7 @@ class ENVied
   class EnvProxy
     attr_reader :config, :coercer, :groups
 
-    def initialize(config, options = {})
+    def initialize(config, **options)
       @config = config
       @coercer = options.fetch(:coercer, ENVied::Coercer.new)
       @groups = options.fetch(:groups, [])
