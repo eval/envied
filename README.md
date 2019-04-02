@@ -1,4 +1,4 @@
-# ENVied [![Build Status](https://travis-ci.org/eval/envied.svg?branch=master)](https://travis-ci.org/eval/envied)
+# ENVied [![Build Status](https://travis-ci.org/eval/envied.svg?branch=master)](https://travis-ci.org/eval/envied) [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://envied-rb.zulipchat.com/)
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
