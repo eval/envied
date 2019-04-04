@@ -1,4 +1,4 @@
-class ENVied::Coercer::String < ENVied::Coercer::BaseType
+class ENVied::Coercer::StringType < ENVied::Coercer::BaseType
 
   def parse
     if raw_value.respond_to?(:to_str)

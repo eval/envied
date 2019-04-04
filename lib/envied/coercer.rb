@@ -17,7 +17,20 @@ class ENVied::Coercer
     unless supported_type?(type)
       raise ArgumentError, "The type `#{type.inspect}` is not supported."
     end
-    coercer.public_send("to_#{type.downcase}", string)
+    if type.to_s == "string"
+      result = self.class.types[:string].parse(string)
+      if result.parsed?
+        return result.value
+      end
+    else
+      coercer.public_send("to_#{type.downcase}", string)
+    end
+  end
+
+  def self.types
+    @types ||= {
+      string: StringType,
+    }
   end
 
   def self.supported_types
