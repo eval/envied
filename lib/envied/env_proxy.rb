@@ -2,7 +2,7 @@ class ENVied
   # Responsible for anything related to the ENV.
   class EnvProxy
     attr_reader :config, :coercer, :groups
-    private :config, :coercer#, :groups
+    private :config, :coercer, :groups
 
     def initialize(config, **options)
       @config = config
