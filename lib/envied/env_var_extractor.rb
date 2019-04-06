@@ -15,12 +15,12 @@ class ENVied
 
     attr_reader :globs, :extensions
 
-    def initialize(options = {})
+    def initialize(**options)
       @globs = options.fetch(:globs, self.defaults[:globs])
       @extensions = options.fetch(:extensions, self.defaults[:extensions])
     end
 
-    def self.extract_from(globs, options = {})
+    def self.extract_from(globs, **options)
       new(options.merge(globs: Array(globs))).extract
     end
 

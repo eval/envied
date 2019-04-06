@@ -179,34 +179,6 @@ RSpec.describe ENVied do
     end
 
     describe "groups" do
-      describe 'requiring' do
-        it 'yields :default when nothing passed to require' do
-          envied_require
-          expect(ENVied.env.groups).to eq [:default]
-        end
-
-        it 'takes ENV["ENVIED_GROUPS"] into account when nothing passed to require' do
-          set_ENV('ENVIED_GROUPS' => 'baz')
-          envied_require
-          expect(ENVied.env.groups).to eq [:baz]
-        end
-
-        it 'yields groupnames passed to it as string' do
-          envied_require('bar')
-          expect(ENVied.env.groups).to eq [:bar]
-        end
-
-        it 'yields groupnames passed to it as symbols' do
-          envied_require(:foo)
-          expect(ENVied.env.groups).to eq [:foo]
-        end
-
-        it 'yields the groups passed via a string with groupnames' do
-          envied_require('foo,bar')
-          expect(ENVied.env.groups).to eq [:foo, :bar]
-        end
-      end
-
       context 'a variable in a group' do
         before do
           set_ENV
@@ -216,19 +188,32 @@ RSpec.describe ENVied do
             group :foo do
               variable :BAR
             end
+            group :moo do
+              variable :BAT
+            end
           end
         end
 
-        it 'is required when requiring the group' do
+        it 'is required when requiring the groups passed as a delimited string' do
           expect {
-            envied_require(:foo)
-          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
+            envied_require('foo,moo')
+          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR, BAT.')
+        end
+
+        it 'is required when requiring the group' do
+          [:foo, 'foo'].each do |group|
+            expect {
+              envied_require(group)
+            }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
+          end
         end
 
         it 'is not required when requiring another group' do
-          expect {
-            envied_require(:bat)
-          }.to_not raise_error
+          [:bat, 'bat'].each do |group|
+            expect {
+              envied_require(group)
+            }.to_not raise_error
+          end
         end
 
         it 'will not define variables not part of the default group' do
@@ -240,10 +225,24 @@ RSpec.describe ENVied do
           }.to raise_error(NoMethodError)
         end
 
+        it 'takes ENV["ENVIED_GROUPS"] into account when nothing is passed to require' do
+          set_ENV('ENVIED_GROUPS' => 'foo')
+          expect {
+            envied_require
+          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
+        end
+
+        it 'will define variables in the default group when nothing is passed to require' do
+          set_ENV('MORE' => 'yes')
+          envied_require
+
+          expect(described_class.MORE).to eq 'yes'
+        end
+
         it 'requires variables without a group when requiring the default group' do
-          [:default, 'default'].each do |groups|
+          [:default, 'default'].each do |group|
             expect {
-              envied_require(*groups)
+              envied_require(group)
             }.to raise_error(RuntimeError, 'The following environment variables should be set: MORE.')
           end
         end

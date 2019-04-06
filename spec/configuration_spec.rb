@@ -43,6 +43,19 @@ RSpec.describe ENVied::Configuration do
 
       expect(config.variables).to include ENVied::Variable.new(:SECRET_KEY_BASE, :string, group: :production)
     end
+
+    it 'sets the same variable for multiple groups' do
+      with_envfile do
+        group :development, :test do
+          variable :DISABLE_PRY, :boolean, default: 'false'
+        end
+      end
+
+      expect(config.variables).to eq [
+        ENVied::Variable.new(:DISABLE_PRY, :boolean, default: 'false', group: :development),
+        ENVied::Variable.new(:DISABLE_PRY, :boolean, default: 'false', group: :test)
+      ]
+    end
   end
 
   describe 'defaults' do
