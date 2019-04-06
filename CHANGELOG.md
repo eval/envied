@@ -1,6 +1,6 @@
 ## master / unreleased
 
-* Now requiring Ruby 2.4+
+* Now requiring Ruby 2.4+ [#48], [#51]
 
 ## 0.9.1 / 2017-07-06
 
