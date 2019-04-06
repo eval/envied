@@ -1,6 +1,7 @@
 ## master / unreleased
 
-* Now requiring Ruby 2.4+
+* Now requiring Ruby 2.4+ [#48], [#51]
+* Removed `coercible` dependency as now all coercion functionality is implemented locally. This is a backwards compatible change. [#49]
 
 ## 0.9.1 / 2017-07-06
 

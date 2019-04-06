@@ -1,7 +1,8 @@
-require 'coercible'
-
 # Responsible for all string to type coercions.
 class ENVied::Coercer
+
+  UnsupportedCoercion = Class.new(StandardError)
+
   # Coerce strings to specific type.
   #
   # @param string [String] the string to be coerced
@@ -16,12 +17,7 @@ class ENVied::Coercer
     unless supported_type?(type)
       raise ArgumentError, "The type `#{type.inspect}` is not supported."
     end
-    coerce_method_for(type.to_sym)[string]
-  end
-
-  def coerce_method_for(type)
-    return nil unless supported_type?(type)
-    coercer.method("to_#{type.downcase}")
+    coercer.public_send("to_#{type.downcase}", string)
   end
 
   def self.supported_types
@@ -52,7 +48,7 @@ class ENVied::Coercer
   end
 
   def coercer
-    @coercer ||= Coercible::Coercer.new[ENViedString]
+    @coercer ||= ENViedString.new
   end
 
   def coerced?(value)
@@ -63,7 +59,7 @@ class ENVied::Coercer
     return false unless supported_type?(type)
     coerce(string, type)
     true
-  rescue Coercible::UnsupportedCoercion
+  rescue UnsupportedCoercion
     false
   end
 end
