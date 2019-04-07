@@ -160,7 +160,7 @@ RSpec.describe ENVied do
           set_ENV('A' => '1')
           configure(enable_defaults: true) do
             variable :A, :integer
-            variable :B, :integer, default: proc {|env| env.A * 2 }
+            variable :B, :integer, default: proc {|env| (env.A * 2).to_s }
           end
           envied_require
 
