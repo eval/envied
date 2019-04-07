@@ -170,11 +170,14 @@ RSpec.describe ENVied do
     end
 
     describe ".required?" do
-      # TODO: change to always return boolean
-      it 'returns true-ish if `ENVied.require` was called' do
+      it 'returns false by default' do
+        expect(ENVied.required?).to eq false
+      end
+
+      it 'returns true if `ENVied.require` was called' do
         expect {
           envied_require
-        }.to change { ENVied.required? }.from(nil).to(anything)
+        }.to change { ENVied.required? }.from(false).to(true)
       end
     end
 

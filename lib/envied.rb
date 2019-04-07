@@ -9,7 +9,10 @@ require 'envied/configuration'
 class ENVied
   class << self
     attr_reader :env, :config
-    alias_method :required?, :env
+
+    def required?
+      !env.nil?
+    end
   end
 
   def self.require(*args, **options)
