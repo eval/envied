@@ -36,8 +36,8 @@ class ENVied
       end
     end
 
-    def error_on_uncoercible_variables!(**options)
-      errors = env.uncoercible_variables.map do |v|
+    def error_on_incoercible_variables!(**options)
+      errors = env.incoercible_variables.map do |v|
         format("%{name} with %{value} (%{type})", name: v.name, value: env.value_to_coerce(v).inspect, type: v.type)
       end
       if errors.any?
@@ -62,8 +62,7 @@ class ENVied
     requested_groups = (args && !args.empty?) ? args : ENV['ENVIED_GROUPS']
     env!(requested_groups, options)
     error_on_missing_variables!(options)
-    error_on_uncoercible_variables!(options)
-
+    error_on_incoercible_variables!(options)
     ensure_spring_after_fork_require(args, options)
   end
 

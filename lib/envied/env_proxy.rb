@@ -15,6 +15,11 @@ class ENVied
     end
 
     def uncoercible_variables
+      warn("DEPRECATION WARNING: uncoercible_variables is deprecated and will be removed in a future release. Use incoercible_variables instead.")
+      incoercible_variables
+    end
+
+    def incoercible_variables
       variables.reject(&method(:coerced?)).reject(&method(:coercible?))
     end
 
