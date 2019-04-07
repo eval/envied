@@ -80,7 +80,11 @@ class ENVied
   end
 
   def self.method_missing(method, *args, &block)
-    respond_to_missing?(method) ? (env && env[method.to_s]) : super
+    if respond_to_missing?(method)
+      env[method.to_s]
+    else
+      super
+    end
   end
 
   def self.respond_to_missing?(method, include_private = false)
