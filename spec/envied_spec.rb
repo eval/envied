@@ -71,7 +71,7 @@ RSpec.describe ENVied do
       specify do
         expect {
           envied_require
-        }.to raise_error(RuntimeError, 'The following environment variables should be set: A.')
+        }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: A.')
       end
     end
 
@@ -85,7 +85,7 @@ RSpec.describe ENVied do
         expect {
           envied_require
         }.to raise_error(
-          RuntimeError,
+          ENVied::IncoercibleVariablesError,
           'The following environment variables are not coercible: A with "NaN" (integer), B with "invalid" (boolean).'
         )
       end
@@ -143,7 +143,7 @@ RSpec.describe ENVied do
 
           expect {
             envied_require
-          }.to raise_error(RuntimeError, 'The following environment variables should be set: A, B.')
+          }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: A, B.')
         end
 
         it 'ignores a default value if ENV variable is already provided' do
@@ -200,14 +200,14 @@ RSpec.describe ENVied do
         it 'is required when requiring the groups passed as a delimited string' do
           expect {
             envied_require('foo,moo')
-          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR, BAT.')
+          }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: BAR, BAT.')
         end
 
         it 'is required when requiring the group' do
           [:foo, 'foo'].each do |group|
             expect {
               envied_require(group)
-            }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
+            }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: BAR.')
           end
         end
 
@@ -232,7 +232,7 @@ RSpec.describe ENVied do
           set_ENV('ENVIED_GROUPS' => 'foo')
           expect {
             envied_require
-          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
+          }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: BAR.')
         end
 
         it 'will define variables in the default group when nothing is passed to require' do
@@ -246,7 +246,7 @@ RSpec.describe ENVied do
           [:default, 'default'].each do |group|
             expect {
               envied_require(group)
-            }.to raise_error(RuntimeError, 'The following environment variables should be set: MORE.')
+            }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: MORE.')
           end
         end
       end
@@ -266,11 +266,11 @@ RSpec.describe ENVied do
         it 'is required when requiring any of the groups' do
           expect {
             envied_require(:foo)
-          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
+          }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: BAR.')
 
           expect {
             envied_require(:moo)
-          }.to raise_error(RuntimeError, 'The following environment variables should be set: BAR.')
+          }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: BAR.')
         end
       end
 
@@ -303,7 +303,7 @@ RSpec.describe ENVied do
           it 'has no default by default' do
             # fixes a bug where variables of type :Hash had a default even
             # when none was configured.
-            expect { envied_require }.to raise_error(RuntimeError, 'The following environment variables should be set: BAZ.')
+            expect { envied_require }.to raise_error(ENVied::MissingVariablesError, 'The following environment variables should be set: BAZ.')
           end
         end
       end

@@ -5,6 +5,8 @@ require 'envied/coercer'
 require 'envied/coercer/envied_string'
 require 'envied/variable'
 require 'envied/configuration'
+require 'envied/errors/missing_variables_error'
+require 'envied/errors/incoercible_variables_error'
 
 class ENVied
   class << self
@@ -27,23 +29,18 @@ class ENVied
       result.any? ? result.map(&:to_sym) : [:default]
     end
 
-    def error_on_missing_variables!(**options)
-      names = env.missing_variables.map(&:name)
-      if names.any?
-        msg = "The following environment variables should be set: #{names.join(', ')}."
-        msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
-        raise msg
+    def error_on_missing_variables!
+      if env.missing_variables.any?
+        raise MissingVariablesError.with(env.missing_variables.map(&:name))
       end
     end
 
-    def error_on_incoercible_variables!(**options)
-      errors = env.incoercible_variables.map do |v|
-        format("%{name} with %{value} (%{type})", name: v.name, value: env.value_to_coerce(v).inspect, type: v.type)
-      end
-      if errors.any?
-        msg = "The following environment variables are not coercible: #{errors.join(", ")}."
-        msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
-        raise msg
+    def error_on_incoercible_variables!
+      if env.incoercible_variables.any?
+        variables = env.incoercible_variables.map do |v|
+          format("%{name} with %{value} (%{type})", name: v.name, value: env.value_to_coerce(v).inspect, type: v.type)
+        end
+        raise IncoercibleVariablesError.with(variables)
       end
     end
 
@@ -61,8 +58,8 @@ class ENVied
   def self.require(*args, **options)
     requested_groups = (args && !args.empty?) ? args : ENV['ENVIED_GROUPS']
     env!(requested_groups, options)
-    error_on_missing_variables!(options)
-    error_on_incoercible_variables!(options)
+    error_on_missing_variables!
+    error_on_incoercible_variables!
     ensure_spring_after_fork_require(args, options)
   end
 
