@@ -28,7 +28,6 @@ class ENVied
 
     def value_to_coerce(var)
       return env_value_of(var) unless env_value_of(var).nil?
-      config.defaults_enabled? ? default_value_of(var) : nil
     end
 
     private
@@ -45,10 +44,6 @@ class ENVied
 
     def coercible?(var)
       coercer.coercible?(value_to_coerce(var), var.type)
-    end
-
-    def default_value_of(var)
-      var.default_value(ENVied, var)
     end
 
     def env_value_of(var)

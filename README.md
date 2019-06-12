@@ -17,7 +17,6 @@ For the rationale behind this project, see this [blogpost](http://www.gertgoet.c
 * [Configuration](#configuration)
   * [Types](#types)
   * [Groups](#groups)
-  * [Defaults](#defaults)
   * [More examples](#more-examples)
 * [Command-line interface](#command-line-interface)
 * [How do I...?](#how-do-i)
@@ -99,7 +98,7 @@ It's similar to groups in a Gemfile:
 
 ```ruby
 # file: Envfile
-variable :FORCE_SSL, :boolean, default: 'false'
+variable :FORCE_SSL, :boolean
 
 group :production do
   variable :SECRET_KEY_BASE
@@ -131,26 +130,6 @@ ENVied.require('default')
 ENVied.require(nil)
 ```
 
-### Defaults
-
-In order to let other developers easily bootstrap the application, you can assign defaults to variables.
-Defaults can be a value or a `Proc` (see example below).
-
-Note that 'easily bootstrap' is quite the opposite of 'fail-fast when not all ENV-variables are present'. Therefore you should explicitly state when defaults are allowed:
-
-```ruby
-# Envfile
-enable_defaults! { ENV['RACK_ENV'] == 'development' }
-
-variable :FORCE_SSL, :boolean, default: 'false'
-variable :PORT, :integer, default: proc {|envied| envied.FORCE_SSL ? 443 : 80 }
-```
-
-Please remember that ENVied only **reads** from ENV; it doesn't mutate ENV.
-Don't let setting a default for, say `RAILS_ENV`, give you the impression that `ENV['RAILS_ENV']` is set.
-As a rule of thumb you should only use defaults:
-* for local development
-* for ENV-variables that are solely used by your application (i.e. for `ENV['STAFF_EMAILS']`, not for `ENV['RAILS_ENV']`)
 
 ### More examples
 
