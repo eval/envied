@@ -4,11 +4,15 @@
 
 For the rationale behind this project, see this [blogpost](http://www.gertgoet.com/2014/10/14/envied-or-how-i-stopped-worrying-about-ruby-s-env.html).
 
-## Features:
+## Features
 
 * check for presence and correctness of ENV-variables
 * access to typed ENV-variables (integers, booleans etc. instead of just strings)
 * check the presence and correctness of a Heroku config
+
+## Non-feature
+
+* provide or load ENV-values
 
 ## Contents
 
@@ -19,6 +23,7 @@ For the rationale behind this project, see this [blogpost](http://www.gertgoet.c
   * [Groups](#groups)
   * [More examples](#more-examples)
 * [Command-line interface](#command-line-interface)
+* [Best Practices](#best-practices)
 * [How do I...?](#how-do-i)
 * [Testing](#testing)
 * [Developing](#developing)
@@ -44,8 +49,8 @@ ENVied.require
 ```
 
 This will throw an error if:
-* both `ENV['FORCE_SSL']` and `ENV['PORT']` are *not present*.
-* the values *cannot* be coerced to a boolean and integer.
+* one of `ENV['FORCE_SSL']`, `ENV['PORT']` is absent.
+* or: their values *cannot* be coerced (resp. to boolean and integer).
 
 ### 3) Use coerced variables
 
@@ -153,9 +158,55 @@ Commands:
   envied version, --version, -v  # Shows version number
 ```
 
-## How do I
+## Best practices
 
-### ...find all ENV-variables my app is currently using?
+Some best practices when using ENVied or working with env-configurable applications in general.
+
+### provide a sample env-file
+
+While ENVied will warn you when you start an application that is 'under-configured', it won't tell users what good default values are. To solve this add a file to the root of your project that contains sane defaults and instructions:
+```
+# .envrc.sample
+# copy this file to .envrc and adjust values if needed
+# then do `source .envrc` to load
+
+export DATABASE_URL=postgres://localhost/blog_development
+export FORCE_SSL=false # only needed in production
+
+# you can find this token on the Heroku-dashboard
+export DEPLOY_TOKEN=1234-ABC-5678
+```
+
+### let [direnv](https://direnv.net/) manage your environment
+
+[direnv](https://direnv.net/) will auto-(un)load values from `.envrc` when you switch folders.  
+
+As a bonus it has some powerful commands in it's [stdlib](https://direnv.net/#man/direnv-stdlib.1).  
+For example:
+```
+# this adds the project's bin-folder to $PATH
+PATH_add bin
+# so instead of `./bin/rails -h` you can do `rails -h` from anywhere (deep) in the project
+
+# the following will use the .envrc.sample as a basis
+# when new variables are introduced upstream, you'll automatically use these defaults
+if [ -f .envrc.sample ]; then
+  source_env .envrc.sample
+fi
+...your customizations
+
+# a variant of this is source_up
+# an .envrc in a subfolder can load the main-file and override specific values
+# this would allow e.g. for a specific test-environment:
+# my-project/test/.envrc
+source_up .envrc
+export DATABASE_URL=the-test db-url
+```
+
+
+## FAQ
+
+### How to find all ENV-variables my app is currently using?
 
 ```
 $ bundle exec envied extract
@@ -165,7 +216,7 @@ This comes in handy when you're not using ENVied yet. It will find all `ENV['KEY
 
 It assumes a standard project layout (see the default value for the globs-option).
 
-### ...check the config of a Heroku app?
+### How to check the config of a Heroku app?
 
 The easiest/quickest is to run:
 
@@ -187,6 +238,18 @@ This way you can do stuff like:
 ```
 $ ./bin/heroku-env-check && git push live master
 ```
+
+### What happened to default values??
+
+The short version: simplicity, i.e. the best tool for the job.  
+
+In the early days of ENVied it was possible to provide default values for a variable.  
+While convenient, it had several drawbacks:
+- it would introduce a value for ENVied.FOO, while ENV['FOO'] was nil: confusing and a potential source of bugs
+- it hides the fact that an application can actually be configged via the environment
+- it creates an in-process environment which is hard to inspect (as opposed to doing `printenv FOO` in a shell, after or before starting the application)
+- there are better ways: e.g. a sample file in a project with a bunch of exports (ie `export FOO=sane-default # and even some documentation`) that someone can source in their shell (see 'Best Practices')
+- made the code quite complex
 
 ## Testing
 
