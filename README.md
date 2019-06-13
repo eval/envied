@@ -2,7 +2,7 @@
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
-For the rationale behind this project, see this [blogpost](http://www.gertgoet.com/2014/10/14/envied-or-how-i-stopped-worrying-about-ruby-s-env.html).
+For the rationale behind this project, see this [blogpost](https://www.gertgoet.com/2014/10/14/envied-or-how-i-stopped-worrying-about-ruby-s-env.html).
 
 ## Features
 
@@ -10,7 +10,7 @@ For the rationale behind this project, see this [blogpost](http://www.gertgoet.c
 * access to typed ENV-variables (integers, booleans etc. instead of just strings)
 * check the presence and correctness of a Heroku config
 
-## Non-feature
+## Non-features
 
 * provide or load ENV-values
 
@@ -135,12 +135,6 @@ ENVied.require('default')
 ENVied.require(nil)
 ```
 
-
-### More examples
-
-* See the [examples](/examples)-folder for a more extensive Envfile
-* See [the Envfile](https://github.com/eval/bunny_drain/blob/c54d7d977afb5e23a92da7a2fd0d39f6a7e29bf1/Envfile) for the bunny_drain application
-
 ## Command-line interface
 
 For help on a specific command, use `envied help <command>`.
@@ -162,7 +156,7 @@ Commands:
 
 Some best practices when using ENVied or working with env-configurable applications in general.
 
-### provide a sample env-file
+### include a .envrc.sample
 
 While ENVied will warn you when you start an application that is 'under-configured', it won't tell users what good default values are. To solve this add a file to the root of your project that contains sane defaults and instructions:
 ```
@@ -196,11 +190,11 @@ fi
 ...your customizations
 
 # a variant of this is source_up
-# an .envrc in a subfolder can load the main-file and override specific values
-# this would allow e.g. for a specific test-environment:
-# my-project/test/.envrc
+# an .envrc in a subfolder can load the .envrc from the root of the project and override specific values
+# this would allow e.g. for a specific test-environment in the subfolder:
+# in my-project/test/.envrc
 source_up .envrc
-export DATABASE_URL=the-test db-url
+export DATABASE_URL=the-test-db-url
 ```
 
 
