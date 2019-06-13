@@ -24,7 +24,7 @@ For the rationale behind this project, see this [blogpost](https://www.gertgoet.
   * [More examples](#more-examples)
 * [Command-line interface](#command-line-interface)
 * [Best Practices](#best-practices)
-* [How do I...?](#how-do-i)
+* [FAQ](#faq)
 * [Testing](#testing)
 * [Developing](#developing)
 * [Contributing](#contributing)
