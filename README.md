@@ -20,6 +20,7 @@ For the rationale behind this project, see this [blogpost](https://www.gertgoet.
 * [Installation](#installation)
 * [Configuration](#configuration)
   * [Types](#types)
+  * [Key alias](#key-alias)
   * [Groups](#groups)
   * [More examples](#more-examples)
 * [Command-line interface](#command-line-interface)
@@ -95,6 +96,31 @@ The following types are supported:
 * `:hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
 * `:array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
 * `:uri` (e.g. 'http://www.google.com' becomes result of `URI.parse('http://www.google.com')`)
+
+
+### Key alias
+
+Local development using environment variables is often not straightforward for values that differ between test and development. E.g. running your tests from a shell where `REDIS_URL` points to the development-redis, will have unwanted effects.
+
+Configuring a key alias addresses this as it allows e.g. `ENVied.REDIS_URL` to be read from `ENV['REDIS_URL_TEST']` first, and `ENV['REDIS_URL']` as fallback.
+This way you can provide values for REDIS_URL that both cover the test and development environment.
+
+Full example:
+```
+# file: Envfile
+key_alias! { Rails.env }
+
+variable :REDIS_URL, :uri
+```
+
+Source the following in your environment:
+```
+# file: .envrc
+export REDIS_URL_DEVELOPMENT=redis://localhost:6379/0
+export REDIS_URL_TEST=redis://localhost:6379/1
+```
+Now running tests or the development server will automatically point to the right Redis-database.
+
 
 ### Groups
 

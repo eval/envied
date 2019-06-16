@@ -47,7 +47,15 @@ class ENVied
     end
 
     def env_value_of(var)
-      ENV[var.name.to_s]
+      ENV.values_at(*env_keys(var, key_alias: config.key_alias)).compact.first
+    end
+
+    def env_keys(var, key_alias: nil)
+      base_key = var.name.to_s
+
+      result = [base_key]
+      result.unshift "#{base_key}_#{key_alias}" if key_alias
+      result
     end
 
     def missing?(var)

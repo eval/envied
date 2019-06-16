@@ -4,7 +4,16 @@ class ENVied
 
     def initialize(**options, &block)
       @coercer = options.fetch(:coercer, Coercer.new)
+      @key_alias = options[:key_alias]
       instance_eval(&block) if block_given?
+    end
+
+    def key_alias!(value = false, &block)
+      @key_alias = block_given? ? block.call : value
+    end
+
+    def key_alias
+      @key_alias && @key_alias.to_s.upcase
     end
 
     def self.load(**options)

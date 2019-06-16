@@ -1,4 +1,7 @@
-# A sample Envfile
+#
+# Allow ENV['FOO_<key_alias>'] to provide for ENVied.FOO (with ENV['FOO']
+# as fallback).
+# key_alias! { Rails.env }
 
 # variable :REDIS_URL, :string
 #
