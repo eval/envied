@@ -245,25 +245,24 @@ While convenient, it had several drawbacks:
 - there are better ways: e.g. a sample file in a project with a bunch of exports (ie `export FOO=sane-default # and even some documentation`) that someone can source in their shell (see 'Best Practices')
 - made the code quite complex
 
-## Testing
 
-```bash
-bundle install
-./bin/rspec
-```
-
-## Developing
+## Development
 
 - install [direnv](http://direnv.net/)
 - cp .envrc{.sample,}
 - direnv allow
 
 ```bash
-# hack with pry
-console
+$ setup
 
-# or, run:
-envied
+# run tests
+$ rspec
+
+# hack with pry
+$ console
+
+# run CLI:
+$ envied
 ```
 
 ## Contributing
