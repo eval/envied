@@ -254,8 +254,16 @@ bundle install
 
 ## Developing
 
+- install [direnv](http://direnv.net/)
+- cp .envrc{.sample,}
+- direnv allow
+
 ```bash
-bin/console
+# hack with pry
+console
+
+# or, run:
+envied
 ```
 
 ## Contributing
