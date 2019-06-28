@@ -1,0 +1,6 @@
+# Copy this file to .envrc, adjust values if needed and
+# source it in shell.
+# Requires [direnv](https://direnv.net/)
+
+PATH_add bin
+PATH_add exe
