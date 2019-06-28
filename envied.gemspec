@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["gert@thinkcreate.nl", "jjfutbol@gmail.com"]
   spec.summary       = %q{Ensure presence and type of ENV-variables}
   spec.description   = %q{Ensure presence and type of your app's ENV-variables.}
-  spec.homepage      = "https://github.com/eval/envied"
+  spec.homepage      = "https://gitlab.com/envied/envied/tree/master#envied"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
