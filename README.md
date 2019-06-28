@@ -267,7 +267,7 @@ $ envied
 
 ## Contributing
 
-For new feature-suggestions open an issue before opening a PR.
+To suggest a new feature, open an Issue before opening a PR.
 
 1. Fork it: http://github.com/eval/envied/fork
 2. Create your feature branch: `git checkout -b my-new-feature`
