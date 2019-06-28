@@ -1,4 +1,6 @@
 # -*- mode: ruby -*-¬
+# NOTE: defaults are deprecated and will be removed in > v0.9
+
 # We allow defaults for local development (and local tests), but want our CI
 # to mimic our production as much as possible.
 # New developers that don't have RACK_ENV set, will in this way not be presented with a huge

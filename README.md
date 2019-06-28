@@ -133,8 +133,8 @@ ENVied.require(nil)
 
 ### Defaults
 
-> *NOTE*: default values will be deprecated in the next minor-release (i.e. > v0.9). See https://gitlab.com/envied/envied/tree/master#what-happened-to-default-values > for more information and how to migrate.  
-> While your project depends on this feature it's recommended to pin the gem to 0.9-releases, i.e. `gem 'envied', '~> 0.9.2'`.
+*NOTE*: default values will be removed in the next minor-release (i.e. > v0.9). See https://gitlab.com/envied/envied/tree/master#what-happened-to-default-values for more information and how to migrate.  
+While your project depends on this feature it's recommended to pin the gem to 0.9-releases, i.e. `gem 'envied', '~> 0.9.2'`.
 
 In order to let other developers easily bootstrap the application, you can assign defaults to variables.
 Defaults can be a value or a `Proc` (see example below).
