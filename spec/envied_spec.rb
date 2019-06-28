@@ -91,6 +91,34 @@ RSpec.describe ENVied do
       end
     end
 
+    context 'using a key_alias' do
+      it 'ensures env-key FOO_<ALIAS> takes precedence over FOO' do
+        set_ENV('A' => 'a-original', 'A_TEST' => 'a-test', 'B' => 'b-original')
+        configure do
+          key_alias! { 'TEST' }
+
+          variable :A
+          variable :B
+        end
+        envied_require
+
+        expect(described_class.A).to eq 'a-test'
+        expect(described_class.B).to eq 'b-original'
+      end
+
+      it 'is converted in an upcased string' do
+        set_ENV('A_TEST' => 'UPPERCASED', 'A_test' => 'lowercase')
+        configure do
+          key_alias! { :test }
+
+          variable :A
+        end
+        envied_require
+
+        expect(described_class.A).to eq 'UPPERCASED'
+      end
+    end
+
     context 'configuring' do
       it 'raises error when configuring variable of unknown type' do
         expect {

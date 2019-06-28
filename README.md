@@ -20,6 +20,7 @@ For the rationale behind this project, see this [blogpost](https://www.gertgoet.
 * [Installation](#installation)
 * [Configuration](#configuration)
   * [Types](#types)
+  * [Key alias](#key-alias)
   * [Groups](#groups)
   * [More examples](#more-examples)
 * [Command-line interface](#command-line-interface)
@@ -95,6 +96,35 @@ The following types are supported:
 * `:hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
 * `:array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
 * `:uri` (e.g. 'http://www.google.com' becomes result of `URI.parse('http://www.google.com')`)
+
+
+### Key alias
+
+By default the value for variable `FOO` should be provided by `ENV['FOO']`. Sometimes though it's convenient to let a different key provide the value, based on some runtime condition. A key-alias will let you do this.  
+
+Consider for example local development where `REDIS_URL` differs between the development and test environment. Normally you'd prepare different shells with different values for `REDIS_URL`: one shell you can run tests in, and other shells where you'd run the console/server etc. This is cumbersome and easy to get wrong.
+
+With a key alias that's calculated at runtime (e.g. `Rails.env`) you'd set values for both `REDIS_URL_TEST` and `REDIS_URL_DEVELOPMENT` and the right value will be used for test and development.
+
+Full example:
+```
+# file: Envfile
+key_alias! { Rails.env }
+
+variable :REDIS_URL, :uri
+```
+
+Source the following in your environment:
+```
+# file: .envrc
+export REDIS_URL_DEVELOPMENT=redis://localhost:6379/0
+export REDIS_URL_TEST=redis://localhost:6379/1
+```
+
+Note that `ENV['REDIS_URL']` is still considered but `REDIS_URL_<key_alias>` takes precedence.  
+Also: the value of key_alias is converted to an upcased string.  
+Finally: this setting is optional.
+
 
 ### Groups
 
