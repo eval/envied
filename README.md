@@ -24,7 +24,6 @@ For the rationale behind this project, see this [blogpost](https://www.gertgoet.
   * [Types](#types)
   * [Key alias](#key-alias)
   * [Groups](#groups)
-  * [More examples](#more-examples)
 * [Command-line interface](#command-line-interface)
 * [Best Practices](#best-practices)
 * [FAQ](#faq)
@@ -124,7 +123,7 @@ export REDIS_URL_TEST=redis://localhost:6379/1
 ```
 
 Note that `ENV['REDIS_URL']` is still considered but `REDIS_URL_<key_alias>` takes precedence.  
-Also: the value of key_alias is converted to an upcased string.  
+Also: any truthy value provided as key_alias is converted to an upcased string.  
 Finally: this setting is optional.
 
 
@@ -184,7 +183,7 @@ Commands:
   envied version, --version, -v  # Shows version number
 ```
 
-## Best practices
+## Best Practices
 
 Some best practices when using ENVied or working with env-configurable applications in general.
 
@@ -192,12 +191,12 @@ Some best practices when using ENVied or working with env-configurable applicati
 
 While ENVied will warn you when you start an application that is 'under-configured', it won't tell users what good default values are. To solve this add a file to the root of your project that contains sane defaults and instructions:
 ```
-# .envrc.sample
+# file: .envrc.sample
 # copy this file to .envrc and adjust values if needed
 # then do `source .envrc` to load
 
 export DATABASE_URL=postgres://localhost/blog_development
-export FORCE_SSL=false # only needed in production
+# export FORCE_SSL=true # only needed for production
 
 # you can find this token on the Heroku-dashboard
 export DEPLOY_TOKEN=1234-ABC-5678
@@ -219,7 +218,7 @@ PATH_add bin
 if [ -f .envrc.sample ]; then
   source_env .envrc.sample
 fi
-...your customizations
+...your overrides
 
 # a variant of this is source_up
 # an .envrc in a subfolder can load the .envrc from the root of the project and override specific values
@@ -271,11 +270,13 @@ The short version: simplicity, i.e. the best tool for the job.
 
 In the early days of ENVied it was possible to provide default values for a variable.  
 While convenient, it had several drawbacks:
-- it would introduce a value for ENVied.FOO, while ENV['FOO'] was nil: confusing and a potential source of bugs
-- it hides the fact that an application can actually be configged via the environment
-- it creates an in-process environment which is hard to inspect (as opposed to doing `printenv FOO` in a shell, after or before starting the application)
-- there are better ways: e.g. a sample file in a project with a bunch of exports (ie `export FOO=sane-default # and even some documentation`) that someone can source in their shell (see 'Best Practices')
-- made the code quite complex
+- it would introduce a value for ENVied.FOO, while ENV['FOO'] was nil: confusing and a potential source of bugs.
+- it hides the fact that an application can actually be configged via the environment.
+- it creates an in-process environment which is hard to inspect (as opposed to doing `printenv FOO` in a shell, after or before starting the application).
+- there are better ways: e.g. a sample file in a project with a bunch of exports (ie `export FOO=sane-default # and even some documentation`) that someone can source in their shell (see [Best Practices](#best-practices)).
+- made the code quite complex.
+
+As an alternative include a file `.envrc.sample` in the root of your project containing default values (ie `export FOO=bar`) that users can source in their shell. See also [Best Practices](#best-practices).
 
 
 ## Development
