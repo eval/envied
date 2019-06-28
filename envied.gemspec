@@ -6,16 +6,16 @@ require "envied/version"
 Gem::Specification.new do |spec|
   spec.name          = "envied"
   spec.version       = ENVied::VERSION
-  spec.authors       = ["Gert Goet", "Javier Julio"]
-  spec.email         = ["gert@thinkcreate.nl", "jjfutbol@gmail.com"]
+  spec.authors       = ["Gert Goet"]
+  spec.email         = ["gert@thinkcreate.nl"]
   spec.summary       = %q{Ensure presence and type of ENV-variables}
   spec.description   = %q{Ensure presence and type of your app's ENV-variables.}
-  spec.homepage      = "https://github.com/eval/envied"
+  spec.homepage      = "https://gitlab.com/envied/envied/tree/master#envied"
   spec.license       = "MIT"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/eval/envied.git"
-  spec.metadata["changelog_uri"] = "https://github.com/eval/envied/blob/master/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://gitlab.com/envied/envied.git"
+  spec.metadata["changelog_uri"] = "https://gitlab.com/envied/envied/blob/master/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
