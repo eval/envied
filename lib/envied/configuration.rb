@@ -50,7 +50,7 @@ class ENVied
     private
 
     def default_values_deprecation
-      warning = "Default values will be deprecated in the next minor-release of ENVied (i.e. > v0.9). For more info see https://gitlab.com/envied/envied/tree/0-9-releases#defaults."
+      warning = "Default values will be removed in the next minor-release of ENVied (i.e. > v0.9). For more info see https://gitlab.com/envied/envied/tree/0-9-releases#defaults."
       if defined?(ActiveSupport::Deprecation)
         ActiveSupport::Deprecation.warn warning
       else

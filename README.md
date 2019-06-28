@@ -1,4 +1,4 @@
-# ENVied [![Build Status](https://travis-ci.org/eval/envied.svg?branch=master)](https://travis-ci.org/eval/envied) [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://envied-rb.zulipchat.com/)
+# ENVied [![pipeline status](https://gitlab.com/envied/envied/badges/0-9-releases/pipeline.svg)](https://gitlab.com/envied/envied/commits/0-9-releases) [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://envied-rb.zulipchat.com/)
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
@@ -227,7 +227,9 @@ bin/console
 
 ## Contributing
 
-1. Fork it: http://github.com/eval/envied/fork
+To suggest a new feature, [open an Issue](https://gitlab.com/envied/envied/issues/new) before opening a PR.
+
+1. Fork it: https://gitlab.com/envied/envied/-/forks/new
 2. Create your feature branch: `git checkout -b my-new-feature`
 3. Commit your changes: `git commit -am 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`

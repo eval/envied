@@ -1,7 +1,9 @@
-## master / unreleased
+## 0.9.2 / 2019-06-29
 
+* Project moved to GitLab (https://gitlab.com/envied/envied)
 * Now requiring Ruby 2.4+ [#48], [#51]
 * Removed `coercible` dependency as now all coercion functionality is implemented locally. This is a backwards compatible change. [#49]
+* Lots of refactoring and bringing the project update to date
 
 ### Deprecated
 
