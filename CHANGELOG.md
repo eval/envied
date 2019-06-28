@@ -3,6 +3,12 @@
 * Now requiring Ruby 2.4+ [#48], [#51]
 * Removed `coercible` dependency as now all coercion functionality is implemented locally. This is a backwards compatible change. [#49]
 
+### Deprecated
+
+ * default values
+
+    See https://gitlab.com/envied/envied/tree/0-9-releases#defaults
+
 ## 0.9.1 / 2017-07-06
 
 * Updates `envied check:heroku` to support multiline ENV variables [#42](../../pull/42)
