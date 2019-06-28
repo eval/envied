@@ -29,3 +29,19 @@ rspec ruby-2.7:
 rspec jruby-9.2:
   image: jruby:9.2-alpine
   <<: *rspec
+
+release:
+  stage: deploy
+  image: ruby:2.6-alpine
+  tags:
+    - docker
+  script:
+    - "echo 'gem: --no-document' > ~/.gemrc"
+    - gem install bundler
+    - 'git -v || apk --update add git'
+    - bundle install -j $(nproc)
+    - 'ruby -ryaml -e "puts YAML.dump({rubygems_api_key: ENV.fetch(%{RUBYGEMS_API_KEY})})" > ~/.gem/credentials'
+    - chmod 600 ~/.gem/credentials
+    - bundle exec rake release
+  only:
+    - tags
