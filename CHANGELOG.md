@@ -1,4 +1,4 @@
-## 0.9.2 / 2019-06-29
+## 0.9.3 / 2019-06-29
 
 * Project moved to GitLab (https://gitlab.com/envied/envied)
 * Now requiring Ruby 2.4+ [#48], [#51]
