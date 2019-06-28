@@ -43,5 +43,5 @@ release:
     - 'ruby -ryaml -e "puts YAML.dump({rubygems_api_key: ENV.fetch(%{RUBYGEMS_API_KEY})})" > ~/.gem/credentials'
     - chmod 600 ~/.gem/credentials
     - bundle exec rake release
-  #only:
-  #  - tags
+  only:
+    - tags
