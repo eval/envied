@@ -16,6 +16,10 @@ class ENVied
       @key_alias && @key_alias.to_s.upcase
     end
 
+    def enable_defaults!(*args)
+      raise "Defaults are no longer supported. See https://gitlab.com/envied/envied/tree/master#what-happened-to-default-values for the recommended upgrade-path, or pin the gem to 0.9-release (e.g. `gem 'envied', '~> 0.9.2'`) to keep using defaults."
+    end
+
     def self.load(**options)
       envfile = File.expand_path('Envfile')
       new(options).tap do |v|
