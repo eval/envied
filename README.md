@@ -99,7 +99,7 @@ The following types are supported:
 * `:uri` (e.g. 'http://www.google.com' becomes result of `URI.parse('http://www.google.com')`)
 
 
-### Key alias
+### Key alias (unreleased)
 
 By default the value for variable `FOO` should be provided by `ENV['FOO']`. Sometimes though it's convenient to let a different key provide the value, based on some runtime condition. A key-alias will let you do this.  
 
