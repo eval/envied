@@ -245,20 +245,29 @@ While convenient, it had several drawbacks:
 - there are better ways: e.g. a sample file in a project with a bunch of exports (ie `export FOO=sane-default # and even some documentation`) that someone can source in their shell (see 'Best Practices')
 - made the code quite complex
 
-## Testing
+
+## Development
+
+- install [direnv](http://direnv.net/)
+- cp .envrc{.sample,}
+- direnv allow
 
 ```bash
-bundle install
-bundle exec rspec
-```
+$ setup
 
-## Developing
+# run tests
+$ rspec
 
-```bash
-bin/console
+# hack with pry
+$ console
+
+# run CLI:
+$ envied
 ```
 
 ## Contributing
+
+To suggest a new feature, open an Issue before opening a PR.
 
 1. Fork it: http://github.com/eval/envied/fork
 2. Create your feature branch: `git checkout -b my-new-feature`
