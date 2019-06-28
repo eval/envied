@@ -16,6 +16,7 @@ class ENVied
     end
 
     def enable_defaults!(value = true, &block)
+      default_values_deprecation
       @defaults_enabled = block_given? ? block.call : value
     end
 
@@ -47,6 +48,15 @@ class ENVied
     end
 
     private
+
+    def default_values_deprecation
+      warning = "Default values will be deprecated in the next minor-release of ENVied (i.e. > v0.9). For more info see https://gitlab.com/envied/envied/tree/0-9-releases#defaults."
+      if defined?(ActiveSupport::Deprecation)
+        ActiveSupport::Deprecation.warn warning
+      else
+        $stderr.puts "DEPRECATION WARNING: #{warning}"
+      end
+    end
 
     def defaults_enabled_default
       if ENV['ENVIED_ENABLE_DEFAULTS'].nil?
