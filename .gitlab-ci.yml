@@ -29,6 +29,8 @@ rspec ruby-2.7:
 rspec jruby-9.2:
   image: jruby:9.2-alpine
   <<: *rspec
+  only:
+    - 0-9-releases
 
 release:
   stage: deploy
