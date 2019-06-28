@@ -2,6 +2,9 @@ require "bundler/setup"
 require "envied"
 
 RSpec.configure do |config|
+  # colorize output on CI
+  config.tty = true
+
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
 
