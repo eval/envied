@@ -26,7 +26,7 @@ For the rationale behind this project, see this [blogpost](https://www.gertgoet.
 * [Best Practices](#best-practices)
 * [FAQ](#faq)
 * [Testing](#testing)
-* [Developing](#developing)
+* [Development](#development)
 * [Contributing](#contributing)
 
 ## Quickstart
