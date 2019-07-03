@@ -128,7 +128,6 @@ RSpec.describe ENVied do
     end
 
     describe ".required?" do
-      # TODO: change to always return boolean
       it 'returns true-ish if `ENVied.require` was called' do
         expect {
           envied_require
@@ -246,21 +245,6 @@ RSpec.describe ENVied do
         it 'yields hash from an empty string' do
           expect(ENVied.BAR).to eq({})
         end
-
-        context 'with defaults enabled' do
-          before do
-            set_ENV
-            configure(enable_defaults: true) do
-              variable :BAZ, :hash
-            end
-          end
-
-          it 'has no default by default' do
-            # fixes a bug where variables of type :Hash had a default even
-            # when none was configured.
-            expect { envied_require }.to raise_error(RuntimeError, 'The following environment variables should be set: BAZ.')
-          end
-        end
       end
 
       describe 'Arrayable' do
@@ -291,6 +275,20 @@ RSpec.describe ENVied do
           expect(ENVied.SITE_URL.scheme).to eq 'https'
           expect(ENVied.SITE_URL.host).to eq 'www.google.com'
         end
+      end
+    end
+
+    describe 'env-type' do
+      it 'intercepts ENV and applies key_alias' do
+        set_ENV('FOO_ALIAS' => 'baz')
+        configure do
+          key_alias! { 'ALIAS' }
+
+          variable :FOO, :env
+        end
+        envied_require
+
+        expect(ENV['FOO']).to eq 'baz'
       end
     end
   end

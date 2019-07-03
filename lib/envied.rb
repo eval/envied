@@ -5,6 +5,7 @@ require 'envied/coercer'
 require 'envied/coercer/envied_string'
 require 'envied/variable'
 require 'envied/configuration'
+require 'envied/env_interceptor'
 
 class ENVied
   class << self
@@ -18,6 +19,7 @@ class ENVied
     error_on_missing_variables!(options)
     error_on_uncoercible_variables!(options)
 
+    intercept_env_vars!
     ensure_spring_after_fork_require(args, options)
   end
 
@@ -52,6 +54,20 @@ class ENVied
     result.any? ? result.map(&:to_sym) : [:default]
   end
 
+  def self.env_keys_to_intercept
+    config.variables.select {|var| var.type == :env }.map{|var| var.name.to_s }
+  end
+
+  def self.intercept_env_vars!
+    if (keys = env_keys_to_intercept).any?
+      ENV.instance_eval { @__envied_env_keys = keys }
+      class << ENV
+        prepend(ENVied::EnvInterceptor)
+      end
+    end
+  end
+  private_class_method :intercept_env_vars!, :env_keys_to_intercept
+
   def self.ensure_spring_after_fork_require(args, **options)
     if spring_enabled? && !options[:via_spring]
       Spring.after_fork { ENVied.require(args, options.merge(via_spring: true)) }
@@ -83,4 +99,5 @@ class ENVied
   def self.respond_to_missing?(method, include_private = false)
     (env && env.has_key?(method)) || super
   end
+
 end
