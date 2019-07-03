@@ -1,6 +1,9 @@
 # Copy this file to .envrc, adjust values if needed and
-# source it in shell.
-# Requires [direnv](https://direnv.net/)
+# `source .envrc` to apply it.
+# Or use [direnv](https://direnv.net/) to auto-(un)load it.
 
-PATH_add bin
-PATH_add exe
+# using direnv
+# PATH_add bin
+
+# without direnv
+# export PATH="$(pwd)/bin:${PATH}"

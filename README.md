@@ -281,22 +281,20 @@ As an alternative include a file `.envrc.sample` in the root of your project con
 
 ## Development
 
-- install [direnv](http://direnv.net/)
-- cp .envrc{.sample,}
-- direnv allow
-
 ```bash
-$ setup
+$ ./bin/setup
 
 # run tests
-$ rspec
+$ ./bin/rspec
 
 # hack with pry
-$ console
+$ ./bin/console
 
 # run CLI:
-$ envied
+$ ./bin/envied
 ```
+
+There's a `.envrc.sample` included that can be used in combination with [direnv](http://direnv.net/).
 
 ## Contributing
 
