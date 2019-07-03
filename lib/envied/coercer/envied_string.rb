@@ -39,6 +39,10 @@ class ENVied::Coercer::ENViedString
     end
   end
 
+  def to_env(string)
+    to_string(string)
+  end
+
   def to_symbol(str)
     str.to_sym
   end

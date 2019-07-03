@@ -22,7 +22,8 @@ For the rationale behind this project, see this [blogpost](https://www.gertgoet.
 * [Installation](#installation)
 * [Configuration](#configuration)
   * [Types](#types)
-  * [Key alias](#key-alias)
+  * [Key alias](#key-alias-unreleased)
+    * [env-type](#env-type-unreleased)
   * [Groups](#groups)
 * [Command-line interface](#command-line-interface)
 * [Best Practices](#best-practices)
@@ -87,15 +88,16 @@ Add this line to your application's Gemfile:
 
 The following types are supported:
 
-* `:string` (implied)
-* `:boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'no'/'yes' for resp. false and true)
-* `:integer`
-* `:float`
-* `:symbol`
-* `:date` (e.g. '2014-3-26')
-* `:time` (e.g. '14:00')
-* `:hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
 * `:array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
+* `:boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'no'/'yes' for resp. false and true)
+* `:date` (e.g. '2014-3-26')
+* `:env` (similar to `:string`, but accessible via ENV - see [Key alias](#key-alias-unreleased) for details)
+* `:float`
+* `:hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
+* `:integer`
+* `:string` (implied)
+* `:symbol`
+* `:time` (e.g. '14:00')
 * `:uri` (e.g. 'http://www.google.com' becomes result of `URI.parse('http://www.google.com')`)
 
 
@@ -121,10 +123,37 @@ Source the following in your environment:
 export REDIS_URL_DEVELOPMENT=redis://localhost:6379/0
 export REDIS_URL_TEST=redis://localhost:6379/1
 ```
+Now commands like `rails console` and `rails test` automatically point to the right redis database.
 
 Note that `ENV['REDIS_URL']` is still considered but `REDIS_URL_<key_alias>` takes precedence.  
 Also: any truthy value provided as key_alias is converted to an upcased string.  
 Finally: this setting is optional.
+
+
+#### env-type (unreleased)
+
+Variables of type `:env` take the key alias into account when accessing `ENV['FOO']`.
+
+Say, your application uses `ENV['DATABASE_URL']` (wich you can't change to `ENVied.DATABASE_URL`). Normally this would mean that the key alias has no effect. For env-type variables however, the key alias is taken into account:
+
+```
+# file: Envfile
+
+key_alias! { Rails.env }
+
+variable :DATABASE_URL, :env
+```
+
+The following now works:
+```shell
+$ DATABASE_URL_DEVELOPMENT=postgres://localhost/blog_development rails runner "p ENV['DATABASE_URL']"
+"postgres://localhost/blog_development"
+```
+
+Note: this also works for `ENV.fetch('FOO')`.  
+Also: no coercion is done (like you would expect when accessing ENV-values directly).  
+
+This means that for Rails applications when you set values for `DATABASE_URL_DEVELOPMENT` and `DATABASE_URL_TEST`, you no longer need a `config/database.yml`.
 
 
 ### Groups

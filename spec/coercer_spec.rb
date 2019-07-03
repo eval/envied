@@ -7,7 +7,7 @@ RSpec.describe ENVied::Coercer do
 
   describe '.supported_types' do
     it 'returns a sorted set of supported types' do
-      expect(described_class.supported_types).to eq %i(array boolean date float hash integer string symbol time uri)
+      expect(described_class.supported_types).to eq %i(array boolean date env float hash integer string symbol time uri)
     end
   end
 
