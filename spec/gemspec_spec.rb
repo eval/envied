@@ -1,17 +1,21 @@
 require "open3"
 
-RSpec.describe 'envied.gemspec' do
-  let!(:build) { Open3.capture3("gem build envied.gemspec") }
+RSpec.describe 'building envied.gemspec' do
+
+  def build!
+    @build ||= Open3.capture3("gem build envied.gemspec")
+    [:stdout, :stderr, :status].zip(@build).to_h
+  end
 
   after do
     Dir.glob("envied-*.gem").each { |f| File.delete(f) }
   end
 
-  it 'builds without warnings' do
-    expect(build[1]).to_not match(/WARNING/)
+  it 'yields no warnings' do
+    expect(build![:stderr]).to be_empty
   end
 
-  it 'builds successfully' do
-    expect(build[2].success?).to eq true
+  specify do
+    expect(build![:status]).to be_success
   end
 end
