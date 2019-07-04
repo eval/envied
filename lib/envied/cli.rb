@@ -70,6 +70,9 @@ class ENVied
     option :groups, type: :array, desc: "uses ENV['ENVIED_GROUPS'] as default if present", default: ENV['ENVIED_GROUPS'] || %w(default), banner: 'default production'
     option :quiet, type: :boolean, desc: 'Communicate success of the check only via the exit status.'
     def check
+      if rails_project?
+        require File.expand_path 'config/environment.rb'
+      end
       ENVied.require(*options[:groups])
       unless options[:quiet]
         puts "All variables for group(s) #{options[:groups]} are present and valid"
@@ -125,6 +128,12 @@ class ENVied
       full_dest = File.expand_path(@dest)
       template("heroku-env-check.tt", full_dest)
       FileUtils.chmod 0755, full_dest
+    end
+
+    no_tasks do
+      def rails_project?
+        File.exists?('config/environment.rb')
+      end
     end
   end
 end
