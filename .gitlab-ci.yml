@@ -31,6 +31,7 @@ rspec jruby-9.2:
   <<: *rspec
   only:
     - master
+    - tags
 
 release:
   stage: deploy
