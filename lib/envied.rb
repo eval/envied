@@ -16,6 +16,7 @@ class ENVied
   def self.require(*args, **options)
     requested_groups = (args && !args.empty?) ? args : ENV['ENVIED_GROUPS']
     env!(requested_groups, options)
+    error_on_duplicate_variables!(options)
     error_on_missing_variables!(options)
     error_on_uncoercible_variables!(options)
 
@@ -28,8 +29,20 @@ class ENVied
     @env = EnvProxy.new(@config, groups: required_groups(*requested_groups))
   end
 
+  def self.error_on_duplicate_variables!(options)
+    var_types_by_name = env.variables.reduce({}) do |acc, v|
+      (acc[v.name] ||= []).push v.type
+      acc
+    end
+    dups = var_types_by_name.select {|name, types| types.uniq.count > 1 }
+
+    if dups.any?
+      raise "The following variables are defined more than once with different types: #{dups.keys.join(', ')}"
+    end
+  end
+
   def self.error_on_missing_variables!(**options)
-    names = env.missing_variables.map(&:name)
+    names = env.missing_variables.map(&:name).uniq.sort
     if names.any?
       msg = "The following environment variables should be set: #{names.join(', ')}."
       msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]

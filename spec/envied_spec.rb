@@ -91,6 +91,29 @@ RSpec.describe ENVied do
       end
     end
 
+    context 'duplicate variables' do
+      specify do
+        set_ENV('A' => 'foo')
+        configure do
+          key_alias! { 'TEST' }
+
+          variable :A, :string
+          variable :B, :string
+
+          variable :A, :env
+
+          group :required do
+            variable :B, :env
+          end
+        end
+
+        expect {
+          envied_require(:default, :required)
+        }.to raise_error(RuntimeError,
+                         'The following variables are defined more than once with different types: A, B')
+      end
+    end
+
     context 'using a key_alias' do
       it 'ensures env-key FOO_<ALIAS> takes precedence over FOO' do
         set_ENV('A' => 'a-original', 'A_TEST' => 'a-test', 'B' => 'b-original')
