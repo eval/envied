@@ -30,6 +30,10 @@ class ENVied
       return env_value_of(var) unless env_value_of(var).nil?
     end
 
+    def variables
+      @variables ||= config.variables.select {|v| groups.include?(v.group) }
+    end
+
     private
 
     def coerce(var)
@@ -60,10 +64,6 @@ class ENVied
 
     def missing?(var)
       value_to_coerce(var).nil?
-    end
-
-    def variables
-      @variables ||= config.variables.select {|v| groups.include?(v.group) }
     end
 
     def variables_by_name

@@ -280,15 +280,20 @@ RSpec.describe ENVied do
 
     describe 'env-type' do
       it 'intercepts ENV and applies key_alias' do
-        set_ENV('FOO_ALIAS' => 'baz')
+        set_ENV('FOO_ALIAS' => 'foo_alias', 'BAR' => 'bar', 'BAR_ALIAS' => 'bar_alias')
         configure do
           key_alias! { 'ALIAS' }
 
           variable :FOO, :env
+
+          group :not_required do
+            variable :BAR, :env
+          end
         end
         envied_require
 
-        expect(ENV['FOO']).to eq 'baz'
+        expect(ENV['FOO']).to eq 'foo_alias'
+        expect(ENV['BAR']).to eq 'bar'
       end
     end
   end

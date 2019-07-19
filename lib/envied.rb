@@ -55,7 +55,7 @@ class ENVied
   end
 
   def self.env_keys_to_intercept
-    config.variables.select {|var| var.type == :env }.map{|var| var.name.to_s }
+    env.variables.select{|v| v.type == :env }.map{|var| var.name.to_s }
   end
 
   def self.intercept_env_vars!
