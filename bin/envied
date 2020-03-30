@@ -1,5 +1,6 @@
-#!/usr/bin/env ruby -Ilib
+#!/usr/bin/env ruby
 
-require 'envied'
+require "bundler/setup"
+require "envied"
 
 ENVied::Cli.start
