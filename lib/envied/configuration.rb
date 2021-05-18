@@ -22,7 +22,7 @@ class ENVied
 
     def self.load(**options)
       envfile = File.expand_path('Envfile')
-      new(options).tap do |v|
+      new(**options).tap do |v|
         v.instance_eval(File.read(envfile), envfile)
       end
     end

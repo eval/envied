@@ -15,13 +15,13 @@ class ENVied
 
   def self.require(*args, **options)
     requested_groups = (args && !args.empty?) ? args : ENV['ENVIED_GROUPS']
-    env!(requested_groups, options)
+    env!(requested_groups, **options)
     error_on_duplicate_variables!(options)
-    error_on_missing_variables!(options)
-    error_on_uncoercible_variables!(options)
+    error_on_missing_variables!(**options)
+    error_on_uncoercible_variables!(**options)
 
     intercept_env_vars!
-    ensure_spring_after_fork_require(args, options)
+    ensure_spring_after_fork_require(args, **options)
   end
 
   def self.env!(requested_groups, **options)
