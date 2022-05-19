@@ -22,7 +22,7 @@ RSpec.describe ENVied do
     end
 
     def configure(**options, &block)
-      @config = ENVied::Configuration.new(options, &block)
+      @config = ENVied::Configuration.new(**options, &block)
     end
 
     def configured_with(**hash)
