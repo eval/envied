@@ -63,7 +63,7 @@ class ENVied
 
   def self.required_groups(*groups)
     splitter = ->(group){ group.is_a?(String) ? group.split(/ *, */) : group }
-    result = groups.compact.map(&splitter).flatten
+    result = groups.compact.map(&splitter).flatten.select {|r| r.class != Hash }
     result.any? ? result.map(&:to_sym) : [:default]
   end
 
