@@ -1,6 +1,8 @@
-# ENVied [![pipeline status](https://gitlab.com/envied/envied/badges/master/pipeline.svg)](https://gitlab.com/envied/envied/commits/master) [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://envied-rb.zulipchat.com/)
+# ENVied
 
-_Canonical Repository:_ https://gitlab.com/envied/envied/tree/master#envied
+## -- THIS PROJECT IS NO LONGER MAINTAINED --
+See https://github.com/eval/nero for a modern replacement.
+
 
 ### TL;DR ensure presence and type of your app's ENV-variables.
 
@@ -64,6 +66,7 @@ ENVied.PORT # => 3001
 ENVied.FORCE_SSL # => false
 ```
 
+<!--
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -81,6 +84,8 @@ Add this line to your application's Gemfile:
 ...or for non-Rails applications:
 
     $ bundle exec envied init
+
+    -->
 
 ## Configuration
 
